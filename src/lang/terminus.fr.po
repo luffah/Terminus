@@ -747,13 +747,13 @@ msgid "people_vendor_sell_mkdir"
 msgstr "le sort 'mkdir' qui coûte {{item_mkdir_cost}}"
 
 msgid "you_buy"
-msgstr "Tu as acheté %s"
+msgstr "Tu as acheté '%s'"
 
 msgid "need_money"
 msgstr "Tu n'as pas de quoi acheter ce sort."
 
 msgid "unzipped"
-msgstr "Dans %s, tu as trouvé ces choses : %s"
+msgstr "Dans '%s', tu as trouvé ces choses : '%s'"
 
 msgid "item_mkdir_cost"
 msgstr "5000"
