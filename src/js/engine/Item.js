@@ -82,6 +82,10 @@ File.prototype=union(EventTarget.prototype,{
     }
     return this;
   },
+  apply:function(stname){
+    this.fire(this.uid+stname);
+    return this;
+  },
 });
 
 function Item(name, intro, picname, prop){
@@ -158,7 +162,7 @@ Item.prototype=union(File.prototype, {
     } else {
       this.povars=delta;
     }
-    this.name=_(this.poid,vars);
+    this.name=_(this.poid,this.povars);
     this.cmd_text.less=_(this.poid+POSUFFIX_DESC,this.povars);
     return this;
   },

@@ -41,7 +41,7 @@ function buy_to_vendor(vt, choice){
   if (choice==0) {
     if ($market.hasItem('mkdir_cost')){
       $market.removeItem('mkdir_cost');
-      $market.ev.fire('mkdirSold');
+      $market.apply('mkdirSold');
       return _('you_buy',[_('item_mkdir_spell')]);
     } else {
       return _('need_money',[_('item_rm_spell')]);
@@ -49,7 +49,7 @@ function buy_to_vendor(vt, choice){
   } else if (choice==1) {
     if ($market.hasItem('rm_cost')){
       $market.removeItem('rm_cost');
-      $market.ev.fire('rmSold');
+      $market.apply('rmSold');
       return _('you_buy',[_('item_rm_spell')]);
     } else {
       return _('need_money',[_('rm_cost')]);
@@ -58,7 +58,7 @@ function buy_to_vendor(vt, choice){
 }
 vendor=$market.newPeople("vendor", "item_merchant.png")
   .setCmdText("less","")
-  .setCmdEvent("less",function(){
+  .setCmdEvent("less_done",function(){
     vt.show_img();
     vt.ask_choose(_('people_vendor_text'), [_('people_vendor_sell_mkdir'),_('people_vendor_sell_rm'),_('people_vendor_sell_nothing')],buy_to_vendor,
       {disabled_choices:disabled_sell_choices});
@@ -70,36 +70,40 @@ var backpack=$market.newItem("backpack","item_backpack.png")
     vt.show_msg(_('item_backpack_stolen'));
     backpack.unsetCmdEvent("mv");
   })
-  .setCmdEvent("less", function(ct){$market.ev.fire('unzipUnlocked');})
+  .setCmdEvent("less")
+  .addStates({
+    less:function(re){
+      _addGroup('unzip');
+      learn(vt, 'unzip', re);
+      backpack.unsetCmdEvent("less");
+      backpack.setPoDelta(['.zip']);
+      backpack.setCmdEvent('unzip',function(ct){
+        unzipped=[];
+        unzipped.push(ct.room.newItem('rm_cost'));
+        unzipped.push(ct.room.newItem('mkdir_cost'));
+        backpack.setPoDelta([]);
+        backpack.unsetCmdEvent('unzip');
+        vt.show_msg(_('unzipped',[_('item_backpack'), unzipped.join(", ")]),{dependant:false});
+      });
+    }
+  })
   ;
 
 $market.addStates({
-  unzipUnlocked:function(re){
-    _addGroup('unzip');
-    learn(vt, 'unzip', re);
-    backpack.unsetCmdEvent("less");
-    backpack.setPoDelta(['.zip']);
-    backpack.setCmdEvent('unzip',function(ct){
-      unzipped=[];
-      unzipped.push(ct.room.newItem('rm_cost'));
-      unzipped.push(ct.room.newItem('mkdir_cost'));
-      backpack.setPoDelta([]);
-      backpack.unsetCmdEvent('unzip');
-      vt.show_msg(_('unzipped',[_('item_backpack'), unzipped.join(", ")]),{dependant:false});
-    });
-  },
   rmSold:function(re){
     _addGroup('rm');
     learn(vt,'rm',re);
     $market.removeItem('rm_spell');
     disabled_sell_choices.push(1);
     vendor.setCmdText("rm", _('people_vendor_rm'));
+    global_fire_done();
   },
   mkdirSold:function(re){
     _addGroup('mkdir');
     learn(vt,'mkdir',re);
     disabled_sell_choices.push(0);
     $market.removeItem('mkdir_spell');
+    global_fire_done();
   }
 })
 ;

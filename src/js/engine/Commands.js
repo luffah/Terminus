@@ -343,31 +343,32 @@ _setupCommand('touch',null,[ARGT.filenew],function(args,vt){
 
 _setupCommand('mkdir',null,[ARGT.dirnew],function(args,vt){//event arg -> created dir
   var t=vt.getContext();
-  if (t.hasRightForCommand("mkdir")){
-    if (args.length === 1){
-      t.addPath(new Room(args[0]));
-      t.fire_event(vt,'mkdir',args,0);
-      return _("room_new_created", args);
+  if (args.length === 1 ){
+    var tr=t.traversee(args[0]);
+    if ( tr.room.writable ) {
+      if ( !tr.item ){
+        tr.room.addPath(new Room(t.item_name));
+        t.fire_event(vt,'mkdir',args,0);
+        return _("room_new_created", args);
+      }
+      return _('tgt_already_exists',[args[0]]);
     }
-    return _("incorrect_syntax");
+    return _("permission_denied")+' '+_("room_not_writable");
   }
-  return _("cmd_unknown");
+  return _("incorrect_syntax");
 });
 _setupCommand('unzip',null,[ARGT.file.concat(['*.zip'])], function(args,vt){
   var t=vt.getContext();
-  if (t.hasRightForCommand("unzip")){
-    if (args.length === 1){
-      var tr=t.traversee(args[0]);
-      if (tr.item && tr.room.writable){
-        tr.item.fire_event(vt,'unzip',args,0);
-        return "";
-      } else {
-        return _("item_cmd_unknow",'unzip');
-      }
+  if (args.length === 1){
+    var tr=t.traversee(args[0]);
+    if (tr.item && tr.room.writable){
+      tr.item.fire_event(vt,'unzip',args,0);
+      return "";
+    } else {
+      return _("item_cmd_unknow",'unzip');
     }
-    return _("incorrect_syntax");
   }
-  return _("cmd_unknown");
+  return _("incorrect_syntax");
 });
 _setupCommand('sudo',null,[ARGT.cmd], function(args,vt){
   var t=vt.getContext();

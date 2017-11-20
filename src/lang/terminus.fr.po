@@ -293,6 +293,9 @@ msgstr "Ceci ne peut être déplacé."
 msgid "cmd_mv_dest_fixed"
 msgstr "Impossible de mettre ça dans cette pièce."
 
+msgid "room_not_writable"
+msgstr "Impossible de mettre ça dans cette pièce."
+
 msgid "permission_denied"
 msgstr "(Permission non accordée)"
 
@@ -731,7 +734,8 @@ msgid "people_vendor"
 msgstr "Vendeur"
 
 msgid "people_vendor_text"
-msgstr "\" Bonjour !\""
+msgstr "\" Bonjour !\", le vendeur te sourit de manière déplaisante.\n"
+"\" Que souhaites-tu acheter ? \""
 
 msgid "people_vendor_sell_nothing"
 msgstr "(passer son chemin)"
@@ -907,13 +911,13 @@ msgstr ""
 ". Va trouver le livre et tape \"grep {{people_darkwizard}} {{item_historybook}}\"."
 
 msgid "room_rockypath"
-msgstr "Che"
+msgstr "CheminEnPierres"
 
 msgid "room_rockypath_text"
-msgstr "The weed-choked path leads off into the fields."
+msgstr "Le chemin mène vers des champs."
 
 msgid "item_largeboulder"
-msgstr "LargeBoulder"
+msgstr "ÉnormeRocher"
 
 msgid "item_largeboulder_text"
 msgstr ""

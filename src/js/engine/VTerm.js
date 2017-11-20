@@ -785,6 +785,7 @@ t.monitor = mon;
     opts=d(opts,{});
     disabled_choices=d(opts.disabled_choices,[]);
     direct=d(opts.direct,false);
+    console.log(opts.disabled_choices);
     while (disabled_choices.indexOf(curidx)>-1){
       curidx++;
     } 
