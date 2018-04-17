@@ -1129,13 +1129,13 @@ msgstr "Clairière"
 
 msgid "room_clearing_text"
 msgstr ""
-"C'est une clairière couverte d'herbe avec une femme assise sur un rocher, soupirant…\n"
-"Derrière elle, les ruines d'une maison."
+"C'est une clairière couverte d'herbe avec un homme assis sur un rocher, soupirant…\n"
+"Derrière lui, les ruines d'une maison."
 
 msgid "room_clearing_text2"
 msgstr ""
-"C'est une clairière couverte d'herbe avec une femme assise sur un rocher, soupirant…\n"
-"Derrière elle, une belle {{room_house}} neuve."
+"C'est une clairière couverte d'herbe avec un homme assis sur un rocher, soupirant…\n"
+"Derrière lui, une belle {{room_house}} neuve."
 
 msgid "room_clearing_cd"
 msgstr "Tu ne peux pas traverser le pont tant que tu n'as pas remplacé la {{item_plank}} manquante."
