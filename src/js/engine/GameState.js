@@ -1,9 +1,11 @@
 function GameState(){
-	this.params = {};
+  this.params = {};
   this.actions = {};
+  this.filesystem = {};
+  this.alias = {};
   this.cookie=null;
-  this.Event=function(e){state.apply(e.type);};
 }
+
 GameState.prototype = {
   getCurrentRoom : function() {
     return window[this.params['']];
@@ -69,3 +71,6 @@ GameState.prototype = {
     return false;
   },
 };
+
+var state = new GameState(); // GameState to initialize a game script
+

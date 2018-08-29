@@ -3,6 +3,7 @@ function getObjUID(name){
   cntUp(global_uid,name,0);
   return  name.substr(0,4)+global_uid[name];
 }
+
 function File(name,picname,prop){
   prop=prop||{};
   this.executable=d(prop.executable,false);
@@ -19,9 +20,21 @@ function File(name,picname,prop){
   //  this.owner='';
   EventTarget.call(this);
 }
+
 File.prototype=union(EventTarget.prototype,{
   toString : function(){
     return this.name;
+  },
+  getHash: function(){
+    hash={};
+    hash['rwx']=this.readable * 4 + this.writable *2 + this.executable;
+    hash['d']=this.hasOwnProperty('children')*1;
+    hash['events']=this.cmd_event;
+    // hash['states']=this._listeners;
+    // TODO: revoir définition d'une sauvegarde... + alteration d'état room/file dans gamestate ?
+    // hash['states_']=state;
+    hash['picture']=this.picture.src;
+    return hash;
   },
   chmod:function(chmod){
     this.readable=d(chmod.read,this.readable);
@@ -78,30 +91,32 @@ File.prototype=union(EventTarget.prototype,{
     delete this.cmd_text[cmd];
     return this;
   },
+  apply : function(e){
+    if (typeof e == "string"){
+      name = e;
+      target = this;
+    } else {
+      name = e.type;
+      target = e.target;
+    }
+    state.apply(target.uid+name);
+  },
   addState : function(name,fun){
-    name=this.uid+name;
-//    this.ev.addListener(name,state.Event);
-    this.addListener(name,state.Event);
-    state.add(name,fun);
+    this.addListener(name,this.apply);
+    state.add(this.uid+name,fun);
     return this;
   },
   addStates : function(h){
     if (isObj(h)){
       for (var i in h) {
         if (h.hasOwnProperty(i)){
-          name=this.uid+i;
-//          this.ev.addListener(name,state.Event);
-          this.addListener(name,state.Event);
-          state.add(name,h[i]);
+          this.addListener(i,this.apply);
+          state.add(this.uid+i,h[i]);
         }
       }
     } else {
-      console.error('addStates shall receive a dictionnary {} as argument, if you want to declare only on state us addState');
+      console.error('addStates shall receive a dictionnary {} as argument, if you want to declare only one state use addState');
     }
-    return this;
-  },
-  apply:function(stname){
-    this.fire(this.uid+stname);
     return this;
   },
 });
@@ -111,10 +126,7 @@ function Item(name, intro, picname, prop){
   prop.poprefix=d(prop.poprefix,POPREFIX_ITEM);
   File.call(this,name,picname,prop);
   this.cmd_text = {less: intro ? intro : _(PO_DEFAULT_ITEM)};
-//  this.valid_cmds = ["less"];
-  //  this.owner='';
   this.room=null;
-//  this.ev = new EventTarget();
   if (prop.poid){
     this.setPo(prop.poid,prop.povars);
   }

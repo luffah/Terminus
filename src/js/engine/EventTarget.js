@@ -7,29 +7,27 @@ function EventTarget(){
 }
 EventTarget.prototype = {
 
-//    constructor: EventTarget,
-    
     addListener: function(type, listener){
         hdef(this._listeners,type,listener);
       return this;
     },
 
-    fire: function(event){
-        if (typeof event == "string"){
-            event = { type: event };
+    fire: function(evt){
+        if (typeof evt == "string"){
+            evt = { type: evt };
         }
-        if (!event.target){
-            event.target = this;
+        if (!evt.target){
+            evt.target = this;
         }
 
-        if (!event.type){  //falsy
+        if (!evt.type){  //falsy
             throw new Error("Event object missing 'type' property.");
         }
 
-        if (this._listeners[event.type] instanceof Array){
-            var listeners = this._listeners[event.type];
+        if (this._listeners[evt.type] instanceof Array){
+            var listeners = this._listeners[evt.type];
             for (var i=0, len=listeners.length; i < len; i++){
-                listeners[i].call(this, event);
+                listeners[i].call(this, evt);
             }
         }
       return this;

@@ -31,7 +31,7 @@ function start_game(){
       music.play('preload');
       var seq=new Seq();
       seq.then(function(next){
-        vt.unmuteSound();
+        // vt.unmuteSound();
         vt.ask(_('prelude_text'),function(val){
           // Todo detect bad or lovely words -> user_judged_bad & user_judged_lovely
           user.judged= _('user_judged-'+Math.min(5,Math.round(val.length / 20)));
@@ -48,6 +48,16 @@ function start_game(){
             cb();
             vt.flash(0,800);
           },wait:500});
+      });
+      seq.then(function(next){
+        vt.ask(_('gameintro_setup_ok'),function(val){
+          },
+          {cls:'mystory',disappear:function(cb){cb();next();},
+          }
+        );
+      });
+      seq.then(function(next){
+        vt.show_loading_element_in_msg(['_',' '],{duration:800,finalvalue:' ',callback:next});
       });
       seq.then(function(next){
         vt.muteSound();
@@ -96,13 +106,14 @@ function start_game(){
 
   // build view
   vt=new VTerm('term');
-  vt.soundbank=snd; 
-  vt.charduration=20; 
+  vt.soundbank=snd;
+  vt.charduration=20;
   vt.charfactor[' ']=25;//on each nbsp , it will take 1/2 second
   vt.disable_input();
   _addGroup('cat');
   _addGroup('dir');
   vt.flash(0,800);
+  // vt.epic_img_enter('terminus_logo.png','epicfromright titlelogo',800,
   vt.epic_img_enter('titlescreen.gif','epicfromright',800,
     function(vt){
       vt.show_msg(['version : '+game_version,null]);

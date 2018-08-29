@@ -23,6 +23,7 @@ const concat = require("gulp-concat");
 const inject = require('gulp-inject');
 const htmlminifier = require("gulp-html-minifier");
 const uglify = require('gulp-uglify');
+const gutil = require('gulp-util');
 const postcss = require("gulp-postcss");
 var postcss_plugins = [
     require("autoprefixer"),
@@ -32,18 +33,7 @@ var postcss_plugins = [
 const po2json = require('po2json');
 var languages=['fr','en'];
 
-
 function _make_all(){
-  //  var clean=false;
-  //  while (!clean){
-  //   try {
-  //     fs.statSync('tmp');
-  //     fs.statSync('webroot');
-  //     console.log('Waiting _clean to finish');
-  //   } catch (e) {
-  //     clean=true;
-  //   }
-  //  }
   var dialogs=_dialogs(languages);
   var js=_js();
   var css=_css();
@@ -93,7 +83,9 @@ function _js(){
   /* --------------------------- */
   return gulp.src(jssrc)
     .pipe(concat('min.js'))
-    .pipe(uglify());
+    .pipe(uglify())
+    .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
+;  
 
 }
 

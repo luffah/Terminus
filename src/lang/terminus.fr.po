@@ -111,6 +111,9 @@ msgstr "Cette commande ne peut pas être utilisée ici."
 msgid "cmd_exit"
 msgstr "Au revoir !"
 
+msgid "gameintro_setup_ok"
+msgstr "Maintenant je vais m'amuser... mais toi, tu vas souffrir. 😄\nLe principe est simple : pour réaliser chaque action, il te faut taper une commande.\nTon outil est une zone de texte, tu peux déplacer le curseur à gauche, à droite, en haut et en bas.\nSi tu appuies sur la touche Tab, tu active une aide interactive.\nBon, ça commence à m'ennuyer de tout t'expliquer."
+
 msgid "gameintro_text_initrd"
 msgstr "Chargement de initrd.img [<div class='inmsg' id='initload'></div>]"
 

@@ -14,7 +14,7 @@ function VTerm(container_id, context){
   /* non dom properties */
   t.context = context;
   t.charduration=10;
-  t.charfactor={char:1,' ':8,' ':2,'!':10,'?':10,',':5,'.':8,"\t":2, "\n":10,'tag':10};
+  t.charfactor={char:1,' ':8,' ':4,'!':10,'?':10,',':5,'.':8,"\t":2, "\n":10,'tag':10};
   t.charhtml={' ':'&nbsp;',"\n":'<br>',"\t":'&nbsp;&nbsp;'};
   t.complete_opts = {case:'i', fuzzy:no_accents,humanized:true};
   t.imgs={};
@@ -403,8 +403,9 @@ VTerm.prototype={
       var dependant=d(opt.dependant,true);
       var safe=d(opt.safe,false);
       var direct=d(opt.direct,false);
+      var cls=d(opt.cls,'');
       t.ghostel=addEl(t.ghost_monitor,'p');
-      t.current_msg=addEl(el,'p','msg');
+      t.current_msg=addEl(el,'p','msg'+' '+cls);
       if (msg.nodeType == 1){
         t.current_msg.appendChild(msg);
         t.ghostel.innerHTML=msg.outerHTML.replace(/<div class='inmsg'.*><\/div>/,'');
@@ -560,6 +561,9 @@ VTerm.prototype={
     // Enter -> exec command
     var t=this;
     t.playSound('enter');
+    // TODO : put this in a clean way // depends on background.js
+    enter_effect();
+    //
     var l=t.get_line().replace(/\s+$/,"");
     if (l.length>0){
       var pr=t.input;

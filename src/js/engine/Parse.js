@@ -122,11 +122,24 @@ function _getCommands(r){
   }
   return ret.concat(_getUserCommands());
 }
+
+function psychologist(r, cmd, args){
+  // TODO: match sentence structure
+  //    if command structure  --> get a similar command
+  //   
+  //
+  //    criterion : love, hate, question, negation, philosophie, existance, life, game reference
+  //
+
+  return _('cmd_not_found',[cmd,r.name]);
+}
+
+ // TODO: how to save filesystem structure
 function _parse_exec(vt, arrs,superuser){
-  var t=vt.getContext();
+  var r=vt.getContext();
   var cmd = arrs[0];
   var ret = "";
-  var r=t;
+  // var r=t;
   arrs.push(arrs.pop().replace(/\/$/,""));
 //  console.log('_parse_exec',arrs,r);
   var args=_expandArgs(arrs.slice(1),r);
@@ -137,8 +150,8 @@ function _parse_exec(vt, arrs,superuser){
     var tr=r.traversee(cmd);
     var item=tr.item, r=tr.room;
     if (item && item.executable){
-      cmdexec=function(args,vt){
-        return item.exec(args,r,vt);
+      cmdexec=function(args,t,vt){
+        return item.exec(args,t,vt);
       };
     }
   }
@@ -153,7 +166,7 @@ function _parse_exec(vt, arrs,superuser){
     } else {
       r.fire_event(vt,'cmd_not_found',args,0);
       r.fire_event(vt,cmd+'_cmd_not_found',args,0);
-      ret=cmd_done(vt,[[r,0]], _('cmd_not_found',[cmd,r.name]),'cmd_not_found',args);
+      ret=cmd_done(vt,[[r,0]], psychologist(r,cmd,args),'cmd_not_found',args);
     }
     return ret;
   } 
@@ -162,7 +175,7 @@ function _parse_exec(vt, arrs,superuser){
   var passwordcallback=function(passok,cmdpass){
     var ret = "";
     if (passok) {
-      var text_to_display = cmdexec(args,vt);
+      var text_to_display = cmdexec(args,r,vt);
       if (text_to_display){
         ret=text_to_display;
       } else if (cmd in r.cmd_text){
@@ -176,14 +189,14 @@ function _parse_exec(vt, arrs,superuser){
 
   // construct the list of passwords to give
   var cmdpass=[];
-  if (cmd in t.commands_lock){
+  if (cmd in r.commands_lock){
     if (cmd.locked_inside) { // test option locked inside
-      cmdpass.push(t.commands_lock[cmd]);
+      cmdpass.push(r.commands_lock[cmd]);
     }
   }
   var tgt,cur;
   for (var i=0;i<args.length;i++ ){
-    tgt=t.traversee(args[i]);
+    tgt=r.traversee(args[i]);
     cur=tgt.room;
     //don't ask passwd for items OR if no room
     if (!cur || tgt.item) {continue;}

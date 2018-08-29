@@ -1,9 +1,10 @@
 var ARGT={dir:[0],file:[1],opt:[2],instr:[3],var:[4],strictfile:[5],cmdname:[6],filename:[7],filenew:[8],dirnew:[9],pattern:[10],msgid:[12]};
 
-function Command(group,syntax,fu){
+function Command(name,syntax,fu){
   this.fu=fu;
   this.syntax=syntax;//example : cmd dir [-d|-e] (undo|redo) -> [ARGT.dir(),ARGT.opt.concat(['-d','e']),ARGT.instr.concat['undo','redo']],
-  this.group=group;
+  this.group=name;
+  this.preargs=[];// default arguments (for aliases)
 }
 
 var global_commands_fu={};
@@ -22,12 +23,33 @@ function _getCommandFunction(cmd){
 function _getCommandSyntax(cmd){
   return global_commands_fu[cmd].syntax;
 }
-function _setupCommand(cmd,group,syntax,fu){
-  global_commands_fu[cmd]=new Command(group||cmd,syntax,fu);
+function _defCommand(cmd,syntax,fu){
+  global_commands_fu[cmd]=new Command(cmd,syntax,fu);
 }
-function _lnCommand(cmd,cmdb,group){
+function _setCommandGroup(group,commands){
+  for (var cmd in global_commands_fu){
+    if (commands.indexOf(cmd) > -1){
+      global_commands_fu[cmd].group=group;
+    } else if (global_commands_fu[cmd].group==group) {
+      global_commands_fu[cmd].group=cmd;
+    }
+  }
+}
+function _lnCommand(cmd,cmdb){
   var c=global_commands_fu[cmdb];
-  _setupCommand(cmd,group||cmd,c.syntax,c.fu);
+  _defCommand(cmd,c.syntax,c.fu);
+}
+
+function _aliasCommand(cmd,cmdb,args){
+  if (isStr(cmd)){
+    c=global_commands_fu[cmdb].fu;
+  } else {
+    c=cmdb;
+  }
+  _defCommand(cmd,[ARGT.filenew],c);
+  if (args.length>0){
+    global_commands_fu[cmd].preargs=args;
+  }
 }
 
 var global_fireables={done:[]};

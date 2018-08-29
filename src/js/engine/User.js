@@ -1,7 +1,6 @@
 
 var user={groups:[],name:'',address:''};
 
-
 function _setUserName(val){
   if (val.length) user.name=val;
   state.set('usr',user.name);

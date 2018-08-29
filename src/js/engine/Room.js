@@ -12,14 +12,11 @@ function Room(roomname, introtext, picname,prop){
   this.items = [];
   this.isRoot=true;
   this.commands_lock={};
-//  this.fire = null;
   this.intro_text = d(introtext, _(PO_DEFAULT_ROOM_DESC));
   this.starter_msg=null;
   this.enter_callback=null;
   this.leave_callback=null;
   this.suggestions=[];
-  //for event handling
-//  this.ev = new EventTarget();
 }
 function newRoom(id, picture,prop){
   //this function automatically set the variable $id to ease game saving
@@ -46,6 +43,9 @@ function enterRoom(new_room,vt){
   if (typeof new_room.enter_callback == 'function'){
     new_room.enter_callback(new_room,vt);
   }
+  // TODO : put this in a clean way // depends on background.js
+  enter_room_effect();
+  //
   return [new_room.toString(), new_room.intro_text];
 }
 Room.prototype=union(File.prototype, {
@@ -64,9 +64,8 @@ Room.prototype=union(File.prototype, {
     if (ev_trigger) {
       var ck=(typeof ev_trigger === "function" ? ev_trigger(context) : ev_trigger);
       if (ck){
-        console.log('FIRE '+ck);
-//        this.ev.fire(this.uid+ck);
-        this.fire(this.uid+ck);
+        console.log(this.uid+' FIRE '+ck);
+        this.fire(ck);
       }
     }
   },

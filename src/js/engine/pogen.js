@@ -17,7 +17,7 @@ function pogen_content(){
   ret+='"MIME-Version: 1.0\\n"\n';
   ret+='"Content-Type: text/plain; charset=UTF-8\\n"\n';
   ret+='"Content-Transfer-Encoding: 8bit\\n"\n';
-  ret+='"Language: en\\n"\n';
+  ret+='"Language: '+LANG+'\\n"\n';
   ret+='"X-Generator: Poedit 1.8.11\\n"\n';
   ret+='"X-Poedit-SourceCharset: UTF-8\\n"\n';
 

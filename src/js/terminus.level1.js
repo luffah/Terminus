@@ -27,10 +27,9 @@ $home.setCmdEvent('poe_cmd_not_found','poe_mode')
     hnotf:function(re){
       if (!re){
         setTimeout(function(){
+          console.log('usccess');
           vt.unmuteSound();
           mesg(_('very_first_try'),re);
-//          vt.show_msg(_('msg_from',['????','???',getTime()]),{direct:true});
-//          vt.show_msg(_('very_first_try'));
           vt.unmuteCommandResult();
           $home.unsetCmdEvent('cmd_not_found');
           setTimeout(function(){ 
@@ -88,15 +87,18 @@ var pwddecl=$western_forest.newItem('western_forest_back_direction')
 //SPELL CASTING ACADEMY
 $western_forest.addPath(
   newRoom('spell_casting_academy', "loc_academy.gif")
-  .setEnterCallback(function(){
-    music.play('academy');
-  })
+  .setEnterCallback(function(){music.play('academy');})
+  .addPath(
+    newRoom('academy_practice', "loc_practiceroom.png",{writable:true}).addPath(
+      newRoom('box', "item_box.png",{writable:true})
+      .setEnterCallback(function(r,vt){enterRoom(r.parents[0],vt);})
+    )
+  )
+  .addPath(
+    newRoom('lessons',"loc_classroom.gif")
+  )
 );
 
-//LESSONS
-$spell_casting_academy.addPath(
-  newRoom('lessons',"loc_classroom.gif")
-);
 var prof=$lessons
   .newPeople('professor', "item_professor.png")
   .setCmdEvent('less','learn_mv')
@@ -106,15 +108,7 @@ var prof=$lessons
     learn(vt,'mv',re);
   });
 
-$spell_casting_academy.addPath(
-  newRoom('academy_practice', "loc_practiceroom.png",{writable:true})
-);
-$academy_practice.newItem('academy_practice', "item_manuscript.png");
-//BOX
-$academy_practice.addPath(
-  newRoom('box', "item_box.png",{writable:true})
-  .setEnterCallback(function(r,vt){enterRoom(r.parents[0],vt);})
-);
+
 var mv_pr_sum=0;
 function mv_sum(re){
   mv_pr_sum++;
@@ -146,6 +140,7 @@ function mv_sum(re){
   console.log('mv',mv_pr_sum);
 }
 
+$academy_practice.newItem('academy_practice', "item_manuscript.png");
 $academy_practice.newItemBatch('practice',[1,2,3], "item_test.png")
   .map(function(i){
     i .setCmdEvent('mv')
@@ -155,40 +150,35 @@ $academy_practice.newItemBatch('practice',[1,2,3], "item_test.png")
 
 //EASTERN MOUNTAINS
 man_sage=newRoom('mountain', "loc_mountains.gif")
-  .newPeople('man_sage', "item_mysteryman.png");
-man_sage.setCmdEvent('less','exitCmd')
+  .newPeople('man_sage', "item_mysteryman.png")
+  .setCmdEvent('less','exitCmd')
+  .setCmdEvent('less_done','manLeave')
   .addStates({
     exitCmd:function (re){
       man_sage.unsetCmdEvent('less');
       _addGroup('exit');
       learn(vt, ['exit'], re);
-      
-      man=$mountain.newItem('man', "item_manuscript.png");
-      man
+
+      man=$mountain.newItem('man', "item_manuscript.png")
         .setCmdEvent('less','manCmd')
+        .setCmdEvent('less_done','trueStart')
         .addStates({
           manCmd:function (re){
             man.unsetCmdEvent('less');
             _addGroup('help');
             learn(vt, ['man', 'help'], re);
-          }
-        })
-        .setCmdEvent('less_done','trueStart')
-        .addStates({
+          },
           trueStart:function (re){
             man.unsetCmdEvent('less_done');
             music.play('yourduty',{loop:true});
           }
         });
-    }
-  });
-man_sage.setCmdEvent('less_done','manLeave')
-  .addStates({
+    },
     manLeave: function(re){
       man_sage.disappear();
     }
-  })
-;
+  });
+
 var poney_txt_id=1;
 function poney_dial(re){
   if (!isStr(poney_txt_id)){

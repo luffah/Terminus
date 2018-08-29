@@ -225,7 +225,7 @@ z-index: -1;
   z-index:1;
 }
 .epicfromright {
-  overflow:hidden;
+  /* overflow:hidden; */
 }
 
 .epicfromright .layers {
@@ -260,9 +260,11 @@ z-index: -1;
   max-width:80ch;
   background:#000;
   box-sizing:border-box;
+  border-radius:8px;
 }
 #term{
-  padding:1rem;
+  /* padding:1em; */
+  padding:3ch;
    position:relative;
 /*   top:-10rem;*/
 /*margin-top:10rem;*/
@@ -271,11 +273,14 @@ fieldset{border:none;}
 img {
 display:block;
 max-width:100%;
+/* min-width: 20vw; */
+image-rendering: optimizespeed;
 /*  max-width:12ch;*/
 }
 
 .screen:not(:last-of-type)  .layers{
-  animation:fromfull 2s 1s forwards;
+  /* animation:fromfull 2s 1s forwards; */
+  max-width:10ch;
 }
 .msg > img {
 max-width:12ch;
@@ -508,6 +513,15 @@ padding:3px;
 }
 input[disabled=""] {
   opacity:0;
+}
+.titlelogo {
+  height:30vh;
+  overflow-y:visible;
+  z-index:99;
+}
+.titlelogo img {
+  height:50vh;
+  max-width:unset;
 }
 
 .mystory {
