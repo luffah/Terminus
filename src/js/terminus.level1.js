@@ -1,30 +1,16 @@
-// home
-function cat_first_try(re){
-  $home.unsetCmdEvent('less_no_arg');
-  mesg(_('cmd_cat_first_try'),re,{timeout:500});
-}
-function cat_second_try(re){
-  $home.unsetCmdEvent('destination_unreachable');
-  mesg(_('cmd_cat_second_try'),re,{timeout:1000});
-}
 //$home - required - default room
-newRoom('home', undefined, {writable:true});
-state.setCurrentRoom($home);
+state.setCurrentRoom(newRoom('home', undefined, {writable:true}));
+
 $home.setEnterCallback(function(){
-  music.play('forest');
-});
-  
-$home.setCmdEvent('poe_cmd_not_found','poe_mode')
-  .setCmdEvent('cmd_not_found','hnotf')
-  .setCmdEvent('less_no_arg','hnoarg')
-  .setCmdEvent('destination_unreachable','hnodest')
+    music.play('forest');
+  })
   .addStates({
-    poe_mode: function(re){
+    poe_cmd_not_found: function(re){
       vt.show_msg(_('cmd_poe_revealed'));
       _addGroup('poe');
       learn(vt,['poe','pogen'],re);
     },
-    hnotf:function(re){
+    cmd_not_found:function(re){
       if (!re){
         setTimeout(function(){
           console.log('usccess');
@@ -40,11 +26,15 @@ $home.setCmdEvent('poe_cmd_not_found','poe_mode')
         },1000);
       }
     },
-    hnoarg:cat_first_try,
-    hnodest:cat_second_try
+    less_no_arg: function (re){
+      $home.unsetCmdEvent('less_no_arg');
+      mesg(_('cmd_cat_first_try'),re,{timeout:500});
+    },
+    destination_unreachable: function (re){
+      $home.unsetCmdEvent('destination_unreachable');
+      mesg(_('cmd_cat_second_try'),re,{timeout:1000});
+    }
   });
-
-
 
 var shell_txt_id=0;
 function shell_dial(re){
@@ -57,10 +47,9 @@ function shell_dial(re){
   state.saveCookie();
 }
 shelly=$home.newPeople('shell')
-  .setCmdEvent('less_done','chtxt')
-  .setCmdEvent('exec_done','chtxt')
+  .setCmdEvent('exec_done','less_done')
   .addStates({
-    chtxt:shell_dial
+    less_done:shell_dial
   });
 
 //WESTERN FOREST
@@ -72,9 +61,8 @@ $home.addPath(
 );
 $western_forest.newItem('western_forest_academy_direction','item_sign.png');
 var pwddecl=$western_forest.newItem('western_forest_back_direction')
-  .setCmdEvent('less','pwdCmd')
   .addStates({
-    pwdCmd:function(re){
+    less:function(re){
       $western_forest.unsetCmdEvent('less');
       if (!_hasGroup('pwd')){
         _addGroup('pwd');
@@ -101,8 +89,7 @@ $western_forest.addPath(
 
 var prof=$lessons
   .newPeople('professor', "item_professor.png")
-  .setCmdEvent('less','learn_mv')
-  .addState('learn_mv',function(re){
+  .addState('less',function(re){
     prof.unsetCmdEvent('less');
     _addGroup('mv');
     learn(vt,'mv',re);
@@ -151,10 +138,8 @@ $academy_practice.newItemBatch('practice',[1,2,3], "item_test.png")
 //EASTERN MOUNTAINS
 man_sage=newRoom('mountain', "loc_mountains.gif")
   .newPeople('man_sage', "item_mysteryman.png")
-  .setCmdEvent('less','exitCmd')
-  .setCmdEvent('less_done','manLeave')
   .addStates({
-    exitCmd:function (re){
+    less:function (re){
       man_sage.unsetCmdEvent('less');
       _addGroup('exit');
       learn(vt, ['exit'], re);
@@ -174,7 +159,7 @@ man_sage=newRoom('mountain', "loc_mountains.gif")
           }
         });
     },
-    manLeave: function(re){
+    less_done: function(re){
       man_sage.disappear();
     }
   });
@@ -206,16 +191,14 @@ $home.addPath(
 );
 var poney=$meadow
   .newPeople("poney", "item_fatpony.png")
-  .setCmdEvent('less','add_mountain')
-  .setCmdEvent('less_done','uptxt')
   .addStates({
-    add_mountain:function(re){
+    less:function(re){
       $meadow.addPath($mountain);
       mesg(_('new_path',[$mountain]),re,{timeout:600,ondone:true});
       unlock(vt, $mountain, re);
       poney.unsetCmdEvent('less');
     },
-    uptxt:poney_dial,
+    less_done:poney_dial,
     uptxthint:poney_dialhint
   });
 
@@ -237,9 +220,8 @@ $dark_corridor.addPath(
 );
 var boulder=$dank
   .newItem('boulder','item_boulder.png',{cls:'large'})
-  .setCmdEvent('mv','mvBoulder')
   .addStates({
-    mvBoulder: function(re){
+    mv: function(re){
       if (!$dank.hasChild($tunnel)){
         $dank.addPath($tunnel);
         //      boulder.unsetCmdEvent('mv');
@@ -264,9 +246,8 @@ newRoom('tunnel',"loc_tunnel.gif").addPath(
 );
 var rat=$tunnel
   .newPeople('rat',"item_rat.png",{pic_shown_in_ls:false})
-  .setCmdEvent('less_done','idRat')
   .addStates({
-    idRat: function(re){
+    less_done: function(re){
       rat.setCmdEvent('less_done','ratDial');
       rat.setPoDelta('_identified');
     },

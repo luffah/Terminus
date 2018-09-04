@@ -930,6 +930,28 @@ VTerm.prototype={
     var intimeout=args.wait||0;
     var outtimeout=args.timeout||null;
     var choicebox = addEl(t.monitor,'div',args.cls|| 'choicebox');
+    var input_enabled=!t.disabled.input;
+    var destroy=null;
+    if (args.disappear){
+       destroy=function(){
+         choicebox.outerHTML="";
+       }
+    }
+    t.disable_input();
+    var end_answer= function(){
+      t.answer_input.setAttribute('disabled',true);
+      t.answer_input = undefined;
+      if (args.disappear) args.disappear(destroy);
+      if (input_enabled) t.enable_input();
+    };
+    ///
+    t.enterKey=function(){
+      t.playSound('choiceselect');
+      var ret = t.answer_input.value;
+      ret = callback?callback(ret):ret;
+      end_answer();
+      t.show_msg(ret);
+    };
     t.show_msg([question,function(){
       setTimeout(function(){
         if (args.multiline){
@@ -960,6 +982,8 @@ VTerm.prototype={
               t.answer_input.selectionStart=strt+1;
               t.answer_input.selectionEnd=strt+1;
             }
+          } else if (args.evkey && args.evkey.hasOwnProperty(e.key)){
+            args.evkey[e.key]();
           }
         };
       },intimeout);
@@ -973,29 +997,7 @@ VTerm.prototype={
         },intimeout+outtimeout);
       }
     }],{el:choicebox,dependant:false}); 
-    var input_enabled=!t.disabled.input;
-    var destroy=null;
-    if (args.disappear){
-       destroy=function(){
-         choicebox.outerHTML="";
-       }
-    }
-    t.disable_input();
    
-    var end_answer= function(){
-      t.answer_input.setAttribute('disabled',true);
-      t.answer_input = undefined;
-      if (args.disappear) args.disappear(destroy);
-      if (input_enabled) t.enable_input();
-    };
-    ///
-    t.enterKey=function(){
-      t.playSound('choiceselect');
-      var ret = t.answer_input.value;
-      ret = callback?callback(ret):ret;
-      end_answer();
-      t.show_msg(ret);
-    };
   },
 /** Password prompt **/
   _begin_password: function(){

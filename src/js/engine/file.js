@@ -104,6 +104,7 @@ File.prototype=union(EventTarget.prototype,{
   addState : function(name,fun){
     this.addListener(name,this.apply);
     state.add(this.uid+name,fun);
+    this.cmd_event[name] = name;
     return this;
   },
   addStates : function(h){
@@ -112,6 +113,7 @@ File.prototype=union(EventTarget.prototype,{
         if (h.hasOwnProperty(i)){
           this.addListener(i,this.apply);
           state.add(this.uid+i,h[i]);
+          this.cmd_event[i] = i;
         }
       }
     } else {

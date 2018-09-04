@@ -1,6 +1,3 @@
-
-
-
 _defCommand('less',[ARGT.strictfile],function(args,cwd,vt){// event arg -> object
   if (args.length < 1){
     cwd.fire_event(vt,'less_no_arg',args,0);
@@ -31,6 +28,7 @@ _defCommand('less',[ARGT.strictfile],function(args,cwd,vt){// event arg -> objec
 });
 _lnCommand('cat','less');
 _lnCommand('more','less');
+
 _defCommand('ls', [ARGT.dir], function(args,cwd,vt){
   var pic;
   console.log(cwd);
@@ -101,7 +99,6 @@ _defCommand('ls', [ARGT.dir], function(args,cwd,vt){
     return prtls.txt;
   }
 });
-_setCommandGroup('dir',['cd','ls']);
 _defCommand('cd',[ARGT.dir],function(args,cwd,vt){
   if (args.length > 1){
     return _('cmd_cd_flood');
@@ -141,10 +138,9 @@ _defCommand('cd',[ARGT.dir],function(args,cwd,vt){
     return _('cmd_cd_failed', args);
   }
 });
-
+_setCommandGroup('dir',['cd','ls']);
 
 //only valid for command names
-_setCommandGroup('help',['man']);
 _defCommand('man',[ARGT.cmdname],function(args,cwd,vt){// event arg -> cmd
   if (args.length < 1){
     return _('cmd_man_no_query');
@@ -165,6 +161,7 @@ _defCommand('help',[ARGT.cmdname], function(args,cwd,vt){
   return ret;
 });
 
+_setCommandGroup('help',['man']);
 _defCommand('exit',[],function(args,cwd,vt){
   setTimeout(function(){
     dom.body.innerHTML=_('cmd_exit_html');
@@ -200,6 +197,7 @@ _defCommand('cp',[ARGT.file,ARGT.filenew], function(args,cwd,vt){//event arg -> 
     return _('cmd_cp_unknown');
   }
 });
+
 _defCommand('mv',[ARGT.strictfile,ARGT.file],function(args,cwd,vt){// event arg -> object (source)
   console.log(args);
   var ret=[],
@@ -357,6 +355,7 @@ _defCommand('mkdir',[ARGT.dirnew],function(args,cwd,vt){//event arg -> created d
   }
   return _("incorrect_syntax");
 });
+
 _defCommand('unzip',[ARGT.file.concat(['*.zip'])], function(args,cwd,vt){
   if (args.length === 1){
     var tr=cwd.traversee(args[0]);
@@ -369,6 +368,7 @@ _defCommand('unzip',[ARGT.file.concat(['*.zip'])], function(args,cwd,vt){
   }
   return _("incorrect_syntax");
 });
+
 _defCommand('sudo',[ARGT.cmd], function(args,cwd,vt){
   if (args[0] === "less" && args[1] === "Certificate"){
     cwd.ev.fire("tryEnterSudo");
@@ -378,6 +378,7 @@ _defCommand('sudo',[ARGT.cmd], function(args,cwd,vt){
   }
   return _("cannot_cast");
 });
+
 _defCommand('poe',[ARGT.msgid],function(args,cwd,vt){
   var sym=args[0];
   if (sym){
@@ -393,6 +394,7 @@ _defCommand('poe',[ARGT.msgid],function(args,cwd,vt){
   }
   return _("incorrect_syntax");
 });
+
 _defCommand('pogen','poe', [], function(args,cwd,vt){
   var ret=pogen_deliver_link();
   return [ret,function(){

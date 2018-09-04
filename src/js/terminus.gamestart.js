@@ -46,13 +46,34 @@ function start_game(){
       seq.then(function(next){
         vt.ask(_('useraddress_prompt'),function(val){ _setUserAddress(val); next();},{placeholder:user.address, cls:'megaprompt', disappear:function(cb){
             cb();
-            vt.flash(0,800);
           },wait:500});
       });
       seq.then(function(next){
         vt.ask(_('gameintro_setup_ok'),function(val){
           },
-          {cls:'mystory',disappear:function(cb){cb();next();},
+          {value:'_ _ _ !',cls:'mystory',
+            evkey:{
+              'ArrowUp':function(){
+              vt.answer_input.value = '_ ↑ _ ?';
+            },
+              'ArrowLeft':function(){
+              vt.answer_input.value = '← _ _ ?';
+            },
+              'ArrowRight':function(){
+              vt.answer_input.value = '_ _ → ?';
+            },
+              'ArrowDown':function(){
+              vt.answer_input.value = '_ ↓ _ ?';
+            },
+              'Tab':function(){
+              vt.answer_input.value = '_ ↹ _ ?';
+            },
+            },
+            disappear:function(cb){
+              cb();
+              vt.flash(0,800);
+              next();
+            },
           }
         );
       });
@@ -107,7 +128,7 @@ function start_game(){
   // build view
   vt=new VTerm('term');
   vt.soundbank=snd;
-  vt.charduration=20;
+  vt.charduration=13.125;
   vt.charfactor[' ']=25;//on each nbsp , it will take 1/2 second
   vt.disable_input();
   _addGroup('cat');
