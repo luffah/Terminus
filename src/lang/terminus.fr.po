@@ -285,10 +285,10 @@ msgid "cmd_cd_no_parent"
 msgstr "Tu ne peux plus rebrousser chemin."
 
 msgid "cmd_cd_parent"
-msgstr "Tu es entré·e dans %s. %s"
+msgstr "Tu es de retour dans %s. %s"
 
 msgid "cmd_cp_copied"
-msgstr "%s vient d'être copié(e) dans %s."
+msgstr "Les données de %s ont été dupliquées dans %s."
 
 msgid "cmd_cp_unknown"
 msgstr "Je ne vois aucun objet qui pourrait porter ce nom."
@@ -306,7 +306,7 @@ msgid "cmd_less_no_arg"
 msgstr "(Pour que ça fonctionne, {{cmd.cat}} doit être suivi d'un sujet à examiner : un objet ou une personne présente à l'endroit où tu te trouves)"
 
 msgid "cmd_less_missing"
-msgstr "%s n'a pas été trouvé(e)."
+msgstr "'%s' est introuvable."
 
 msgid "cmd_man_no_query"
 msgstr "Il faut poser une question pour obtenir une réponse. C'est ce que dit le grand manuscrit."
@@ -322,13 +322,13 @@ msgid "cmd_mv_aliases"
 msgstr "d[ée]pl\w*, boug\*, mov\w*, met\w*"
 
 msgid "cmd_mv_done"
-msgstr "%s a été déplacé(e) vers %s."
+msgstr "%s se trouve maintenant dans %s."
 
 msgid "cmd_mv_name_done"
-msgstr "%s a été renommé(e) %s."
+msgstr "%s s'appelle maintenant %s."
 
 msgid "cmd_mv_overwrite_done"
-msgstr "%s a été renommé(e) en %s (qui a été écrasé(e))."
+msgstr "%s remplace et écrase %s."
 
 msgid "cmd_mv_flood"
 msgstr ""
@@ -466,9 +466,10 @@ msgstr "RentreChezToi"
 
 msgid "item_western_forest_back_direction_text"
 msgstr ""
-"À tout moment, si tu veux revenir au point de départ, \n"
-"écris juste la commande '{{cmd.cd}} ~' ou '{{cmd.cd}}'. \n"
-"Si tu es perdu(e), écris '{{cmd.pwd}}'."
+"À tout moment :\n"
+"  pour revenir au point de départ, \n"
+"       écris juste la commande '{{cmd.cd}} ~' ; \n"
+"  pour savoir ou tu te trouves, écris '{{cmd.pwd}}'."
 
 msgid "item_practice"
 msgstr "Pilier%d"
@@ -685,23 +686,25 @@ msgstr "Rat"
 
 msgid "people_rat_text"
 msgstr ""
-"Tu inspectes avec tes mains la touffe de poils et tu remarques qu'il s'agit d'un rat… De la taille d'un petit chien. Il t'a mordu·e. \n"
-"Cette expérience ne te fut guère agréable."
+"Tu inspectes la touffe de poils et tu remarques qu'il s'agit d'un rat… De la taille d'un petit chien.\n"
+"À ce moment, tu sens ses dents se serrer sur ta peau.\n"
+"Tu t'écartes vivement pour éviter que la morsure ne te déchiquette la peau.\n"
+"Tu essayes d'oublier cette expérience guère agréable."
 
 msgid "people_rat_identified_text"
-msgstr "(Oh, pardon, excusez-moi de ma maladresse !)"
+msgstr "(Oh, pardon, excusez  ma maladresse !)"
 
 msgid "people_rat_identified_text1"
 msgstr "(On peut se tutoyer ?)"
 
 msgid "people_rat_identified_text2"
-msgstr "(Oh, pardon, excuse-moi de ma maladresse !)"
+msgstr "(Désolé, encore, excuse moi de ma maladresse !)"
 
 msgid "people_rat_identified_text3"
 msgstr "(Je n'ai rien à t'apprendre et tu souhaites tout de même me parler ?)"
 
 msgid "people_rat_identified_text4"
-msgstr "(Es-tu venu sauver Terminus ?)"
+msgstr "(Es-tu là pour sauver Terminus ?)"
 
 msgid "room_stone_chamber"
 msgstr "ChambreDePierre"
@@ -716,7 +719,7 @@ msgid "room_portal"
 msgstr "Portail"
 
 msgid "room_portal_text"
-msgstr "Tu as été transporté·e à travers les âges…"
+msgstr "Tu traverses le portail qui te transporte à travers les âges…"
 
 msgid "room_townsquare"
 msgstr "PlaceDuVillage"
@@ -1149,7 +1152,7 @@ msgstr "HommeEnPleurs"
 msgid "people_cryingman_text"
 msgstr ""
 "<voice grl>\"Vous ! Vous faites partie des mercenaires du {{people_darkwizard}} ! Je peux la sentir cette capacité étrange que vous avez.\n"
-"Vous êtes venu·e finir le travail, n'est-ce pas ?\n"
+"T'es là pour finir le travail, n'est-ce pas ?\n"
 "Allez ! Qu'est-ce que vous attendez ? Faites votre sale boulot, il ne me reste plus rien à perdre.\n"
 "\n"
 "<voice char>« Mais enfin ! Que s'est-il passé ? »\n"
