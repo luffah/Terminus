@@ -15,10 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 //require("es6-promise").polyfill();
-//const fs = require('fs');
 const gulp = require("gulp");
 const file = require('gulp-file');
-const del = require("del");
 const concat = require("gulp-concat");
 const inject = require('gulp-inject');
 const htmlminifier = require("gulp-html-minifier");
@@ -33,61 +31,6 @@ var postcss_plugins = [
 const po2json = require('po2json');
 var languages=['fr','en'];
 
-function _make_all(){
-  var dialogs=_dialogs(languages);
-  var js=_js();
-  var css=_css();
-  var images=_images();
-  var sounds=_sounds();
-  for (i in dialogs){
-    _html(i,dialogs[i],images,js,css);
-  }
-}
-function _js(){
-  /*
-   * JS (without dialogs)
-   */
-
-  var jssrc=[
-    'src/js/engine/howler.core.js',
-    'src/js/engine/js.js',
-    'src/js/engine/Gettext.js',
-    'src/js/engine/Cookie.js',
-    'src/js/engine/GameState.js',
-    'src/js/engine/EventTarget.js',
-    'src/js/engine/Sound.js',
-    'src/js/engine/Music.js',
-    'src/js/engine/ReturnSequence.js',
-    'src/js/engine/VTerm.js',
-    'src/js/engine/User.js',
-    'src/js/engine/Parse.js',
-    'src/js/engine/Command.js',
-    'src/js/engine/Commands.js',
-    'src/js/engine/Pic.js',
-    'src/js/engine/Item.js',
-    'src/js/engine/Room.js',
-    'src/js/terminus.init.js',
-    'src/js/terminus.assets.js',
-    'src/js/terminus.utils.js',
-    'src/js/terminus.gamestart.js',
-    'src/js/terminus.level1.js',
-    'src/js/terminus.level2.js',
-    'src/js/terminus.run.js',
-  ];
-  
-  /* uncomment this for debuging */
-  gulp.src(jssrc)
-    .pipe(concat('min.js'))
-    .pipe(gulp.dest("./"))
-  ;
-  /* --------------------------- */
-  return gulp.src(jssrc)
-    .pipe(concat('min.js'))
-    .pipe(uglify())
-    .on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
-;  
-
-}
 
 function _css(){
   /*
@@ -105,6 +48,7 @@ function _images(){
   return gulp.src('src/img/*')
     .pipe(gulp.dest('webroot/img/'));
 }
+
 function _sounds(){
   /*
    * Sounds
@@ -171,10 +115,11 @@ function _html(lang,dialogs,images,js,css){
   return true;
 }
 
-function _clean(){
-  return del.sync(['webroot']); 
+var dialogs=_dialogs(languages);
+var js=_js();
+var css=_css();
+var images=_images();
+var sounds=_sounds();
+for (i in dialogs){
+_html(i,dialogs[i],images,js,css);
 }
-
-gulp.task('clean', _clean);
-gulp.task('makeall', ['clean'], _make_all);
-gulp.task('default', ['makeall']);

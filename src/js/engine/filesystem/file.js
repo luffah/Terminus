@@ -201,7 +201,6 @@ Item.prototype=union(File.prototype, {
   fire_event:function(vt,cmd,args,idx){
     var ev_trigger=null;
     var context={term:vt,room:this.room, item:this, arg:(def(idx)?args[idx]:null), args:args, i:idx};
-//    console.log(this.cmd_event);
     if (cmd in this.cmd_event) {
       console.log(this.uid+' EVENT '+cmd);
       ev_trigger = this.cmd_event[cmd];
@@ -210,7 +209,7 @@ Item.prototype=union(File.prototype, {
       var ck=(typeof ev_trigger === "function" ? ev_trigger(context) : ev_trigger);
       if (ck) {
         console.log(this.uid+' FIRE '+ck);
-        this.fire(this.uid+ck);
+        this.fire(ck);
       }
     }
   },

@@ -1,20 +1,17 @@
 {
   "name": "Terminus",
   "description": "Terminal based game",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": true,
+  "scripts": {
+    "build": "make all"
+  },
   "dependencies": {
-    "gulp-cli": "*",
-    "gulp": "*",
-    "gulp-file": "*",
-    "del": "*",
-    "gulp-concat": "*",
-    "gulp-inject": "*",
-    "gulp-html-minifier": "*",
-    "gulp-uglify": "*",
-    "gulp-postcss": "*",
+    "postcss": "^7.*",
     "autoprefixer": "*",
-    "cssnano": "*",
-    "po2json": "*"
+    "cssnano": "^3.*",
+    "uglify-js": "*",
+    "babel-cli": "*",
+    "babel-preset-env": "*"
   }
 }

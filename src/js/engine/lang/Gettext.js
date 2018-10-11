@@ -62,6 +62,16 @@ function var_resolve(a){
 //  console.log(a,vars);
   return _(a,vars,guess_gettext_mod(a));
 }
+function _match(str, strb) {
+  ret = -1;
+  if (str in dialog) {
+    re=new RegExp(dialog[str]);
+    return strb.match(re);
+  } else if (poe){
+    pogen(str);
+  }
+  return ret;
+}
 function _(str,vars,args) {
   if (!def(str)) return '';
   if (typeof vars !== 'object' || vars.length === 0 ){

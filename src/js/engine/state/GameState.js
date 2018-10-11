@@ -7,8 +7,8 @@ function GameState(){
 }
 
 GameState.prototype = {
-  getCurrentRoom : function() {
-    return window[this.params['']];
+  getCurrentContext : function() {
+    return Context.parse(this.params['']);
   },
   saveCookie: function(){
     //when you call this function, set the cookie in the browser
@@ -16,11 +16,9 @@ GameState.prototype = {
       this.cookie.write(this.params);
     }
   },
-  setCurrentRoom : function(newRoom){
-    if(newRoom.varname){
-      this.params['']=newRoom.varname;
-      this.saveCookie();
-    }
+  setCurrentContext : function(ctx){
+    this.params['']=ctx.stringify();
+    this.saveCookie();
   },
   add : function(param_name, fun){
     this.actions[param_name]=fun;
@@ -65,7 +63,7 @@ GameState.prototype = {
           }
         }
       }
-      this.saveCookie();
+      // this.saveCookie();
       return true;
     }
     return false;

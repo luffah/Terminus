@@ -14,3 +14,14 @@ Textual elements are called through GetText which get the dialogs defined in a o
 VTerm is a view that interact with some models.
 
 The game script (out of the engine) is the controller.
+
+## Code Structure
+```
+      EventTarget
+          |            raise events
+         File        --that act on-->    State
+      /   |   \
+  People Item   Room
+  
+
+```

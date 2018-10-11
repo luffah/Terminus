@@ -29,6 +29,29 @@ function pogen_content(){
   return ret;
 }
 
+function pogen_pot(){
+  var ret="";
+  ret+='msgid  ""\n';
+  ret+='msgstr ""\n';
+  ret+='"Project-Id-Version: \\n"\n';
+  ret+='"POT-Creation-Date: \\n"\n';
+  ret+='"PO-Revision-Date: \\n"\n';
+  ret+='"Last-Translator: \\n"\n';
+  ret+='"Language-Team: \\n"\n';
+  ret+='"MIME-Version: 1.0\\n"\n';
+  ret+='"Content-Type: text/plain; charset=UTF-8\\n"\n';
+  ret+='"Content-Transfer-Encoding: 8bit\\n"\n';
+  ret+='"Language: '+LANG+'\\n"\n';
+  ret+='"X-Generator: Poedit 1.8.11\\n"\n';
+  ret+='"X-Poedit-SourceCharset: UTF-8\\n"\n';
+
+  for (var i in dialog){
+    ret+='msgid "'+i+"\"\n";
+    ret+="msgstr \"\"\n";
+  }
+  return ret;
+}
+
 //https://stackoverflow.com/questions/21012580/is-it-possible-to-write-data-to-file-using-only-javascript
 
 function makeTextFile(text) {

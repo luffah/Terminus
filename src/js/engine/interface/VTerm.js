@@ -12,11 +12,12 @@ function no_accents(str){
 function VTerm(container_id, context){
   var t=this;
   /* non dom properties */
-  t.context = context;
-  t.charduration=10;
-  t.charfactor={char:1,' ':8,' ':4,'!':10,'?':10,',':5,'.':8,"\t":2, "\n":10,'tag':10};
+  t.context=context;
+  t.charduration=13.125;
+  //on each nbsp , it will take 1/2 second
+  t.charfactor={char:1,' ':25,' ':4,'!':10,'?':10,',':5,'.':8,"\t":2, "\n":10,'tag':10};
   t.charhtml={' ':'&nbsp;',"\n":'<br>',"\t":'&nbsp;&nbsp;'};
-  t.complete_opts = {case:'i', fuzzy:no_accents,humanized:true};
+  t.complete_opts={case:'i', fuzzy:no_accents,humanized:true};
   t.imgs={};
   t.statkey={};
   t.history=[];
@@ -63,7 +64,13 @@ function VTerm(container_id, context){
   t.soundbank={};
   t.badge_pic=new Pic('badge.png');
   t.timeout={badge:3000,scrl:100,notification:4000};
+  t.stdin='';
+  t.stdout='';
+  t.stderr='';
+  t.returncode=0;
+  t.enterKey=t.enter;
   t.behave();
+  t.disable_input();
 }
 VTerm.prototype={
   /* API part */
@@ -389,16 +396,32 @@ VTerm.prototype={
     }
     return this;
   },
-  show_msg: function (msg,opt){
-    if (def(msg)){
+  show_msg: function (mesg,opt){
+    if (def(mesg)){
       opt=opt||{};
       var cb;
       var t=this;
       t.busy=true;t.loop_waiting();
-      if (typeof msg != 'string'){
-        cb=msg[1];
-        msg=msg[0];
+      if (typeof mesg == "string"){
+        mesg = _stdout(mesg);
       }
+      // FIXME
+      // work arounded -- std / err flux shall be separated...
+      msg = '';
+      t.stdout = '';
+      t.stderr = '';
+      if (mesg.hasOwnProperty('stderr')) {
+         t.stderr = mesg.stderr;
+         msg += t.stderr + "\n";
+      }
+      if (mesg.hasOwnProperty('stdout')) {
+         t.stdout = mesg.stdout;
+         msg += t.stdout;
+      }
+      if (mesg.hasOwnProperty('cb')) {
+        cb = mesg.cb();
+      }
+      //
       var el=d(opt.el,t.monitor);
       var dependant=d(opt.dependant,true);
       var safe=d(opt.safe,false);
@@ -461,7 +484,7 @@ VTerm.prototype={
       if (tocomplete && idx>0) { // at least 1 arg
         match=_completeArgs(args,idx,tocomplete,t.context,trymatch);
       } else if (args[0].length>0) {
-        if (_hasRightForCommand(args[0],user.groups)) { // propose argument
+        if (_hasRightForCommand(args[0],t.context)) { // propose argument
           match=_completeArgs(args,idx,tocomplete,t.context,trymatch);
         } else { // propose command completion
           var cmds=_getCommands(t.context);
@@ -597,7 +620,6 @@ VTerm.prototype={
       }
     }
   },
-  enterKey : this.enter,
 /*****************/
 /** Prompt behavior part **/
 /*****************/
@@ -952,7 +974,7 @@ VTerm.prototype={
       end_answer();
       t.show_msg(ret);
     };
-    t.show_msg([question,function(){
+    t.show_msg(question,{cb:function(){
       setTimeout(function(){
         if (args.multiline){
           t.answer_input=addEl(choicebox,'textarea',{cols:78});
@@ -996,7 +1018,7 @@ VTerm.prototype={
           t.show_msg(ret);
         },intimeout+outtimeout);
       }
-    }],{el:choicebox,dependant:false}); 
+    },el:choicebox,dependant:false}); 
    
   },
 /** Password prompt **/

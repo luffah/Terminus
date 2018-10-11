@@ -1,3 +1,5 @@
+function _stdout(a){return {stdout:a};}
+function _stderr(a){return {stderr:a};}
 function ReturnSequence(list){
   this.seq=list;
   this.isReturnSequence=true;
