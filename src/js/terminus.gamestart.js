@@ -16,25 +16,22 @@ window.addEventListener("load", function(event) {
   console.log('Start game')
 
   var start = function (vt, useCookies) {
-    var context = false
+    var context
     vt.muteSound()
-    if (pogencnt > 0) { vt.show_msg(_('pogen_alert', pogencnt)) }
+    if (pogencnt > 0)  vt.show_msg(_('pogen_alert', pogencnt))
     if ((useCookies - (hasSave ? 1 : 0)) <= 0) { // yes new game or load
       state.setCookieDuration(7 * 24 * 60)// in minutes
-      if (useCookies === 0) { // load
-        if (state.loadCookie()) {
-          context = state.getCurrentContext()
-        }
+      if (useCookies == 0) {
+         context = state.loadContext()
       }
-    } else { // do not use cookie
-      state.stopCookie()
-    }
+    } else state.stopCookie() // do not use cookie
     vt.clear()
     if (context) {
       vt.setContext(context)
+      state.loadActions()
       vt.unmuteSound()
       vt.notification(_('game_loaded'))
-      vt.show_msg(vt.context.getStarterMsg(_('welcome_msg', [vt.context.user.name]) + '\n'))
+      vt.show_msg(vt.context.room.getStarterMsg(_('welcome_msg', vt.context.currentuser) + '\n'))
       vt.enable_input()
     } else {
       context = new Context({ 'sure': { groups: [], address: 'DTC' } }, 'sure', $home, {})
@@ -56,8 +53,8 @@ window.addEventListener("load", function(event) {
             vt.context.user.judged = _('user_judged' + Math.min(5, Math.round(val.length / 20)))
           }
         },
-        { cls: 'mystory', disappear: function (cb) { cb(); next() }
-        }
+          { cls: 'mystory', disappear: function (cb) { cb(); next() }
+          }
         )
       })
       seq.then(function (next) {
@@ -74,31 +71,31 @@ window.addEventListener("load", function(event) {
       seq.then(function (next) {
         vt.ask(_('gameintro_setup_ok'), function (val) {
         },
-        { value: '_ _ _ !',
-          cls: 'mystory',
-          evkey: {
-            'ArrowUp': function () {
-              vt.answer_input.value = '_ ↑ _ ?'
+          { value: '_ _ _ !',
+            cls: 'mystory',
+            evkey: {
+              'ArrowUp': function () {
+                vt.answer_input.value = '_ ↑ _ ?'
+              },
+              'ArrowLeft': function () {
+                vt.answer_input.value = '← _ _ ?'
+              },
+              'ArrowRight': function () {
+                vt.answer_input.value = '_ _ → ?'
+              },
+              'ArrowDown': function () {
+                vt.answer_input.value = '_ ↓ _ ?'
+              },
+              'Tab': function () {
+                vt.answer_input.value = '_ ↹ _ ?'
+              }
             },
-            'ArrowLeft': function () {
-              vt.answer_input.value = '← _ _ ?'
-            },
-            'ArrowRight': function () {
-              vt.answer_input.value = '_ _ → ?'
-            },
-            'ArrowDown': function () {
-              vt.answer_input.value = '_ ↓ _ ?'
-            },
-            'Tab': function () {
-              vt.answer_input.value = '_ ↹ _ ?'
+            disappear: function (cb) {
+              cb()
+              vt.flash(0, 800)
+              next()
             }
-          },
-          disappear: function (cb) {
-            cb()
-            vt.flash(0, 800)
-            next()
           }
-        }
         )
       })
       seq.then(function (next) {
@@ -160,13 +157,25 @@ window.addEventListener("load", function(event) {
     vt.enable_input()
     doTest(vt)
   } else {
-    vt.flash(0, 800)
-    vt.epic_img_enter('titlescreen.gif', 'epicfromright', 800,
-      function (vt) {
+    var seq = new Seq()
+    seq.then(function (next) {
+      vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
+        function (vt,choice) {
+          vt.clear()
+          next()
+        },
+        { direct:true, cls: 'mystory' }
+      )
+    })
+    seq.then(function (next) {
+      vt.flash(0, 800)
+      vt.epic_img_enter('titlescreen.gif', 'epicfromright', 2000, function (vt) {
         vt.show_msg('version : ' + version)
         //        music.play('title',{loop:true});
         vt.ask_choose(_('cookie'), choices, start, { direct: true })
       })
+    })
+    seq.next();
   }
 })
 /**

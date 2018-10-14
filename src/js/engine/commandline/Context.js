@@ -24,7 +24,7 @@ Context.prototype = {
     if (val.length) {
       this.users[val]=this.users[this.currentuser];
       delete this.users[this.currentuser];
-      this.currentuser =val;
+      this.currentuser=val;
       this.user=this.users[this.currentuser];
     }
   },
@@ -35,7 +35,7 @@ Context.prototype = {
 Context.parse = function(str){
   if (def(str)){
     jsonable = JSON.parse(str);
-    return new Context(jsonable.u, jsonable.us, Room.parse(jsonable.r),jsonable.v);
+    return new Context(jsonable.us, jsonable.u, Room.parse(jsonable.r),jsonable.v);
   } else {
     return undefined;
   }

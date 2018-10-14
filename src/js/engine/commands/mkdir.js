@@ -3,6 +3,10 @@ _defCommand('mkdir', [ARGT.dirnew], function (args, ctx, vt) { // event arg -> c
   if (args.length === 1) {
     var tr = cwd.traversee(args[0])
     if (tr.room.writable) {
+      if ('mkdir' in tr.room.cmd_hook) {
+        hret = tr.room.cmd_hook['grep'](args)
+        if (d(hret.ret, false)) return hret.ret
+      }
       if (!tr.item) {
         tr.room.addPath(new Room(cwd.item_name))
         cwd.fire_event(vt, 'mkdir', args, 0)

@@ -574,3 +574,13 @@ font-family:term;
 .battlescene .img-container .layers {
   position:absolute;
 }
+#rubandev {
+	position: fixed;
+	z-index: 99;
+	transform: translate(50%,50%) rotate(-45deg);
+	transform-origin: bottom;
+	font-size: 1em;
+	color: rgba(0,0,0,0.8);
+  text-align:center;
+	text-shadow: white 0px 0px 7px;
+}

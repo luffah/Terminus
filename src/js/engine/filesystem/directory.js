@@ -1,6 +1,6 @@
 var globalSpec = {}
 
-function Room (roomname, introtext, picname, prop) {
+function Room (roomname, text, picname, prop) {
   prop = prop || {}
   prop.executable = d(prop.executable, true)
   File.call(this, d(roomname, _(PO_DEFAULT_ROOM, [])), picname, prop)
@@ -10,11 +10,10 @@ function Room (roomname, introtext, picname, prop) {
   this.items = []
   this.isRoot = true
   this.commands_lock = {}
-  this.intro_text = d(introtext, _(PO_DEFAULT_ROOM_DESC))
+  this.text = d(text, _(PO_DEFAULT_ROOM_DESC))
   this.starter_msg = null
   this.enter_callback = null
   this.leave_callback = null
-  this.suggestions = []
 }
 function newRoom (id, picture, prop) {
   // this function automatically set the variable $id to ease game saving
@@ -45,7 +44,7 @@ function enterRoom (new_room, vt) {
   // TODO : put this in a clean way // depends on background.js
   enter_room_effect()
   //
-  return [new_room.toString(), new_room.intro_text]
+  return [new_room.toString(), new_room.text]
 }
 Room.parse = function (str) {
   return window[str]
@@ -72,23 +71,10 @@ Room.prototype = union(File.prototype, {
       }
     }
   },
-  // text displayed at each change
-  setIntroText: function (txt) {
-    this.intro_text = txt
-    return this
-  },
-  addCommand: function (cmd) {
-    this.suggestions.push(cmd)
-    return this
-  },
-  removeCommand: function (cmd) {
-    rmIdxOf(this.suggestions, cmd)
-  },
-  checkTextIdx: function (textidx) {
-    return dialog.hasOwnProperty(this.poid + POSUFFIX_DESC + textidx)
-  },
-  setTextIdx: function (textidx, vars) {
-    this.intro_text = _(this.poid + POSUFFIX_DESC + textidx, vars, { or: this.poid + POSUFFIX_DESC })
+  addCommand: function (cmd, options) {
+    if (def(options)) {
+      this.setCommandOptions(cmd, options)
+    }
     return this
   },
   // callback when entering in the room
@@ -106,7 +92,7 @@ Room.prototype = union(File.prototype, {
     if (this.starter_msg) {
       return prefix + this.starter_msg
     } else {
-      return prefix + _(POPREFIX_CMD + 'pwd', [this.name]).concat('\n').concat(this.intro_text)
+      return prefix + _(POPREFIX_CMD + 'pwd', [this.name]).concat('\n').concat(this.text)
     }
   },
   setStarterMsg: function (txt) {
@@ -269,16 +255,6 @@ Room.prototype = union(File.prototype, {
     delete this.commands_lock[cmd]
     return this
   },
-  addCommand: function (cmd, options) {
-    //    if (this.commands.indexOf(cmd) == -1) {
-    //      this.commands.push(cmd);
-    //    }
-    if (def(options)) {
-      this.setCommandOptions(cmd, options)
-    }
-    return this
-  },
-
   /* Checks if arg can be reached from this room
    * Returns the room if it can
    * Returns false if it cannot

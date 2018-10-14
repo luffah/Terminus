@@ -11,12 +11,20 @@ _defCommand('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // ev
     var retfireables = []; var rename; var overwritten
     for (var i = 0; i < (args.length - 1); i++) {
       src = cwd.traversee(args[i])
+      if ('mv' in src.item.cmd_hook) {
+         hret = src.item.cmd_hook['mv']([args[i],args[args.length - 1]])
+        if (def(hret)){
+         if (d(hret.ret, false)) ret.push(hret.ret)
+         if (d(hret.pass, false)) continue
+        }
+      }
       if (src.room) {
         if (src.item && dest.room) {
           rename = (dest.item_name && (src.item_name !== dest.item_name))
           overwritten = (dest.item)
-          if (!dest.room.writable) {
+         if (!dest.room.writable) {
             ret.push(_stderr(_('permission_denied') + ' ' + _('cmd_mv_dest_fixed')))
+            src.item.fire_event(vt, 'permission_denied', args, 0)
           } else if (src.item_idx > -1) {
             if (src.room.writable) {
               if (overwritten) {
@@ -30,20 +38,14 @@ _defCommand('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // ev
                 dest.room.addItem(src.item)
                 src.room.removeItemByIdx(src.item_idx)
                 src.item.fire_event(vt, 'mv_outside', [args[i], args[args.length - 1]], 0)
-                if ('mv' in src.item.cmd_text) {
-                  ret.push(_stdout(src.item.cmd_text.mv))
-                } else {
-                  ret.push(_stdout(_('cmd_mv_done', [args[i], args[args.length - 1]])))
-                }
+                ret.push(_stdout(_('cmd_mv_done', [args[i], args[args.length - 1]])))
               } else {
                 src.item.fire_event(vt, 'mv_local', [args[i], args[args.length - 1]], 0)
               }
               src.item.fire_event(vt, 'mv', [args[i], args[args.length - 1]], 0)
               if (rename) {
                 src.item.fire_event(vt, 'mv_name', args, 0)
-                if ('mv_name' in src.item.cmd_text) {
-                  ret.push(_stdout(src.item.cmd_text.mv_name))
-                } else if (!overwritten) {
+                if (!overwritten) {
                   ret.push(_stdout(_('cmd_mv_name_done', [args[i], args[args.length - 1]])))
                 }
               }
@@ -51,10 +53,9 @@ _defCommand('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // ev
                 ret.push(_stdout(_('cmd_mv_overwrite_done', [args[i], args[args.length - 1]])))
               }
               retfireables.push([src.item, 0])
-            } else if ('mv' in src.item.cmd_text) {
-              ret.push(_stdout(src.item.cmd_text.mv))
             } else {
               ret.push(_stderr(_('permission_denied') + ' ' + _('cmd_mv_fixed')))
+              src.item.fire_event(vt, 'permission_denied', args, 0)
             }
           }
         } else if (!src[2]) {

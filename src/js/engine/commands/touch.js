@@ -5,6 +5,11 @@ _defCommand('touch', [ARGT.filenew], function (args, ctx, vt) {
   } else {
     var createdItemsString = ''
     for (var i = args.length - 1; i >= 0; i--) {
+      if ('touch' in cwd.cmd_hook) {
+        hret = cwd.cmd_hook['touch']([args[i]])
+        if (d(hret.ret, false)) ret.push(hret.ret)
+        if (d(hret.pass, false)) continue
+      }
       if (cwd.getItemFromName(args[i])) {
         return _stderr(_('tgt_already_exists', [args[i]]))
       } else if (args[i].length > 0) {

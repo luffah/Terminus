@@ -1,5 +1,9 @@
 // $home - required - default room
-newRoom('home', undefined, { writable: true })
+// future ?
+// mkdir('/home/$USER',)
+// mkfile('~/shell')
+// mkdir('~/western_forest')
+newRoom('home', undefined, {writable: true })
 
 $home.setEnterCallback(function () {
   music.play('forest')
@@ -61,15 +65,14 @@ $home.addPath(
 )
 $western_forest.newItem('western_forest_academy_direction', 'item_sign.png')
 var pwddecl = $western_forest.newItem('western_forest_back_direction')
-  .addStates({
-    less: function (re) {
+  .setCmdEvent('less', function () {
       $western_forest.unsetCmdEvent('less')
-      if (!_hasGroup('pwd')) {
+      if (!vt.context.hasGroup('pwd')) {
         vt.context.addGroup('pwd')
-        learn(vt, 'pwd', re)
+        learn(vt, 'pwd')
       }
     }
-  })
+  )
 
 // SPELL CASTING ACADEMY
 $western_forest.addPath(
@@ -179,7 +182,7 @@ function poney_dialhint (re) {
   poney.setCmdEvent('less_done', 'uptxthint')
   if (!vt.statkey.Tab || vt.statkey.Tab == 0) {
     poney.setTextIdx('tab')
-  } else if (!_hasGroup('mv')) {
+  } else if (!vt.context.hasGroup('mv')) {
     poney.setTextIdx('mv')
   } else if (!state.applied('mvBoulder')) {
     poney.setTextIdx('mountain')
@@ -214,10 +217,10 @@ $mountain.addPath(
 
 // DANK ROOM / SMALL HOLE
 $dark_corridor.addPath(
-  newRoom('dank', 'loc_darkroom.gif', { writable: true }).addCommand('mv')
+  newRoom('dank', 'loc_darkroom.gif', { writable: true })
     .addPath(
       newRoom('small_hole', undefined, { writable: true })
-        .setCmdText('cd', _('room_small_hole_cd'))
+        .setCmd('cd', (args) => {return {ret:_stdout(_('room_small_hole_cd'))}})
     )
 )
 var boulder = $dank
@@ -226,7 +229,6 @@ var boulder = $dank
     mv: function (re) {
       if (!$dank.hasChild($tunnel)) {
         $dank.addPath($tunnel)
-        //      boulder.unsetCmdEvent('mv');
         unlock(vt, $tunnel, re)
         if (re) {
           $dank.getItem('boulder').moveTo($small_hole)

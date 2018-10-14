@@ -11,8 +11,9 @@ function File(name,picname,prop){
   this.writable=d(prop.writable,false);
   this.picture = new Pic(picname,prop) ;
   this.cmd_event={};
-  this.cmd_text = {};
+  this.cmd_hook = {};
   this.name=name;
+  this.text='';
   this.uid=prop.uid||getObjUID(prop.poid||name);
 //  console.log(name,this.uid);
   this.poprefix=prop.poprefix;
@@ -67,6 +68,24 @@ File.prototype=union(EventTarget.prototype,{
   setPic: function(pic){
     this.picture.set(pic);
   },
+  setPo:function(name,vars){
+    this.poid=this.poprefix+name;
+    this.povars=vars;
+    this.name=_(this.poid,vars);
+    this.text=_(this.poid+POSUFFIX_DESC,vars);
+    return this;
+  },
+  setText : function(text) {
+    this.text = text;
+    return this;
+  },
+  checkTextIdx: function (textidx) {
+    return dialog.hasOwnProperty(this.poid + POSUFFIX_DESC + textidx)
+  },
+  setTextIdx: function (textidx, vars) {
+    this.text = _(this.poid + POSUFFIX_DESC + textidx, vars, { or: this.poid + POSUFFIX_DESC })
+    return this
+  },
   unsetCmdEvent : function(cmd) {
     delete this.cmd_event[cmd];
     return this;
@@ -83,12 +102,17 @@ File.prototype=union(EventTarget.prototype,{
     }
     return this;
   },
-  setCmdText : function(cmd, text) {
-    this.cmd_text[cmd] = text;
+  setCmd : function(cmd, fu) {
+    if (typeof fu == "object"){
+      fu = () => {return {ret:fu} }
+    } else if (typeof fu == "string") {
+      fu = () => {return {ret:_stdout(fu), pass: true}}
+    }
+    this.cmd_hook[cmd] = fu
     return this;
   },
-  unsetCmdText : function(cmd){
-    delete this.cmd_text[cmd];
+  unsetCmd : function(cmd) {
+    delete this.cmd_hook[cmd];
     return this;
   },
   apply : function(e){
@@ -127,7 +151,7 @@ function Item(name, intro, picname, prop){
   prop=prop||{};
   prop.poprefix=d(prop.poprefix,POPREFIX_ITEM);
   File.call(this,name,picname,prop);
-  this.cmd_text = {less: intro ? intro : _(PO_DEFAULT_ITEM)};
+  this.text = intro || _(PO_DEFAULT_ITEM)
   this.room=null;
   if (prop.poid){
     this.setPo(prop.poid,prop.povars);
@@ -146,8 +170,8 @@ Item.prototype=union(File.prototype, {
   copy:function(name){
     var nut = new Item(name);
     nut.picture = this.picture.copy();
-    nut.cmd_text = clone(this.cmd_text);
-    nut.valid_cmds = clone(this.valid_cmds);
+    nut.text = clone(this.text);
+    nut.cmd_hook = clone(this.cmd_hook);
     nut.cmd_event = clone(this.cmd_event);
     nut._listeners = clone(this._listeners);
     nut.room = this.room;
@@ -167,27 +191,9 @@ Item.prototype=union(File.prototype, {
     if (this.exec_function){
       return this.exec_function(this,args,room,vt);
     } else {
-      return cmd_done(vt,[[it,0]],it.cmd_text.less,'exec',args);
+      return cmd_done(vt,[[it,0]],it.text,'exec',args);
     }
   },
-  setPo:function(name,vars){
-    this.poid=this.poprefix+name;
-    this.povars=vars;
-    this.name=_(this.poid,vars);
-    this.cmd_text.less=_(this.poid+POSUFFIX_DESC,vars);
-    return this;
-  },
-  checkTextIdx : function(textidx) {
-    return dialog.hasOwnProperty(this.poid+POSUFFIX_DESC+textidx);
-  },
-  setTextIdx : function(textidx,vars) {
-    this.cmd_text.less = _(this.poid+POSUFFIX_DESC+textidx,vars,{or:this.poid+POSUFFIX_DESC});
-    return this;
-  },
-//  setTextIdx : function(textidx,vars) { // TODO with range
-//    this.cmd_text.less = _(this.poid+POSUFFIX_DESC+textidx,vars,{or:this.poid+POSUFFIX_DESC});
-//    return this;
-//  },
   setPoDelta:function(delta){
     if (typeof delta == 'string'){
       this.poid+=delta;
@@ -195,7 +201,7 @@ Item.prototype=union(File.prototype, {
       this.povars=delta;
     }
     this.name=_(this.poid,this.povars);
-    this.cmd_text.less=_(this.poid+POSUFFIX_DESC,this.povars);
+    this.text=_(this.poid+POSUFFIX_DESC,this.povars);
     return this;
   },
   fire_event:function(vt,cmd,args,idx){

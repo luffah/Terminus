@@ -25,13 +25,16 @@ _defCommand('cd', [ARGT.dir], function (args, ctx, vt) {
   } else {
     var dest = cwd.traversee(args[0])
     var room = dest.room
+    if ('cd' in room.cmd_hook) {
+      hret = room.cmd_hook['cd'](args)
+      if (def(hret)){
+      if (d(hret.ret, false)) return hret.ret
+      }
+    }
     if (room && !dest.item_name) {
       if (room.executable) {
         room.previous = cwd
         return _stdout(_('cmd_cd', enterRoom(room, vt)))
-      } else {
-        cwd.fire_event(vt, 'cd', args, 0, { 'unreachable_room': room })
-        return _stdout(room.cmd_text.cd)
       }
     }
     cwd.fire_event(vt, 'cd', args, 0, { 'unreachable_room': room })

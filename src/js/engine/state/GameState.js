@@ -1,74 +1,76 @@
-function GameState(){
-  this.params = {};
-  this.actions = {};
-  this.filesystem = {};
-  this.alias = {};
-  this.cookie=null;
+function GameState () {
+  this.params = {}
+  this._params_cache = {}
+  this.actions = {}
+  this.filesystem = {}
+  this.alias = {}
+  this.cookie = null
 }
 
 GameState.prototype = {
-  getCurrentContext : function() {
-    return Context.parse(this.params['']);
-  },
-  saveCookie: function(){
-    //when you call this function, set the cookie in the browser
+  saveCookie: function () {
+    // when you call this function, set the cookie in the browser
     if (this.cookie) {
-      this.cookie.write(this.params);
+      this.cookie.write(this.params)
     }
   },
-  setCurrentContext : function(ctx){
-    this.params['']=ctx.stringify();
-    this.saveCookie();
+  add: function (name, fun) {
+    this.actions[name] = fun
   },
-  add : function(param_name, fun){
-    this.actions[param_name]=fun;
+  set: function (name, fun) {
+    this.params[name] = fun
   },
-  set : function(param_name, fun){
-    this.params[param_name]=fun;
+  get: function (name, fun) {
+    return this.params[name]
   },
-  get : function(param_name, fun){
-    return this.params[param_name];
+  applied: function (name) {
+    return this.actions[name]
   },
-  applied : function(param_name){
-    return this.actions[param_name];
+  apply: function (name, replay) {
+    console.log('apply ' + name)
+    this.params[name] = 1
+    if (name in this.actions) { this.actions[name]((typeof replay === 'undefined') ? false : replay) }
   },
-  apply : function(param_name, replay){
-    console.log('apply '+param_name);
-    this.params[param_name] = 1;
-    if (param_name in this.actions) {
-      this.actions[param_name]((typeof replay === 'undefined') ? false : replay);
+  startCookie: function (name) {
+    this.cookie = new Cookie(name)
+    if (this.cookie.check()) {
+      this._params_cache = this.cookie.read()
+      return true
     }
+    return false
   },
-  startCookie : function(name){
-    this.cookie=new Cookie(name);
-    return this.cookie.check();
+  stopCookie: function (name) {
+    this.cookie = null
   },
-  stopCookie : function(name){
-    this.cookie=null;
+  setCookieDuration: function (minutes) {
+    this.cookie.minutes = minutes
   },
-  setCookieDuration : function(minutes){
-    //this function create a new cookie
-    this.cookie.minutes=minutes;
-  },
-  loadCookie : function(){
-    //this function reads from a cookie if one exists
-    var params=this.cookie.read();
-    if (params){
-      for (var k in params){
-        if (params.hasOwnProperty(k)){
+  loadActions: function () {
+    var params = this._params_cache
+    if (params) {
+      for (var k in params) {
+        if (params.hasOwnProperty(k)) {
           if (k in this.actions) {
-            this.apply(k, params[k]);
-          } else {
-            this.set(k,params[k]);
+            this.apply(k, params[k])
           }
         }
       }
-      // this.saveCookie();
-      return true;
+      return true
     }
-    return false;
+    return false
   },
-};
+  loadContext: function () {
+    var params = this._params_cache
+    if (params.hasOwnProperty(0)) {
+      this.params[0] = params[0]
+      return Context.parse(params[0])
+    }
+    return false
+  },
+  setCurrentContext: function (ctx) {
+    this.params[0] = ctx.stringify()
+    this.saveCookie()
+  }
+}
 
-var state = new GameState(); // GameState to initialize a game script
-
+var state = new GameState() // GameState to initialize a game script

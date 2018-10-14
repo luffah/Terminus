@@ -398,13 +398,21 @@ VTerm.prototype={
   },
   show_msg: function (mesg,opt){
     if (def(mesg)){
+      var t=this;
+      if (mesg instanceof Array){
+        console.log(mesg)
+        for (m in mesg) {
+          t.show_msg(mesg[m],opt)
+        }
+        return this
+      }
       opt=opt||{};
       var cb;
-      var t=this;
       t.busy=true;t.loop_waiting();
       if (typeof mesg == "string"){
         mesg = _stdout(mesg);
       }
+      console.log(mesg)
       // FIXME
       // work arounded -- std / err flux shall be separated...
       msg = '';

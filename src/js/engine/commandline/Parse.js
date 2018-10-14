@@ -143,9 +143,12 @@ function _parse_exec (vt, arrs, superuser) {
   }
   // test command eligibility when no existant cmd
   if (!cmdexec) {
-    if (cmd in r.cmd_text) {
-      r.fire_event(vt, cmd + '_cmd_text', args, 0)
-      ret = r.cmd_text[cmd]
+    if (cmd in r.cmd_hook) {
+      r.fire_event(vt, cmd + '_cmd_hook', args, 0)
+      re = r.cmd_hook[cmd](args)
+      if ('ret' in re) {
+        ret = re.ret
+      }
     } else {
       r.fire_event(vt, 'cmd_not_found', args, 0)
       r.fire_event(vt, cmd + '_cmd_not_found', args, 0)
@@ -161,8 +164,8 @@ function _parse_exec (vt, arrs, superuser) {
       var text_to_display = cmdexec(args, ctx, vt)
       if (text_to_display) {
         ret = text_to_display
-      } else if (cmd in r.cmd_text) {
-        ret = r.cmd_text[cmd]
+      } else if (cmd in r.cmd_hook) {
+        ret = r.cmd_hook[cmd](args)
       }
     } else {
       ret = _('room_wrong_password')

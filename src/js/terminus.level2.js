@@ -34,7 +34,7 @@ var lady=$townsquare.newPeople('citizen3',"item_lady.png")
 //MARKETPLACE
 var disabled_sell_choices=[];
 $townsquare.addPath(
-  newRoom('market',"loc_market.gif",{writable:true}).addCommand('touch')
+  newRoom('market',"loc_market.gif",{writable:true})
 );
 
 function buy_to_vendor(vt, choice){
@@ -57,7 +57,6 @@ function buy_to_vendor(vt, choice){
   }
 }
 vendor=$market.newPeople("vendor", "item_merchant.png")
-  .setCmdText("less","")
   .setCmdEvent("less_done",function(){
     vt.show_img();
     vt.ask_choose(_('people_vendor_text'), [_('people_vendor_sell_mkdir'),_('people_vendor_sell_rm'),_('people_vendor_sell_nothing')],buy_to_vendor,
@@ -73,7 +72,7 @@ var backpack=$market.newItem("backpack","item_backpack.png")
   .setCmdEvent("less")
   .addStates({
     less:function(re){
-      _addGroup('unzip');
+      vt.context.addGroup('unzip');
       learn(vt, 'unzip', re);
       backpack.unsetCmdEvent("less");
       backpack.setPoDelta(['.zip']);
@@ -91,15 +90,15 @@ var backpack=$market.newItem("backpack","item_backpack.png")
 
 $market.addStates({
   rmSold:function(re){
-    _addGroup('rm');
+    vt.context.addGroup('rm');
     learn(vt,'rm',re);
     $market.removeItem('rm_spell');
     disabled_sell_choices.push(1);
-    vendor.setCmdText("rm", _('people_vendor_rm'));
+    vendor.setCmd("rm", _('people_vendor_rm'));
     global_fire_done();
   },
   mkdirSold:function(re){
-    _addGroup('mkdir');
+    vt.context.addGroup('mkdir');
     learn(vt,'mkdir',re);
     disabled_sell_choices.push(0);
     $market.removeItem('mkdir_spell');
@@ -113,7 +112,6 @@ $market.newItem("mkdir_spell","item_manuscript.png");
 //LIBRARY
 $townsquare.addPath(
 newRoom("library", "loc_library.gif")
-  .addCommand("grep")
 );
 $library.newItem('radspellbook',"item_radspellbook.png");
 $library.newItem('romancebook',"item_romancenovel.png");
@@ -153,14 +151,13 @@ lever=$library.newItem("lever", "item_lever.png",{executable:true})
 //BACK ROOM
 $library.addPath(
 newRoom('backroom',"loc_backroom.gif")
-  .addCommand("grep")
 );
 
 $backroom.newPeople("grep", "grep.png")
   .setCmdEvent('less','grep')
   .addStates({
     grep:function(re){
-      _addGroup('grep');
+      vt.context.addGroup('grep');
       learn(vt,'grep',re);
     }
   })
@@ -174,10 +171,10 @@ $townsquare.addPath(
 );
 // TODO play on filesize concept
 $rockypath.newItem("largeboulder", "item_boulder.png")
-  .setCmdText("rm", _('item_largeboulder_rm'))
   .setCmdEvent("rm")
   .addStates({
     rm: function(re){
+      vt.show_msg(_('item_largeboulder_rm'))
       $rockypath.addPath($farm);
       if (re) {
         if (re) $rockypath.removeItem('largeboulder');
@@ -209,16 +206,15 @@ $townsquare.addPath(
   },true)
   .addStates({
     'touchGear': function (re){
-      Artisan.setCmdText("less", _('item_gear_touch'));
-      $artisanshop.addCommand("cp");
-      _addGroup('cp');
+      Artisan.setCmd("less", _('item_gear_touch'));
+      vt.context.addGroup('cp');
       learn(vt,'cp',re);
       if (re) $artisanshop.newItem('gear',"item_gear.png");
       else $artisanshop.getItem('gear').setPic("item_gear.png");
       state.saveCookie();
     },
     "FiveGearsCopied": function(re){
-      Artisan.setCmdText("less", _('item_gear_artisans_ok'));
+      Artisan.setCmd("less", _('item_gear_artisans_ok'));
       $artisanshop.removeItem('gear');
       if (re){
       } else {
@@ -235,16 +231,18 @@ $townsquare.addPath(
 );
 
 $artisanshop.newItem("strangetrinket", "item_trinket.png")
-  .setCmdText("rm", _('item_strangetrinket_rm'))
-  .setCmdText("mv", _('item_strangetrinket_mv'));
+  .setCmd("rm", _('item_strangetrinket_rm'))
+  .setCmd("mv", _('item_strangetrinket_mv'))
+
 $artisanshop.newItem("dragon", "item_clockdragon.png",{pic_shown_in_ls:false})
-  .setCmdText("rm", _('item_dragon_rm'))  
-  .setCmdText("mv", _('item_dragon_mv')); 
+  .setCmd("rm", _('item_dragon_rm'))
+  .setCmd("mv", _('item_dragon_mv'))
+
 var Artisan=$artisanshop.newPeople("artisan", "item_artisan.png")
   .setCmdEvent('less', 'touch' )
   .addStates({
     'touch': function(re){
-      _addGroup('touch');
+      vt.context.addGroup('touch');
       learn(vt,'touch',re);
       Artisan.unsetCmdEvent('less');
       state.saveCookie();
@@ -254,13 +252,12 @@ var Artisan=$artisanshop.newPeople("artisan", "item_artisan.png")
 
 //FARM
 newRoom("farm", "loc_farm.gif")
-  .addCommand("cp")
   .newItem("earofcorn", "item_corn.png")
-  .setCmdText("rm",_('item_earofcorn_rm'))
+  .setCmd("rm",_('item_earofcorn_rm'))
   .setCmdEvent('cp','CornCopied')
   .addStates({
     CornCopied:function(re){
-      Farmer.setCmdText("less", _('corn_farmer_ok'));
+      Farmer.setCmd("less", _('corn_farmer_ok'));
       if (re) $farm.newItem('another_earofcorn');
     }
   });
@@ -271,14 +268,12 @@ var Farmer=$farm.newPeople('farmer',"item_farmer.png");
 $townsquare.addPath(
   newRoom("brokenbridge", "loc_bridge.gif")
   .setCmdEvent('touch',function(ct){return (ct.arg === _("item_plank")) ? "touchPlank" : "";})
-  .addCommand("touch")
   .addStates({
     touchPlank: function(re){
-      $clearing.addCommand("cd");
-      $clearing.unsetCmdText("cd");
+      $clearing.unsetCmd("cd");
       $clearing.setExecutable(true);
-      $brokenbridge.unsetCmdText("cd");
-      $brokenbridge.setIntroText(_('room_brokenbridge_text2'));
+      $brokenbridge.unsetCmd("cd");
+      $brokenbridge.setText(_('room_brokenbridge_text2'));
       if (re) $brokenbridge.newItem('plank',"item_plank.png");
       else $brokenbridge.getItem('plank').setPic("item_plank.png");
     }
@@ -291,17 +286,16 @@ $brokenbridge.addPath(
   .setCmdEvent('mkdir',function(ct){
     return (ct.arg == _('room_house') ? 'HouseMade':'');
   })
-  .setCmdText("cd", _('room_clearing_cd'))
-  .addCommand("mkdir")
+  .setCmd("cd", _('room_clearing_cd'))
   .addStates({
     HouseMade: function(re){
       if (re) { $clearing.leadsTo(newRoom('house')); }
       $clearing.getChildFromName(_('room_house'))
-        .setCmdText("cd", _('room_house_cd') )
-        .setCmdText("ls", _('room_house_ls') );
-      $clearing.unsetCmdText("cd");
-      $clearing.setIntroText(_('room_clearing_text2'));
-      CryingMan.setCmdText("less", _('room_clearing_less2'));
+        .setCmd("cd", _('room_house_cd') )
+        .setCmd("ls", _('room_house_ls') );
+      $clearing.unsetCmd("cd");
+      $clearing.setText(_('room_clearing_text2'));
+      CryingMan.setCmd("less", _('room_clearing_less2'));
     }
   })
 );
@@ -313,8 +307,10 @@ $clearing.addPath(
 );
 $ominouspath.newItem("brambles", "item_brambles.png",{cls:'large'})
   .setCmdEvent('rm','rmBrambles')
-  .setCmdText("mv", _('item_brambles_mv'))
-  .setCmdText('rm', _('item_brambles_rm'))
+  .setCmd("mv", _('item_brambles_mv'))
+  .setCmd('rm', (args) => {
+    vt.show_msg(_('item_brambles_rm'))
+  })
   .addStates({
     rmBrambles:function(re){
       $ominouspath.addPath($trollcave) ;
@@ -331,54 +327,52 @@ newRoom("trollcave", "loc_cave.gif",{writable:true})
   .setCmdEvent('mv',troll_evt)
   .setCmdEvent('rm',troll_evt);
 
+  // .setCmd("rm", _('people_troll11_rm'))
+  // .setCmd("mv", _('people_troll11_mv'))
 $trollcave.newPeople('troll1', "item_troll1.png")
-  .setCmdText("rm", _('people_troll11_rm'))
-  .setCmdText("mv", _('people_troll11_mv'))
-  .setCmdText("cp",_('people_troll11_cp'))
+  .setCmd("cp", _('people_troll11_cp'))
   .setCmdEvent('mv','openSlide')
   .setCmdEvent('rm','openSlide')
   .addStates({
     openSlide:function(re){
-      $slide.addCommand("cd");
       $slide.setExecutable(true);
-      $slide.setCmdText("cd", _('room_slide_cd2'));
       if (re) $trollcave.removePeople('troll1');
     }
   });
 
 $trollcave.newPeople('troll2', "item_troll2.png")
-  .setCmdText("rm",_('people_troll11_rm'));
+  .setCmd("rm",_('people_troll11_rm'));
 
 $trollcave.newPeople('supertroll', "item_supertroll.png")
-  .setCmdText("rm", _('people_supertroll_rm'))
-  .setCmdText("mv", _('people_supertroll_mv'));
+  .setCmdEvent("rm", () => {vt.show_msg(_('people_supertroll_rm'))})
+  .setCmdEvent("mv", () => {vt.show_msg(_('people_supertroll_mv'))})
 
 //CAGE
 $trollcave.addPath(
   newRoom('cage', "item_cage.png",{cls:'covering',writable:true,executable:false,pic_shown_as_item:true})
-  .setCmdText("cd", _('room_cage_cd'))
+  .setCmd("cd", (args) => { {ret:_stdout(_('room_cage_cd'))}})
 );
 var Kid=$cage.newPeople('kidnapped', "item_boy.png")
-  .setCmdText("mv", _('people_kidnapped_mv'))
-  .setCmdEvent("mv",'freekid')
   .addStates({
-    freeKid:function(){Kid.moveTo($clearing);}
+    mv:function(){
+      vt.show_msg(_('people_kidnapped_mv'))
+      Kid.moveTo($clearing)
+    }
   });
 //SLIDE
 $trollcave.addPath(
   newRoom("slide",null,{executable:false})
-  .setCmdText("cd", _('room_slide_cd'))
+  .setCmd("cd", (args) => { {ret:_stdout(_('room_slide_cd'))}})
 );
 
 //KERNEL FILES
 $slide.addPath(
   newRoom("kernel")
   .addCommand("sudo",{question:undefined,password:"IHTFP"})
-  .addCommand("grep")
-  .setCmdText("sudo", _('room_kernel_sudo'))
   .addStates({
     sudoComplete : function(re){
       $kernel.addPath($paradise);
+      vt.show_msg(_('room_kernel_sudo'));
     }
   })
 );
@@ -387,18 +381,21 @@ $kernel.newItem("instructions")
   .setCmdEvent('less','sudo')
   .addStates({
     sudo : function(re){
-      _addGroup('sudo');
+      vt.context.addGroup('sudo');
       learn(vt,'sudo',re);
     }
   });
 
 $kernel. addPath(
   newRoom("morekernel")
-  .addCommand("grep")
 );
-$morekernel.newItemBatch("bigfile",['L','M','Q','R','S','T','U','V','W']);
+$morekernel.newItemBatch("bigfile",['L','M','P','Q','R','S','U','V','W']);
+$morekernel.newItem('bigfile', null, {povars: ['T']}).setCmd('grep',(args)=>{
+  if (args[0].indexOf('pass') == 0)
+    return {ret:_stdout('password = IFHTP'),pass:true}
+})
 
 //PARADISE (end game screen)
 newRoom("paradise", "loc_theend.gif")
-  .setCmdText("ls", _('room_paradise_ls'));
+  .setCmd("ls", _('room_paradise_ls'));
 

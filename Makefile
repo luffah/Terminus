@@ -38,6 +38,8 @@ js: .npm po  ## Compress javascript files
 	done
 
 po: ## Generate javascript file from pofile
+	mkdir -p ./src/js/_build
+	which pip && ( pip search polib || pip install polib)
 	find ./src/lang -name '*.po' | sed 's/^.*\.\([A-Za-z-]\+\)\.po/\1/' \
 		| while read i; do ${PYTHON} ./buildsystem/po2json.py $${i}; done;
 

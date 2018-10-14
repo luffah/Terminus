@@ -11,6 +11,7 @@ function Command (name, syntax, fu) {
 
 var global_commands_fu = {}
 function _hasRightForCommand (cmd, ctx) {
+  ctx = d(ctx, vt.context)
   return (global_commands_fu[cmd] ? (ctx.user.isRoot || ctx.user.groups.indexOf(global_commands_fu[cmd].group) > -1) : false)
 }
 
