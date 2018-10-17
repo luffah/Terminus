@@ -2,12 +2,12 @@
 // import { GameState, VTerm, _,  dom, _match, Seq, Context, pogencnt } from 'engine'
 // import { snd, music } from 'terminus.assets'
 // import { $home } from 'terminus.level1'
-// import { TESTING, doTest } from 'tests'
+// import { doTest } from 'tests'
 var state = new GameState() // GameState to initialize in game script
 var vt = new VTerm('term')
 vt.soundbank = snd
 var version = '0.2beta'
-window.addEventListener("load", function(event) {
+window.addEventListener('load', function (event) {
   var loadel
   // prepare game loading
   var hasSave = state.startCookie('terminus' + version)
@@ -18,11 +18,11 @@ window.addEventListener("load", function(event) {
   var start = function (vt, useCookies) {
     var context
     vt.muteSound()
-    if (pogencnt > 0)  vt.show_msg(_('pogen_alert', pogencnt))
+    if (pogencnt > 0) vt.show_msg(_('pogen_alert', pogencnt))
     if ((useCookies - (hasSave ? 1 : 0)) <= 0) { // yes new game or load
       state.setCookieDuration(7 * 24 * 60)// in minutes
       if (useCookies == 0) {
-         context = state.loadContext()
+        context = state.loadContext()
       }
     } else state.stopCookie() // do not use cookie
     vt.clear()
@@ -34,15 +34,14 @@ window.addEventListener("load", function(event) {
       vt.show_msg(vt.context.room.getStarterMsg(_('welcome_msg', vt.context.currentuser) + '\n'))
       vt.enable_input()
     } else {
-      context = new Context({ 'sure': { groups: [], address: 'DTC' } }, 'sure', $home, {})
+      context = new Context({ 'sure': { groups: ['user'], address: 'DTC' } }, 'sure', $home, {})
       vt.setContext(context)
       vt.unmuteSound()
       vt.muteCommandResult()
       vt.context.addGroup('cat')
       vt.context.addGroup('dir')
       music.play('preload')
-      var seq = new Seq()
-      seq.then(function (next) {
+      new Seq().then(function (next) {
         // vt.unmuteSound();
         vt.ask(_('prelude_text'), function (val) {
           if (_match('re_hate', val)) {
@@ -53,24 +52,24 @@ window.addEventListener("load", function(event) {
             vt.context.user.judged = _('user_judged' + Math.min(5, Math.round(val.length / 20)))
           }
         },
-          { cls: 'mystory', disappear: function (cb) { cb(); next() }
-          }
+        { cls: 'mystory', disappear: function (cb) { cb(); next() }
+        }
         )
       })
-      seq.then(function (next) {
-        vt.ask(vt.context.user.judged + '\n' + _('username_prompt'), function (val) { vt.context.setUserName(val); next() }, { placeholder: vt.context.currentuser, cls: 'megaprompt', disappear: function (cb) { cb() }, wait: 500 })
-      })
-      seq.then(function (next) {
-        vt.ask(_('useraddress_prompt'), function (val) { vt.context.setUserAddress(val); next() }, { placeholder: vt.context.user.address,
-          cls: 'megaprompt',
-          disappear: function (cb) {
-            cb()
+        .then(function (next) {
+          vt.ask(vt.context.user.judged + '\n' + _('username_prompt'), function (val) { vt.context.setUserName(val); next() }, { placeholder: vt.context.currentuser, cls: 'megaprompt', disappear: function (cb) { cb() }, wait: 500 })
+        })
+        .then(function (next) {
+          vt.ask(_('useraddress_prompt'), function (val) { vt.context.setUserAddress(val); next() }, { placeholder: vt.context.user.address,
+            cls: 'megaprompt',
+            disappear: function (cb) {
+              cb()
+            },
+            wait: 500 })
+        })
+        .then(function (next) {
+          vt.ask(_('gameintro_setup_ok'), function (val) {
           },
-          wait: 500 })
-      })
-      seq.then(function (next) {
-        vt.ask(_('gameintro_setup_ok'), function (val) {
-        },
           { value: '_ _ _ !',
             cls: 'mystory',
             evkey: {
@@ -92,90 +91,91 @@ window.addEventListener("load", function(event) {
             },
             disappear: function (cb) {
               cb()
-              vt.flash(0, 800)
+              flash(0, 800)
               next()
             }
           }
-        )
-      })
-      seq.then(function (next) {
-        vt.show_loading_element_in_msg(['_', ' '], { duration: 800, finalvalue: ' ', callback: next })
-      })
-      seq.then(function (next) {
-        vt.muteSound()
-        vt.show_loading_element_in_msg(['_', ' '], { duration: 800, finalvalue: ' ', callback: next })
-      })
-      seq.then(function (next) {
-        vt.show_msg(_('gameintro_text_initrd'), { cb: next })
-      })
-      seq.then(function (next) {
-        loadel = dom.Id('initload')
-        vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
-          el: loadel,
-          finalvalue: "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
-          duration: 800,
-          callback: next })
-      })
-      seq.then(function (next) {
-        vt.show_msg(_('gameintro_text_domainname'), { cb: next })
-      })
-      seq.then(function (next) {
-        loadel = dom.Id('domainsetup')
-        vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
-          el: loadel,
-          finalvalue: "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
-          duration: 800,
-          callback: next })
-      })
-      seq.then(function (next) {
-        vt.show_msg(_('gameintro_text_fsck'), { cb: next })
-      })
-      seq.then(function (next) {
-        loadel = dom.Id('initfsck')
-        vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
-          el: loadel,
-          finalvalue: "<span class='color-ko'>" + _('gameintro_failure') + '</span>',
-          duration: 800,
-          callback: next })
-      })
-      seq.then(function (next) {
-        vt.show_msg(_('gameintro_text_terminus'), { cb: next })
-      })
-      seq.then(function (next) {
-        vt.show_msg(_('gamestart_text'))
-        vt.unmuteSound()
-        music.play('story')
-        vt.enable_input()
-        vt.auto_shuffle_input_msg(_('press_enter'), 0.9, 0.1, 8, 20, null, 50)
-      })
-      seq.next()
+          )
+        })
+        .then(function (next) {
+          vt.show_loading_element_in_msg(['_', ' '], { duration: 800, finalvalue: ' ', callback: next })
+        })
+        .then(function (next) {
+          vt.muteSound()
+          vt.show_loading_element_in_msg(['_', ' '], { duration: 800, finalvalue: ' ', callback: next })
+        })
+        .then(function (next) {
+          vt.show_msg(_('gameintro_text_initrd'), { cb: next })
+        })
+        .then(function (next) {
+          loadel = dom.Id('initload')
+          vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
+            el: loadel,
+            finalvalue: "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
+            duration: 800,
+            callback: next })
+        })
+        .then(function (next) {
+          vt.show_msg(_('gameintro_text_domainname'), { cb: next })
+        })
+        .then(function (next) {
+          loadel = dom.Id('domainsetup')
+          vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
+            el: loadel,
+            finalvalue: "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
+            duration: 800,
+            callback: next })
+        })
+        .then(function (next) {
+          vt.show_msg(_('gameintro_text_fsck'), { cb: next })
+        })
+        .then(function (next) {
+          loadel = dom.Id('initfsck')
+          vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
+            el: loadel,
+            finalvalue: "<span class='color-ko'>" + _('gameintro_failure') + '</span>',
+            duration: 800,
+            callback: next })
+        })
+        .then(function (next) {
+          vt.show_msg(_('gameintro_text_terminus'), { cb: next })
+        })
+        .then(function (next) {
+          vt.show_msg(_('gamestart_text'))
+          vt.unmuteSound()
+          music.play('story')
+          vt.enable_input()
+          vt.auto_shuffle_line(_('press_enter'), 0.9, 0.1, 8, 20, null, 50)
+        })
+        .next()
     }
   }
   // vt.epic_img_enter('terminus_logo.png','epicfromright titlelogo',800,
-  if (TESTING) {
-    vt.setContext(state.getCurrentContext())
+  if (typeof doTest === 'function') {
+    context = new Context({ 'sure': { groups: ['user'], address: 'DTC' } }, 'sure', $home, {})
+    vt.setContext(context)
     vt.enable_input()
     doTest(vt)
   } else {
-    var seq = new Seq()
-    seq.then(function (next) {
-      vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
-        function (vt,choice) {
-          vt.clear()
-          next()
-        },
-        { direct:true, cls: 'mystory' }
-      )
-    })
-    seq.then(function (next) {
-      vt.flash(0, 800)
-      vt.epic_img_enter('titlescreen.gif', 'epicfromright', 2000, function (vt) {
-        vt.show_msg('version : ' + version)
-        //        music.play('title',{loop:true});
-        vt.ask_choose(_('cookie'), choices, start, { direct: true })
+    new Seq()
+      .then(function (next) {
+        vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
+          function (vt, choice) {
+            vt.clear()
+            next()
+          },
+          { direct: true, cls: 'mystory' }
+        )
       })
-    })
-    seq.next();
+      .then(function (next) {
+        flash(0, 800)
+        vt.epic_img_enter('titlescreen.gif', 'epicfromright', 2000, function (vt) {
+          vt.show_msg('version : ' + version)
+          //        music.play('title',{loop:true});
+          vt.ask_choose(_('cookie'), choices, start, { direct: true })
+        })
+      })
+      .next()
   }
 })
 /**

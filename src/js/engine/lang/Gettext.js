@@ -15,14 +15,6 @@ var PO_DEFAULT_ROOM_DESC = POPREFIX_ROOM + PO_NONE_DESC
 var PO_DEFAULT_ITEM_DESC = POPREFIX_ITEM + PO_NONE_DESC
 var PO_DEFAULT_PEOPLE_DESC = POPREFIX_PEOPLE + PO_NONE_DESC
 
-String.prototype.printf = function (vars) {
-  var i = -1
-  return this.replace(/\%[sd]/g,
-    function (a, b) {
-      i++
-      return vars[i]
-    })
-}
 function objToMsg (o) {
   return o.toMsg()
 }
@@ -44,6 +36,7 @@ var poe = (typeof pogen === 'function')
 var var_regexp = /\{\{\w+(\.\w+|,\[([^,]*(,)?)\])?\}\}/g
 var var_vars_regexp = /\[([^,]*(,)?)\]/g
 var var_vars_regexpbis = /\.(\w+)/
+// resolve {{msg_id}}, {{msg_id.argument}} and {{msg_id,[arg1,arg2,...]}} in msg_str
 function var_resolve (a) {
   a = a.substring(2, a.length - 2)
   if (var_vars_regexp.test(a)) {
@@ -51,25 +44,14 @@ function var_resolve (a) {
     a = a.split(',')[0]
   } else if (var_vars_regexpbis.test(a)) {
     b = a.split('.')
-    //  console.log(b);
     a = b[0]
     vars = [b[1]]
   } else {
     vars = []
   }
-  //  console.log(a,vars);
   return _(a, vars, guess_gettext_mod(a))
 }
-function _match (str, strb) {
-  ret = -1
-  if (str in dialog) {
-    re = new RegExp(dialog[str])
-    return strb.match(re)
-  } else if (poe) {
-    pogen(str)
-  }
-  return ret
-}
+
 function _ (str, vars, args) {
   if (!def(str)) return ''
   if (typeof vars === 'string' || typeof vars === 'number') {
@@ -105,6 +87,17 @@ function _ (str, vars, args) {
   if (args.decorate) {
     //    console.log('decorate',args.decorate);
     ret = args.decorate.printf([ret])
+  }
+  return ret
+}
+
+function _match (str, strb) {
+  ret = -1
+  if (str in dialog) {
+    re = new RegExp(dialog[str])
+    return strb.match(re)
+  } else if (poe) {
+    pogen(str)
   }
   return ret
 }

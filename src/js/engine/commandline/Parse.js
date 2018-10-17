@@ -88,7 +88,7 @@ function _completeArgs (args, argidx, tocomplete, ctx, compl) { // return comple
     substrMatches.push('..')
   }
   for (var roomIdx = 0; roomIdx < path.length; roomIdx++) {
-    roomNext = roomCurrent.can_cd(path[roomIdx])
+    roomNext = roomCurrent.can_cd(path[roomIdx], ctx)
     if (roomNext) {
       roomCurrent = roomNext
       if (roomIdx === path.length - 1) {

@@ -43,7 +43,7 @@ _defCommand('ls', [ARGT.dir], function (args, ctx, vt) {
   console.log(cwd)
 
   if (args.length > 0) {
-    var room = cwd.traversee(args[0]).room
+    var room = cwd.traversee(args[0],ctx).room
     if (room) {
       if ('ls' in room.cmd_hook) {
         hret = room.cmd_hook['ls'](args)

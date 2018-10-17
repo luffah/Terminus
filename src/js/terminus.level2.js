@@ -128,14 +128,14 @@ vimbook=$library.newItem('vimbook',"item_vimbook.png")
   .setCmdEvent('less','openVim')
   .addState("openVim", function(re){
     if (!re){
-      vt.flash(1600,1000);
+      flash(1600,1000);
       vt.rmCurrentImg(2650);
     }
     vimbook.disappear();
   });
 
 
-lever=$library.newItem("lever", "item_lever.png",{executable:true})
+lever=$library.newItem("lever", "item_lever.png",{mod:777})
   .setCmdEvent('exec','pullLever')
   .addStates({
     pullLever:function(re){
@@ -271,7 +271,7 @@ $townsquare.addPath(
   .addStates({
     touchPlank: function(re){
       $clearing.unsetCmd("cd");
-      $clearing.setExecutable(true);
+      $clearing.setPerm(777);
       $brokenbridge.unsetCmd("cd");
       $brokenbridge.setText(_('room_brokenbridge_text2'));
       if (re) $brokenbridge.newItem('plank',"item_plank.png");
@@ -282,7 +282,7 @@ $townsquare.addPath(
 
 //CLEARING
 $brokenbridge.addPath(
-  newRoom("clearing", "loc_clearing.gif",{executable:false})
+  newRoom("clearing", "loc_clearing.gif",{mod:0})
   .setCmdEvent('mkdir',function(ct){
     return (ct.arg == _('room_house') ? 'HouseMade':'');
   })
@@ -335,7 +335,7 @@ $trollcave.newPeople('troll1', "item_troll1.png")
   .setCmdEvent('rm','openSlide')
   .addStates({
     openSlide:function(re){
-      $slide.setExecutable(true);
+      $slide.chmod(777);
       if (re) $trollcave.removePeople('troll1');
     }
   });
@@ -349,7 +349,7 @@ $trollcave.newPeople('supertroll', "item_supertroll.png")
 
 //CAGE
 $trollcave.addPath(
-  newRoom('cage', "item_cage.png",{cls:'covering',writable:true,executable:false,pic_shown_as_item:true})
+  newRoom('cage', "item_cage.png",{cls:'covering',mod:666,pic_shown_as_item:true})
   .setCmd("cd", (args) => { {ret:_stdout(_('room_cage_cd'))}})
 );
 var Kid=$cage.newPeople('kidnapped', "item_boy.png")
@@ -361,7 +361,7 @@ var Kid=$cage.newPeople('kidnapped', "item_boy.png")
   });
 //SLIDE
 $trollcave.addPath(
-  newRoom("slide",null,{executable:false})
+  newRoom("slide",null,{mod:0})
   .setCmd("cd", (args) => { {ret:_stdout(_('room_slide_cd'))}})
 );
 

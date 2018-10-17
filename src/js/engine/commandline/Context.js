@@ -14,6 +14,9 @@ Context.prototype = {
       v:this.variables
     });
   },
+  traversee:function(path){
+    return this.room.traversee(path, this)
+  },
   addGroup(grp){
     this.users[this.currentuser].groups.push(grp);
   },
@@ -26,6 +29,7 @@ Context.prototype = {
       delete this.users[this.currentuser];
       this.currentuser=val;
       this.user=this.users[this.currentuser];
+      File.prototype.user=this.currentuser;
     }
   },
   setUserAddress(val){

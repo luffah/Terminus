@@ -1,5 +1,3 @@
-
-
 @font-face {
     font-family: term;
     src: url('terminal-grotesque-webfont.eot');
@@ -22,7 +20,9 @@ body {
   font-stretch:condensed;
   position:absolute;
   width:100%;
+  min-height:101%
 }
+
 .color-ok {
 color:lightgreen;
 }
@@ -44,6 +44,7 @@ color:magenta;
 .mesg {
 color:grey;
 }
+
 .notifications{
   position:fixed;
   z-index:0;

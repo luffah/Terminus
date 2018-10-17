@@ -2,8 +2,8 @@ var globalSpec = {}
 
 function Room (roomname, text, picname, prop) {
   prop = prop || {}
-  prop.executable = d(prop.executable, true)
   File.call(this, d(roomname, _(PO_DEFAULT_ROOM, [])), picname, prop)
+  this.chmod(755)
   this.parents = []
   this.previous = this
   this.children = []
@@ -31,6 +31,7 @@ function newRoom (id, picture, prop) {
 }
 function enterRoom (new_room, vt) {
   var ctx = vt.getContext()
+  console.log('enterRoom', new_room, ctx)
   var prev = ctx.room
   if (prev || !new_room.hasParent(prev)) {
     console.log(prev.toString(), 'doLeaveCallbackTo', new_room.toString())
@@ -102,7 +103,7 @@ Room.prototype = union(File.prototype, {
   // Room picture
   // item & people management
   addItem: function (newitem) {
-    pushDef(newitem, this.items)
+    this.items.push(newitem);
     newitem.room = this
     return this
   },
@@ -263,30 +264,26 @@ Room.prototype = union(File.prototype, {
    * i.e. $home.can_cd("next_room") returns true
    *      $home.can_cd("next_room/another_room") is invalid
    */
-  can_cd: function (arg) {
+  can_cd: function (arg, ctx) {
     // Don't allow for undefined or multiple paths
+    let r = null
     if (arg === '~') {
-      return $home
+      r = $home
     } else if (arg === '..') {
-      return this.parents[0]
+      r = this.parents[0]
     } else if (arg === '.') {
-      return this
+      r = this
     } else if (arg && arg.indexOf('/') == -1) {
-      var c = this.children
-      for (var i = 0; i < c.length; i++) {
-        if (arg === c[i].toString()) {
-          return c[i]
-        }
-      }
+      r = this.children.filter((i) => arg == i.toString()).shift()
     }
-    return null
+    return (r && r.ismod('x', ctx)) ? r : null
   },
 
   /* Returns the room and the item corresponding to the path
    * if item is null, then the path describe a room and  room is the full path
    * else room is the room containing the item */
-  traversee: function (path) {
-    var item; var pa = this.pathToRoom(path); var ret = {}
+  traversee: function (path, ctx) {
+    var item; var pa = this.pathToRoom(path, ctx); var ret = {}
     ret.room = pa[0]; ret.item_name = pa[1]; ret.item_idx = -1
     if (ret.room) {
       ret.room_name = ret.room.name
@@ -300,18 +297,17 @@ Room.prototype = union(File.prototype, {
         }
       }
     }
-    console.log(ret)
     return ret
   },
-  pathToRoom: function (path) {
+  pathToRoom: function (path, ctx) {
     var pat = path.split('/')
     var room = this
     var lastcomponent = null
     var cancd = true
     var pathstr = ''
     for (var i = 0; i < pat.length - 1; i++) {
-      if (room && room.executable) {
-        room = room.can_cd(pat[i])
+      if (room) {
+        room = room.can_cd(pat[i],ctx)
         if (room) {
           pathstr += (i > 0 ? '/' : '') + pat[i]
         }
@@ -321,7 +317,7 @@ Room.prototype = union(File.prototype, {
     }
     if (room) {
       lastcomponent = pat[pat.length - 1]
-      cancd = room.can_cd(lastcomponent)
+      cancd = room.can_cd(lastcomponent,ctx)
       if (cancd) {
         room = cancd
         pathstr += (i > 0 ? '/' : '') + lastcomponent + '/'

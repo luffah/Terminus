@@ -23,16 +23,16 @@ _defCommand('cd', [ARGT.dir], function (args, ctx, vt) {
     vt.push_img(img.room_none)
     return _stdout(_('cmd_cd', enterRoom(cwd, vt)))
   } else {
-    var dest = cwd.traversee(args[0])
+    var dest = ctx.traversee(args[0])
     var room = dest.room
-    if ('cd' in room.cmd_hook) {
-      hret = room.cmd_hook['cd'](args)
-      if (def(hret)){
-      if (d(hret.ret, false)) return hret.ret
+    if (room ) {
+      if ('cd' in room.cmd_hook) {
+        hret = room.cmd_hook['cd'](args)
+        if (def(hret)){
+        if (d(hret.ret, false)) return hret.ret
+        }
       }
-    }
-    if (room && !dest.item_name) {
-      if (room.executable) {
+      if (!dest.item_name) {
         room.previous = cwd
         return _stdout(_('cmd_cd', enterRoom(room, vt)))
       }

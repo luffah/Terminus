@@ -1,21 +1,37 @@
+# Java Files #
 *.class
-
-# Package Files #
 *.jar
 *.war
 *.ear
 
+# other vcs
 *.svn
 
+# swap
 *.swp
-#backups
+*~
+
+# backups
 *.bak
 bak
-#trashes
+.back*
+
+# trashes
 _trash
 
-#report files
+# report files
 *.pdf
 
-#screenshots
-# *.png
+# build
+node_modules
+_build
+webroot
+.npm
+package-lock.json
+
+# image projects
+*.kra
+
+# audio projects
+*.aup
+snd/*_data

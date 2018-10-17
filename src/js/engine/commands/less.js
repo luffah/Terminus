@@ -10,7 +10,7 @@ _defCommand('less', [ARGT.strictfile], function (args, ctx, vt) { // event arg -
   } else {
     var ret = []
     for (var i = 0; i < args.length; i++) {
-      var tgt = cwd.traversee(args[i])
+      var tgt = ctx.traversee(args[i],ctx)
       var room = tgt.room
       if ('less' in room.cmd_hook) {
          hret = room.cmd_hook['less']([args[i]])
@@ -39,7 +39,7 @@ _defCommand('less', [ARGT.strictfile], function (args, ctx, vt) { // event arg -
         ret.push(_stderr(_('room_unreachable')))
       }
     }
-    return new ReturnSequence(ret)
+    return new Seq(ret)
   }
 })
 _aliasCommand('cat', 'less')

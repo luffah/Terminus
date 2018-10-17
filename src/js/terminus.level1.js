@@ -217,9 +217,9 @@ $mountain.addPath(
 
 // DANK ROOM / SMALL HOLE
 $dark_corridor.addPath(
-  newRoom('dank', 'loc_darkroom.gif', { writable: true })
+  newRoom('dank', 'loc_darkroom.gif', { mod: 644 })
     .addPath(
-      newRoom('small_hole', undefined, { writable: true })
+      newRoom('small_hole', undefined, { mod: 644 })
         .setCmd('cd', (args) => {return {ret:_stdout(_('room_small_hole_cd'))}})
     )
 )

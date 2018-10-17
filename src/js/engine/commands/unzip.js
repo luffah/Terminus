@@ -1,6 +1,6 @@
 _defCommand('unzip', [ARGT.file.concat(['*.zip'])], function (args, ctx, vt) {
   if (args.length === 1) {
-    var tr = ctx.room.traversee(args[0])
+    var tr = ctx.room.traversee(args[0],ctx)
     if (tr.item && tr.room.writable) {
       tr.item.fire_event(vt, 'unzip', args, 0)
       return _stdout('')

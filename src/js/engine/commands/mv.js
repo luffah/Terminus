@@ -4,13 +4,13 @@ _defCommand('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // ev
   var src
   var item_idx
   var cwd = ctx.room
-  var dest = cwd.traversee(args[args.length - 1])
+  var dest = cwd.traversee(args[args.length - 1],ctx)
   if (dest.item_name && args.length > 2) {
     ret.push(_stderr(_('cmd_mv_flood')))
   } else {
     var retfireables = []; var rename; var overwritten
     for (var i = 0; i < (args.length - 1); i++) {
-      src = cwd.traversee(args[i])
+      src = cwd.traversee(args[i],ctx)
       if ('mv' in src.item.cmd_hook) {
          hret = src.item.cmd_hook['mv']([args[i],args[args.length - 1]])
         if (def(hret)){
@@ -67,7 +67,7 @@ _defCommand('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // ev
         ret.push(_stderr(_('cmd_mv_no_file', [args[i]])))
       }
     }
-    return cmd_done(vt, retfireables, new ReturnSequence(ret), 'mv', args)
+    return cmd_done(vt, retfireables, new Seq(ret), 'mv', args)
     //      return _("cmd_mv_invalid");
   }
   return ret.join('\n')

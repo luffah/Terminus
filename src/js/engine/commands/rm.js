@@ -5,7 +5,7 @@ _defCommand('rm', [ARGT.file], function (args, ctx, vt) { // event arg -> object
     var ret = []
     var item, room, idx
     for (var i = 0; i < args.length; i++) {
-      var tgt = ctx.room.traversee(args[i])
+      var tgt = ctx.room.traversee(args[i],ctx)
       room = tgt.room
       item = tgt.item
       if ('rm' in item.cmd_hook) {
@@ -32,7 +32,7 @@ _defCommand('rm', [ARGT.file], function (args, ctx, vt) { // event arg -> object
           ret.push(_stderr(_('cmd_rm_invalid')))
         }
       }
-      return new ReturnSequence(ret)
+      return new Seq(ret)
     }
   }
 })
