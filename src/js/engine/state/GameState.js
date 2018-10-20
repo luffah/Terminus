@@ -20,8 +20,11 @@ GameState.prototype = {
   set: function (name, fun) {
     this.params[name] = fun
   },
-  get: function (name, fun) {
+  get: function (name) {
     return this.params[name]
+  },
+  _get_pre: function (name) {
+    return this._params_cache[name]
   },
   applied: function (name) {
     return this.actions[name]

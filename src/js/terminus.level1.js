@@ -6,7 +6,7 @@
 newRoom('home', undefined, {writable: true })
 
 $home.setEnterCallback(function () {
-  music.play('forest')
+  vt.playMusic('forest')
 })
   .addStates({
     poe_cmd_not_found: function (re) {
@@ -15,13 +15,12 @@ $home.setEnterCallback(function () {
       learn(vt, ['poe', 'pogen'], re)
     },
     cmd_not_found: function (re) {
+      $home.unsetCmdEvent('cmd_not_found')
+      vt.context.addGroup('cat')
+      vt.context.addGroup('dir')
       if (!re) {
         setTimeout(function () {
-          console.log('usccess')
-          vt.unmuteSound()
           mesg(_('very_first_try'), re)
-          vt.unmuteCommandResult()
-          $home.unsetCmdEvent('cmd_not_found')
           setTimeout(function () {
             vt.show_img()
             global_fire_done()
@@ -60,7 +59,7 @@ shelly = $home.newPeople('shell')
 $home.addPath(
   newRoom('western_forest', 'loc_forest.gif')
     .setEnterCallback(function () {
-      music.play('forest')
+      vt.playMusic('forest')
     })
 )
 $western_forest.newItem('western_forest_academy_direction', 'item_sign.png')
@@ -77,7 +76,7 @@ var pwddecl = $western_forest.newItem('western_forest_back_direction')
 // SPELL CASTING ACADEMY
 $western_forest.addPath(
   newRoom('spell_casting_academy', 'loc_academy.gif')
-    .setEnterCallback(function () { music.play('academy') })
+    .setEnterCallback(function () { vt.playMusic('academy') })
     .addPath(
       newRoom('academy_practice', 'loc_practiceroom.png', { writable: true }).addPath(
         newRoom('box', 'item_box.png', { writable: true })
@@ -124,7 +123,7 @@ function mv_sum (re) {
           $lessons.setLeaveCallback(function () {
             $academy_practice.destroy()
           })
-          music.play('warning', { loop: true })
+          vt.playMusic('warning', { loop: true })
           mesg(_('leave_academy'), re)
         }, 3000)
       })
@@ -160,7 +159,7 @@ man_sage = newRoom('mountain', 'loc_mountains.gif')
           },
           trueStart: function (re) {
             man.unsetCmdEvent('less_done')
-            music.play('yourduty', { loop: true })
+            vt.playMusic('yourduty', { loop: true })
           }
         })
     },
@@ -244,7 +243,7 @@ newRoom('tunnel', 'loc_tunnel.gif').addPath(
     newRoom('portal', 'item_portal.png')
       .setEnterCallback(function () {
         vt.playSound('portal')
-        music.play('chapter1')
+        vt.playMusic('chapter1')
       })
   )
 )

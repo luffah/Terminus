@@ -5,7 +5,7 @@ $portal.addPath(
   newRoom("townsquare", "loc_square.gif")
 );
 $townsquare.setEnterCallback(function(){
-  music.play('chapter2',{loop:true});
+  vt.playMusic('chapter2',{loop:true});
 });
 var mayor_txtidx=1;
 var mayor=$townsquare.newPeople('citizen1',"item_citizen1.png")

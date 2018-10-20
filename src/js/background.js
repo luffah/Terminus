@@ -21,7 +21,7 @@ Background.prototype = {
       width: this.w,
       height: this.h
     })
-    ctx = buf.getContext('2d')
+    let ctx = buf.getContext('2d')
     for (let i = 0; i < this.w; i = i + pxlsize) {
       for (let j = 0; j < this.h; j = j + pxlsize) {
         m = gradient(i, j, m, this.w, this.h)
@@ -66,16 +66,22 @@ var tmp={}
 tmp.bgcnt = 0
 tmp.colorrange=hex2rgbrange(['22b14c', '000000'])
 tmp.bginterval=function () {
+  if (vt.busy) {setTimeout(tmp.bginterval,500)}
+  else {
   _bg.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, gradient)
   _bg.draw(-tmp.bgcnt)
-  if (++tmp.bgcnt<8) { setTimeout(tmp.bginterval,100)}
+  if (++tmp.bgcnt<8) { setTimeout(tmp.bginterval,500)}
+  }
 }
 tmp.bgcnt2 = 0
 tmp.bginterval2=function () {
+  if (vt.busy) {setTimeout(tmp.bginterval,500)}
+  else {
   _bg.setRandomData(tmp.bgcnt2, 2 ** tmp.bgcnt2, tmp.colorrange, gradient)
-   if (++tmp.bgcnt<5) { setTimeout(tmp.bginterval2,100)}
+   if (++tmp.bgcnt<5) { setTimeout(tmp.bginterval2,500)}
+  }
 }
-setTimeout(tmp.bginterval,100)
+setTimeout(tmp.bginterval,0)
 setTimeout(tmp.bginterval,1000)
 
 function enter_room_effect () {

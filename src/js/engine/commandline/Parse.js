@@ -46,70 +46,58 @@ function _validArgs (cmd, args, ctx) {
   }
 }
 
-function commonprefix (array) {
-  // https://stackoverflow.com/questions/1916218/find-the-longest-common-starting-substring-in-a-set-of-strings/1917041#1917041
-  var A = array.concat().sort()
-
-  var a1 = A[0]; var a2 = A[A.length - 1]; var L = a1.length; var i = 0
-  while (i < L && a1.charAt(i) === a2.charAt(i)) i++
-  return a1.substring(0, i)
-}
-
 function _completeArgs (args, argidx, tocomplete, ctx, compl) { // return completion matches
-  var roomCurrent = tocomplete.substring(0, 1) == '~' ? $home : ctx.room
+  let roomCurrent = tocomplete.substring(0, 1) == '~' ? $home : ctx.room
   tocomplete = tocomplete.replace(/\*/g, '.*')
   // Iterate through each room
-  var roomNext
+  let roomNext
 
   var substrMatches = []
 
-  var cmd = args[0]
-  var syntax = [ARGT.cmdname].concat(_getCommandSyntax(cmd))
+  let argtype = argidx ? ctx.getCommand(args[0]).syntax[argidx-1][0] : 'cmdname'
 
-  if (_argType(syntax, argidx, ARGT.cmdname)) {
-    var cmds = _getUserCommands()
+  if (argtype == 'cmdname') {
+    var cmds = ctx.getUserCommands()
     //    tocomplete=args.shift();
-    idx = 0
-    for (var i = 0; i < cmds.length; i++) {
+    cmds.forEach((i) => {
       if (compl(cmds[i])) {
-        substrMatches.push(cmds[i] + ((cmds[i] == tocomplete) ? ' ' : ''))// space is here to say : if only one found, then go to next arg
+        substrMatches.push(cmds[i] + ((cmds[i] == tocomplete) ? ' ' : ''))// if uniq, then go to next arg
       }
-    }
+    })
     return substrMatches
-  }
-  if (_argType(syntax, argidx, ARGT.msgid)) {
-    //    if (cmd=='poe') {
+  } else if (argtype == 'msgid') {
     return Object.keys(dialog).filter(function (i) {
       return i.match('^' + tocomplete)
     }).slice(0, 20)
-  }
-  var path = tocomplete.split('/')
-  if (_argType(syntax, argidx, ARGT.dir) && path.length == 1 && path[0].length === 0) {
-    substrMatches.push('..')
-  }
-  for (var roomIdx = 0; roomIdx < path.length; roomIdx++) {
-    roomNext = roomCurrent.can_cd(path[roomIdx], ctx)
-    if (roomNext) {
-      roomCurrent = roomNext
-      if (roomIdx === path.length - 1) {
-        ret = [roomNext.name + '/' ]
-      }
-    } else {
-      // We've made it to the final room,
-      // so we should look for things to complete our journey
-      if (roomIdx == path.length - 1) {
-        // Compare to this room's children
-        if (_argType(syntax, argidx, ARGT.strictfile) || _argType(syntax, argidx, ARGT.file) || _argType(syntax, argidx, ARGT.dir)) {
-          for (child_num = 0; child_num < roomCurrent.children.length; child_num++) {
-            if (compl(roomCurrent.children[child_num].name, path[roomIdx])) {
-              substrMatches.push(roomCurrent.children[child_num].name + '/')
+  } else {
+    var path = tocomplete.split('/')
+    if (argtype == 'dir' && path.length == 1 && path[0].length === 0) {
+      substrMatches.push('..')
+    }
+    for (let i = 0; i < path.length; i++) {
+      roomNext = roomCurrent.can_cd(path[i], ctx)
+      if (roomNext) {
+        roomCurrent = roomNext
+        if (i === path.length - 1) {
+          ret.push(roomNext.name + '/')
+        }
+      } else {
+        // We've made it to the final room,
+        // so we should look for things to complete our journey
+        if (i == path.length - 1) {
+          // Compare to this room's children
+          if (['strictfile', 'file', 'dir'].indexOf(argtype) != -1) {
+            for (child_num = 0; child_num < roomCurrent.children.length; child_num++) {
+              if (compl(roomCurrent.children[child_num].name, path[i])) {
+                substrMatches.push(roomCurrent.children[child_num].name + '/')
+              }
             }
-          }
-          // Compare to this room's items
-          if (_argType(syntax, argidx, ARGT.strictfile) || _argType(syntax, argidx, ARGT.file)) {
-            for (itemIdx = 0; itemIdx < roomCurrent.items.length; itemIdx++) {
-              if (compl(roomCurrent.items[itemIdx].name, path[roomIdx])) {
-                substrMatches.push(roomCurrent.items[itemIdx].name)
+            // Compare to this room's items
+            if (['strictfile', 'file'].indexOf(argtype) != -1) {
+              for (itemIdx = 0; itemIdx < roomCurrent.items.length; itemIdx++) {
+                if (compl(roomCurrent.items[itemIdx].name, path[i])) {
+                  substrMatches.push(roomCurrent.items[itemIdx].name)
+                }
               }
             }
           }
@@ -119,27 +107,36 @@ function _completeArgs (args, argidx, tocomplete, ctx, compl) { // return comple
   }
   return substrMatches
 }
-// TODO: how to save filesystem structure
-function _parse_exec (vt, arrs, superuser) {
+
+function _parse_exec (vt, line) {
+  var commands = line.split(';')
+  let ret = new Seq()
+  for (let i = 0; i < commands.length; i++) {
+    ret.append(_parse_command(vt, commands[i]))
+  }
+  return ret
+}
+
+function _parse_command (vt, line) {
+  var arrs = line.split(' ').filter((s) => s.length)
   var ctx = vt.getContext()
   var cmd = arrs[0]; var r = ctx.room; var ret = ''
   arrs.push(arrs.pop().replace(/\/$/, ''))
-   console.log('_parse_exec',arrs,r);
+  console.log('parse and execute : ', arrs, r)
   var args = _expandArgs(arrs.slice(1), r)
   // find the program to launch
   var cmdexec = null
   if (cmd.match(/^(\.\/|\/)/)) { // find a local program
-         console.log('matched');
+    console.log('matched')
     var tr = r.traversee(cmd)
-    var item = tr.item; var r = tr.room
-    if (item && item.executable) {
+    if (tr.item && tr.item.ismod('x', ctx)) {
       cmdexec = function (args, ctx, vt) {
-        return item.exec(args, ctx, vt)
+        return tr.item.exec(args, ctx, vt)
       }
     }
   }
-  if (!cmdexec && _hasRightForCommand(cmd, ctx)) { // find a builtin program
-    cmdexec = _getCommandFunction(cmd)
+  if (!cmdexec && ctx.hasRightForCommand(cmd)) { // find a builtin program
+    cmdexec = global_commands_fu[cmd].fu
   }
   // test command eligibility when no existant cmd
   if (!cmdexec) {
@@ -156,9 +153,10 @@ function _parse_exec (vt, arrs, superuser) {
     }
     return ret
   }
+
   // asume there is a collection of password to unlock
   // if the collection is empty then the command is executed
-  var passwordcallback = function (passok, cmdpass) {
+  var passwordcallback = (passok, cmdpass) => {
     var ret = ''
     if (passok) {
       var text_to_display = cmdexec(args, ctx, vt)
@@ -176,17 +174,18 @@ function _parse_exec (vt, arrs, superuser) {
   // construct the list of passwords to give
   var cmdpass = []
   if (cmd in r.commands_lock) {
-    if (cmd.locked_inside) { // test option locked inside
+    if (cmd.locked_inside) {
       cmdpass.push(r.commands_lock[cmd])
     }
   }
+
   var tgt, cur
-  for (var i = 0; i < args.length; i++) {
+  for (let i = 0; i < args.length; i++) {
     tgt = r.traversee(args[i])
     cur = tgt.room
     // don't ask passwd for items OR if no room
     if (!cur || tgt.item) { continue }
-    if (i === 0 && !_hasRightForCommand(cmd, vt.context)) {
+    if (i === 0 && !ctx.hasRightForCommand(cmd)) {
       if (cmd in cur.cmd_text) {
         ret = cur.cmd_text[cmd]
       } else {
@@ -201,6 +200,7 @@ function _parse_exec (vt, arrs, superuser) {
       cmdpass.push(cur.commands_lock[cmd])
     }
   }
+
   // ask passwords and exec
   if (cmdpass.length > 0) {
     vt.ask_password(cmdpass, passwordcallback)

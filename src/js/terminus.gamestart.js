@@ -5,25 +5,54 @@
 // import { doTest } from 'tests'
 var state = new GameState() // GameState to initialize in game script
 var vt = new VTerm('term')
-vt.soundbank = snd
-var version = '0.2beta'
-window.addEventListener('load', function (event) {
-  var loadel
-  // prepare game loading
-  var hasSave = state.startCookie('terminus' + version)
-  var choices = [_('cookie_yes'), _('cookie_no')]
-  if (hasSave) choices.unshift(_('cookie_yes_load'))
-  console.log('Start game')
-
-  var start = function (vt, useCookies) {
-    var context
-    vt.muteSound()
-    if (pogencnt > 0) vt.show_msg(_('pogen_alert', pogencnt))
-    if ((useCookies - (hasSave ? 1 : 0)) <= 0) { // yes new game or load
-      state.setCookieDuration(7 * 24 * 60)// in minutes
-      if (useCookies == 0) {
-        context = state.loadContext()
+window.addEventListener('load', Game)
+function Game(){
+  var t = Game.prototype
+  t.version = '0.2beta'
+  if (typeof doTest === 'function') {
+    doTest(vt)
+    return
+  }
+  console.log('new game')
+  new Seq([t.demo_note,t.menu]).next()
+}
+Game.prototype = {
+  demo_note(next) {
+      vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
+        function (vt, choice) {
+          vt.clear()
+          next()
+        },
+        { direct: true, cls: 'mystory' }
+      )
+  },
+  menu(next) {
+      // prepare game loading
+      var t = Game.prototype
+      let hasSave = state.startCookie('terminus' + t.version)
+      let choices = [_('cookie_yes_load'),_('cookie_yes'), _('cookie_no')]
+      flash(0, 800)
+      // TODO : add checkbox for snd and textspeed
+      // TODO : opt object for setting vt option
+      if (d(state._get_pre('snd'),true)){
+        load_soundbank(vt)
       }
+      vt.epic_img_enter('titlescreen.gif', 'epicfromright', 2000, function (vt) {
+        vt.show_msg('version : ' + t.version)
+        //        vt.playMusic('title',{loop:true});
+        vt.ask_choose(_('cookie'), choices, t.start, {
+          direct: true,
+          disabled_choices: hasSave ? [] : [0]
+        })
+      })
+  },
+  start: function (vt, useCookies) {
+    console.log('Start game')
+    var context
+    if (pogencnt > 0) vt.show_msg(_('pogen_alert', pogencnt))
+    if (useCookies < 3) { // yes new game or load
+      state.setCookieDuration(7 * 24 * 60) // in minutes
+      if (useCookies < 2) context = state.loadContext()
     } else state.stopCookie() // do not use cookie
     vt.clear()
     if (context) {
@@ -37,10 +66,8 @@ window.addEventListener('load', function (event) {
       context = new Context({ 'sure': { groups: ['user'], address: 'DTC' } }, 'sure', $home, {})
       vt.setContext(context)
       vt.unmuteSound()
-      vt.muteCommandResult()
-      vt.context.addGroup('cat')
-      vt.context.addGroup('dir')
-      music.play('preload')
+      vt.playMusic('preload')
+      var loadel
       new Seq().then(function (next) {
         // vt.unmuteSound();
         vt.ask(_('prelude_text'), function (val) {
@@ -143,41 +170,14 @@ window.addEventListener('load', function (event) {
         .then(function (next) {
           vt.show_msg(_('gamestart_text'))
           vt.unmuteSound()
-          music.play('story')
+          vt.playMusic('story')
           vt.enable_input()
           vt.auto_shuffle_line(_('press_enter'), 0.9, 0.1, 8, 20, null, 50)
         })
         .next()
     }
   }
-  // vt.epic_img_enter('terminus_logo.png','epicfromright titlelogo',800,
-  if (typeof doTest === 'function') {
-    context = new Context({ 'sure': { groups: ['user'], address: 'DTC' } }, 'sure', $home, {})
-    vt.setContext(context)
-    vt.enable_input()
-    doTest(vt)
-  } else {
-    new Seq()
-      .then(function (next) {
-        vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
-          function (vt, choice) {
-            vt.clear()
-            next()
-          },
-          { direct: true, cls: 'mystory' }
-        )
-      })
-      .then(function (next) {
-        flash(0, 800)
-        vt.epic_img_enter('titlescreen.gif', 'epicfromright', 2000, function (vt) {
-          vt.show_msg('version : ' + version)
-          //        music.play('title',{loop:true});
-          vt.ask_choose(_('cookie'), choices, start, { direct: true })
-        })
-      })
-      .next()
-  }
-})
+}
 /**
  * API:
  * CREATE ROOMS, ITEMS and PEOPLES

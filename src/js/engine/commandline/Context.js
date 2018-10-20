@@ -6,7 +6,7 @@ function Context(users, currentuser, room, variables){
   this.variables=variables;
 }
 Context.prototype = {
-  stringify:function(){
+  stringify(){
     return JSON.stringify({
       u:this.currentuser,
       us:this.users,
@@ -14,14 +14,14 @@ Context.prototype = {
       v:this.variables
     });
   },
-  traversee:function(path){
+  traversee(path){
     return this.room.traversee(path, this)
   },
   addGroup(grp){
-    this.users[this.currentuser].groups.push(grp);
+    this.user.groups.push(grp);
   },
-  hasGroup(grp, ctx){
-    return this.users[this.currentuser].groups.indexOf(grp)>-1;
+  hasGroup(grp){
+    return this.user.groups.indexOf(grp)>-1;
   },
   setUserName(val){
     if (val.length) {
@@ -33,7 +33,29 @@ Context.prototype = {
     }
   },
   setUserAddress(val){
-    if (val.length) this.users[this.currentuser].address=val;
+    if (val.length) this.user.address=val;
+  },
+  getCommand(cmdname){
+    return global_commands_fu[cmdname]
+  },
+  hasRightForCommand(cmdname) {
+    cmd = this.getCommand(cmdname)
+    return ( cmd && cmd.ismod('x', this) ? (
+          this.user.isRoot || this.currentuser == cmd.owner || this.user.groups.indexOf(cmd.group) > -1
+          ) : false)
+  },
+  getUserCommands () {
+    var t=this
+    return Object.keys(global_commands_fu).filter((c) => t.hasRightForCommand(c))
+  },
+  getCommands () {
+    var ret = []; var cmd; var i; var r = this.room
+    for (i = 0; i < r.items.length; i++) {
+      if (r.items[i].executable) {
+        ret.push('./' + r.items[i].name)
+      }
+    }
+    return ret.concat(this.getUserCommands())
   }
 }
 Context.parse = function(str){

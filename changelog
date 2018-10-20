@@ -1,6 +1,11 @@
 Here are listed major changes with commit references.
 Noticable things between commits are separated by '--'.
 
+commit 86f935a2acbbb16e7e52ffec4a523019bb55ffd1
+Date:   Wed Oct 17 18:56:11 2018 +0200
+    Add support for file modes.
+    Fix grep for use with the new paradigm.
+
 commit 18b2ae0c1cc0e621ab805a29d04e2f20bb5a2a3e
 Date:   Fri Feb 23 12:32:31 2018 +0100
     Set an ignore case and fuzzy completion.

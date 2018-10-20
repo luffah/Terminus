@@ -67,7 +67,7 @@ _defCommand('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // ev
         ret.push(_stderr(_('cmd_mv_no_file', [args[i]])))
       }
     }
-    return cmd_done(vt, retfireables, new Seq(ret), 'mv', args)
+    return cmd_done(vt, retfireables, ret, 'mv', args)
     //      return _("cmd_mv_invalid");
   }
   return ret.join('\n')

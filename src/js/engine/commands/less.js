@@ -39,7 +39,7 @@ _defCommand('less', [ARGT.strictfile], function (args, ctx, vt) { // event arg -
         ret.push(_stderr(_('room_unreachable')))
       }
     }
-    return new Seq(ret)
+    return ret
   }
 })
 _aliasCommand('cat', 'less')

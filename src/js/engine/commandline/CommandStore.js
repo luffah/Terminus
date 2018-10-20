@@ -1,59 +1,35 @@
-var ARGT = { dir: [0], file: [1], opt: [2], instr: [3], var: [4], strictfile: [5], cmdname: [6], filename: [7], filenew: [8], dirnew: [9], pattern: [10], msgid: [12] }
+var ARGT = {}
+let l=['dir', 'file', 'opt', 'instr', 'var', 'strictfile', 'cmdname', 'filename', 'filenew', 'dirnew', 'pattern', 'msgid'] 
+l.forEach((i) => {ARGT[i] = [i]})
 
 function _stdout(a){return {stdout:a};}
 function _stderr(a){return {stderr:a};}
 
-function Command (name, syntax, fu) {
+function Command (name, syntax, fu, prop) {
   // syntax example : cmd dir [-d|-e] (undo|redo) -> [ARGT.dir(),ARGT.opt.concat(['-d','e']),ARGT.instr.concat['undo','redo']],
   // fu example : (args, ctx, vt) => console.log(args,ctx,vt)
   this.fu = fu
   this.syntax = syntax
-  this.group = name
-  this.preargs = []// default arguments (for aliases)
+  prop = prop || {}
+  this.group = prop.group || name
+  this.owner = prop.owner || name
+  this.executable = prop.executable || true
+  this.mod = new Modes(prop.mod || 'a+x')
+  this.preargs = prop.preargs || [] // default arguments (for aliases)
 }
+Command.prototype.ismod = File.prototype.ismod
+Command.prototype.chmod = File.prototype.chmod
 
 var global_commands_fu = {}
-function _hasRightForCommand (cmd, ctx) {
-  ctx = d(ctx, vt.context)
-  return (global_commands_fu[cmd] ? (ctx.user.isRoot || ctx.user.groups.indexOf(global_commands_fu[cmd].group) > -1) : false)
-}
 
-function _getUserCommands () {
-  return Object.keys(global_commands_fu).filter(_hasRightForCommand)
-}
-
-function _getCommands (ctx) {
-  var ret = []; var cmd; var i; var r = ctx.room
-  for (i = 0; i < r.items.length; i++) {
-    if (r.items[i].executable) {
-      ret.push('./' + r.items[i].name)
-    }
-  }
-  return ret.concat(_getUserCommands())
-}
-
-function _argType (syntax, argnum, argtyp) {
-  return argtyp[0] === syntax[argnum][0]
-}
-
-function _getCommandFunction (cmd) {
-  return global_commands_fu[cmd].fu
-}
-
-function _getCommandSyntax (cmd) {
-  return global_commands_fu[cmd].syntax
-}
-
-function _defCommand (cmd, syntax, fu) {
-  global_commands_fu[cmd] = new Command(cmd, syntax, fu)
+function _defCommand (cmd, syntax, fu, prop) {
+  global_commands_fu[cmd] = new Command(cmd, syntax, fu, prop)
 }
 
 function _setCommandGroup (group, commands) {
-  for (var cmd in global_commands_fu) {
+  for (let cmd in global_commands_fu) {
     if (commands.indexOf(cmd) > -1) {
       global_commands_fu[cmd].group = group
-    } else if (global_commands_fu[cmd].group == group) {
-      global_commands_fu[cmd].group = cmd
     }
   }
 }
@@ -61,7 +37,7 @@ function _setCommandGroup (group, commands) {
 function _aliasCommand (cmd, cmdb, args) {
   var c = (isStr(cmdb)) ? global_commands_fu[cmdb] : cmdb
   _defCommand(cmd, c.syntax, c.fu)
-  if (def(args)) {
+  if (args) {
     global_commands_fu[cmd].preargs = args
   }
 }
@@ -81,12 +57,11 @@ function cmd_done (vt, fireables, ret, cmd, args) {
   if (typeof ret === 'string') {
     ret = _stdout(ret)
   }
-  ret.cb = function () {
-    for (var i = 0; i < fireables.length; i++) {
-      fireables[i][0].fire_event(vt, cmd + '_done', args, fireables[i][1])
+  ret.cb = () => {
+    fireables.forEach((f) => {
+      f[0].fire_event(vt, cmd + '_done', args, f[1])
       global_fire_done()
-    }
+    })
   }
-  console.log(ret)
   return ret
 }

@@ -6,7 +6,7 @@ _defCommand('cd', [ARGT.dir], function (args, ctx, vt) {
     cwd.previous.previous = cwd
     enterRoom(cwd.previous, vt)
   } else if (args.length === 0) {
-    return _stderr(_('cmd_cd_no_args') + (_hasRightForCommand('pwd') ? ('\n' + _('cmd_cd_no_args_pwd')) : ''))
+    return _stderr(_('cmd_cd_no_args') + (ctx.hasRightForCommand('pwd') ? ('\n' + _('cmd_cd_no_args_pwd')) : ''))
   } else if (args[0] === '~') {
     $home.previous = cwd
     enterRoom($home, vt)

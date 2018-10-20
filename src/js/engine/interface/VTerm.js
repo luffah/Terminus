@@ -13,7 +13,8 @@ function VTerm (container_id, context) {
   t.stdout = ''
   t.stderr = ''
   t.returncode = 0
-  t.soundbank = {}
+  t.soundbank = null
+  t.musicbank = null
   t.imgs = {}
   t.statkey = {}
   t.history = []
@@ -62,7 +63,7 @@ function VTerm (container_id, context) {
 
   // buttons
   t.btn_clear = addBtn(k, 'key', '✗', 'Ctrl-U', function (e) {
-    t.set_line(''); t.show_suggestions(_getCommands(this.context).map(addspace))
+    t.set_line(''); t.show_suggestions(this.context.getCommands().map(addspace))
   })
   t.btn_tab = addBtn(k, 'key', '↹', 'Tab', function (e) { t.make_suggestions() })
   t.btn_enter = addBtn(k, 'key', '↵', 'Enter', function (e) { t.enterKey() })
@@ -275,9 +276,7 @@ VTerm.prototype = union(Waiter.prototype, {
       }
       //
       var el = d(opt.el, t.monitor)
-      var dependant = d(opt.dependant, true)
-      var safe = d(opt.safe, false)
-      var direct = d(opt.direct, false)
+      var direct = (t.charduration == 0) || opt.direct
       var cls = d(opt.cls, '')
       t.ghostel = addEl(t.ghost_monitor, 'p')
       t.current_msg = addEl(el, 'p', 'msg' + ' ' + cls)
@@ -301,7 +300,7 @@ VTerm.prototype = union(Waiter.prototype, {
           t.busy = false
           t.scrl()
         } else { // progressive
-          t._show_chars(t.msg_idx, t.current_msg, txttab, dependant, safe, cb, txt, 'char', 1, opt)
+          t._show_chars(t.msg_idx, t.current_msg, txttab, opt.dependant, opt.safe, cb, txt, 'char', 1, opt)
         }
       }
     }
@@ -336,10 +335,10 @@ VTerm.prototype = union(Waiter.prototype, {
       if (tocomplete && idx > 0) { // at least 1 arg
         match = _completeArgs(args, idx, tocomplete, t.context, trymatch)
       } else if (args[0].length > 0) {
-        if (_hasRightForCommand(args[0], t.context)) { // propose argument
+        if (t.context.hasRightForCommand(args[0])) { // propose argument
           match = _completeArgs(args, idx, tocomplete, t.context, trymatch)
         } else { // propose command completion
-          var cmds = _getCommands(t.context)
+          var cmds = t.context.getCommands()
           idx = 0
           for (var i = 0; i < cmds.length; i++) {
             console.log(cmds[i], tocomplete)
@@ -350,9 +349,9 @@ VTerm.prototype = union(Waiter.prototype, {
           }
         }
       } else { // propose commands
-        console.log('this case', _getCommands(t.context))
+        console.log('this case', t.context.getCommands())
         tocomplete = ''
-        match = _getCommands(t.context).map(addspace)
+        match = t.context.getCommands().map(addspace)
       }
       console.log(match)
       // find solutions
@@ -441,35 +440,31 @@ VTerm.prototype = union(Waiter.prototype, {
     //
     var l = t.get_line().replace(/\s+$/, '')
     if (l.length > 0) {
-      var pr = t.input
       var mon = t.monitor
       t.monitor = addEl(mon, 'div', 'screen')
+
       t.histindex = 0
-      t._show_previous_prompt(pr.value)
-      t.history.push(pr.value)
-      var args = l.split(' ')
-      var echo = _parse_exec(t, args)
-      if (def(echo)) {
-        if (echo instanceof Seq) {
+      t._show_previous_prompt(t.input.value)
+      t.history.push(t.input.value)
+
+      var echo = _parse_exec(t, l)
+      if (echo) {
+        if (t.cmdoutput) {
           var supercb = []
           for (var i = 0; i < echo.length(); i++) {
-            supercb.push(function () {
+            supercb.push(() => {
+              console.log('pass')
               t.show_img({ index: echo.getIdx() })
               t.show_msg(echo.next(), { cb: supercb.shift() })
             })
           }
           supercb.shift()()
-        } else {
-          t.show_img()
-          if (t.cmdoutput) {
-            t.show_msg(echo)
-          }
         }
         t.set_line('')
         t.hide_suggestions()
-        // t.show_suggestions(_getCommands(t.context).map(addspace));
-        t.monitor = mon
       }
+
+      t.monitor = mon
     }
   },
   /*****************/
@@ -973,8 +968,13 @@ VTerm.prototype = union(Waiter.prototype, {
     this.mute = false
   },
   playSound: function (key) {
-    if (!this.mute) {
+    if (!this.mute && this.soundbank) {
       this.soundbank.play(key)
+    }
+  },
+  playMusic: function (key) {
+    if (!this.mute && this.musicbank) {
+      this.musicbank.play(key)
     }
   },
 
@@ -998,7 +998,7 @@ VTerm.prototype = union(Waiter.prototype, {
     if (imgs && imgs.length > 0) {
       let c = addEl(t.monitor, 'div', 'img-container')
         while (im = imgs.shift()) {
-          im.render(c,() = {
+          im.render(c,() => {
             t.scrl(1000)
           }
           )
