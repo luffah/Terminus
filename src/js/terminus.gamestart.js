@@ -9,6 +9,9 @@ window.addEventListener('load', Game)
 function Game(){
   var t = Game.prototype
   t.version = '0.2beta'
+  newRoom('home', undefined, {writable: true })
+  loadLevel1()
+  loadLevel2()
   if (typeof doTest === 'function') {
     doTest(vt)
     return

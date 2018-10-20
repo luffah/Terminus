@@ -1,6 +1,7 @@
 
 //---------------LEVEL 2---------------------
 //TOWN SQUARE
+function loadLevel2(){
 $portal.addPath(
   newRoom("townsquare", "loc_square.gif")
 );
@@ -398,4 +399,4 @@ $morekernel.newItem('bigfile', null, {povars: ['T']}).setCmd('grep',(args)=>{
 //PARADISE (end game screen)
 newRoom("paradise", "loc_theend.gif")
   .setCmd("ls", _('room_paradise_ls'));
-
+}

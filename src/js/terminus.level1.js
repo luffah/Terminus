@@ -3,8 +3,8 @@
 // mkdir('/home/$USER',)
 // mkfile('~/shell')
 // mkdir('~/western_forest')
-newRoom('home', undefined, {writable: true })
 
+function loadLevel1(){
 $home.setEnterCallback(function () {
   vt.playMusic('forest')
 })
@@ -258,5 +258,5 @@ var rat = $tunnel
       rat.setTextIdx(rat_txtidx++)
     }
   })
-
+}
 // ---------------END LEVEL 1-----------------

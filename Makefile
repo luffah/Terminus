@@ -25,7 +25,7 @@ _ensure_dir_build:
 _js_transpile: _ensure_dir_build
 	${NODEJS} ./node_modules/.bin/babel \
 		-o _build/all.${_LANG}.js --presets env \
-		`grep '<script ' ./src/index.html | egrep -v 'tests/|<!--|-->' | sed 's/.*src="\([^"]*.js\)".*/.\/src\/\1/;s/${LANG_REGEX}/\1${_LANG}\2/'`
+		`grep '<script ' ./src/index.html | grep 'src=' |  egrep -v 'tests/|<!--|-->' | sed 's/.*src="\([^"]*.js\)".*/.\/src\/\1/;s/${LANG_REGEX}/\1${_LANG}\2/'`
 
 _js: _js_transpile
 	${NODEJS} ./node_modules/.bin/uglifyjs \
@@ -37,9 +37,13 @@ js: .npm po  ## Compress javascript files
 		_LANG=$${_LANG} make _js; \
 	done
 
-po: ## Generate javascript file from pofile
+_check_polib:
+	${PYTHON}  -c "import polib" || pip install polib
+
+_ensure_js_build_dir:
 	mkdir -p ./src/js/_build
-	which pip && ( pip search polib || pip install polib)
+
+po: _ensure_js_build_dir _check_polib ## Generate javascript files from pofiles
 	find ./src/lang -name '*.po' | sed 's/^.*\.\([A-Za-z-]\+\)\.po/\1/' \
 		| while read i; do ${PYTHON} ./buildsystem/po2json.py $${i}; done;
 
@@ -56,6 +60,12 @@ assets: ## Place images and sounds in webroot dir
 	cp src/snd/*.wav webroot/snd/;
 
 # EXTRA #
+pot: _ensure_js_build_dir _check_polib ## Generate a pot file from a pofile [usage: _LANG=xx make pot]
+	${PYTHON} ./buildsystem/potgenfromlang.py $(or  ${_LANG}, fr)
+
+translatorguide:  ## A little guide for new translators
+	less src/lang/README
+
 to_dokuwiki: ## Convert markdown files in wiki_md to wiki_dokuwiki
 	find ./wiki_md -name '*.md' | \
 	    while read i; do \

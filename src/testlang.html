@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+  <head id='head'>
+  <meta charset="utf-8" />
+  <script>
+  var __xhr = new XMLHttpRequest()
+  __xhr.open("GET","index.html")
+  __xhr.setRequestHeader('Content-type',
+    'application/x-www-form-urlencoded; charset=utf-8;')
+
+  __xhr.onreadystatechange = function(){
+    if (__xhr.readyState == 4 && __xhr.status == 200) {
+      var content = 
+      document.open()
+      document.write(__xhr.responseText)
+      document.close()
+      var __lang=window.location.search.substr(1)
+      if (__lang){
+        let node = document.createElement('script')
+        node.type = "text/javascript"
+        node.setAttribute('src', './js/_build/terminus.dialog.'+__lang+'.js')
+        document.body.appendChild(node)
+      }
+    }
+  }
+  __xhr.send()
+   </script>
+  </head>
+</html>
