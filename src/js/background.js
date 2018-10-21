@@ -1,19 +1,16 @@
-function Background () {
-  this.ckSize()
+function Background (w, h, x, y) {
   this.canvas = addAttrs(dom.El('canvas'), {
-    style: 'position:fixed;top:0;left:0;z-index:-1',
-    width: this.w,
-    height: this.h
+    style: 'position:fixed;top:'+y+';left:'+x+';z-index:-2',
+    width: w,
+    height: h
   })
+  this.w = w
+  this.h = h
   this.ctx = this.canvas.getContext('2d')
   this.data = {}
   dom.body.appendChild(this.canvas)
 }
 Background.prototype = {
-  ckSize: function () {
-    this.w = window.innerWidth
-    this.h = window.innerHeight
-  },
   setRandomData: function (idx, pxlsize, c, gradient) {
     let r; let g; let b; let m = [1, 1, 1]
     let buf = addAttrs(dom.El('canvas'),{
@@ -54,50 +51,70 @@ function hex2rgbrange (r) {
 }
 dom.Id('term').style = 'background:rgba(0,0,0,0.9)'
 
-var _bg = new Background()
+var _bgl = new Background(window.innerWidth/2,window.innerHeight,0,0)
+var _bg = new Background(window.innerWidth/2,window.innerHeight,'50%',0)
 function gradient (i, j, m, w, h) {
   var mt = clone(m)
-  m[0] = (1 + (i / w)) / mt[2]
-  m[1] = (1 + (i / w)) / mt[0]
-  m[2] = (1 + (i / w)) / mt[1]
+  m[0] = (1 + i / w) / mt[2]
+  m[1] = (1 + i / w) / mt[0]
+  m[2] = (1 + i / w) / mt[1]
   return m
 }
+
+function igradient (i, j, m, w, h) {
+  var mt = clone(m)
+  m[0] = (2 - i / w) / mt[2]
+  m[1] = (2 - i / w) / mt[0]
+  m[2] = (2 - i / w) / mt[1]
+  return m
+}
+
 var tmp={}
 tmp.bgcnt = 0
 tmp.colorrange=hex2rgbrange(['22b14c', '000000'])
-tmp.bginterval=function () {
-  if (vt.busy) {setTimeout(tmp.bginterval,500)}
+tmp.loadinitbg=function () {
+  if (vt.busy) {setTimeout(tmp.loadinitbg,1000)}
   else {
-  _bg.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, gradient)
+  _bgl.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, gradient)
+  _bg.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, igradient)
   _bg.draw(-tmp.bgcnt)
-  if (++tmp.bgcnt<8) { setTimeout(tmp.bginterval,500)}
+  _bgl.draw(-tmp.bgcnt)
+  if (++tmp.bgcnt<3) { setTimeout(tmp.loadinitbg,600)}
   }
 }
-tmp.bgcnt2 = 0
-tmp.bginterval2=function () {
-  if (vt.busy) {setTimeout(tmp.bginterval,500)}
+tmp.bgcnt2 = 1
+tmp.loadgamebg=function () {
+  if (vt.busy) {setTimeout(tmp.loadgamebg,1000)}
   else {
-  _bg.setRandomData(tmp.bgcnt2, 2 ** tmp.bgcnt2, tmp.colorrange, gradient)
-   if (++tmp.bgcnt<5) { setTimeout(tmp.bginterval2,500)}
+  _bg.setRandomData(tmp.bgcnt2, 2 ** (tmp.bgcnt2+3), tmp.colorrange, gradient)
+   if (++tmp.bgcnt2<5) { setTimeout(tmp.loadgamebg,1000)}
   }
 }
-setTimeout(tmp.bginterval,0)
-setTimeout(tmp.bginterval,1000)
+
+function loadBackgroud(step){
+  tmp['load'+step+'bg']()
+}
 
 function enter_room_effect () {
   let seq = new Seq()
-  for (let i = 2; i <= 5; i++) {
+  for (let i = 1; i < 3; i++) {
     seq.then(function (next) {
       _bg.draw(i)
-      setTimeout(next, 60)
+      setTimeout(next, 200)
     })
   }
   seq.then(function (next) {
-    _bg.draw(2)
+    _bg.draw(0)
   })
   seq.next()
 }
+
 var bgcnt = 0
+var bglcnt = 0
 function enter_effect () {
-  _bg.draw(-(bgcnt++ % 8))
+  if ((bgcnt + bglcnt) % 3){
+    _bgl.draw(-(bglcnt++ % 3))
+  } else {
+    _bg.draw(-(bgcnt++ % 3))
+  }
 }

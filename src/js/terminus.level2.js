@@ -83,7 +83,7 @@ var backpack=$market.newItem("backpack","item_backpack.png")
         unzipped.push(ct.room.newItem('mkdir_cost'));
         backpack.setPoDelta([]);
         backpack.unsetCmdEvent('unzip');
-        vt.show_msg(_('unzipped',[_('item_backpack'), unzipped.join(", ")]),{dependant:false});
+        vt.show_msg(_('unzipped',[_('item_backpack'), unzipped.join(", ")]),{unbreakable:true});
       });
     }
   })

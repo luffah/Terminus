@@ -7,7 +7,7 @@ function VTerm (container_id, context) {
   var t = this
   /* non dom properties */
   t.context = context
-  t.msg_idx = 0
+  t.msgidx = 0
   t.histindex = 0
   t.stdin = ''
   t.stdout = ''
@@ -75,36 +75,39 @@ function VTerm (container_id, context) {
 VTerm.prototype = union(Waiter.prototype, {
   SAFE_BROKEN_TEXT: true,
   /* Getter and setter */
-  setContext: function(ctx) { this.context = ctx },
-  getContext: function() { return this.context },
-  muteCommandResult: function() { this.cmdoutput = false },
-  unmuteCommandResult: function() { this.cmdoutput = true },
-  get_line: function() { return this.input.value.replace(/\s+/, ' ') },
-  set_line: function(val) { this.input.value = val },
-  get_cursor_pos: function() { return this.input.selectionStart },
-  set_cursor_pos: function(c) { this.input.selectionStart = c },
+  setContext: function (ctx) { this.context = ctx },
+  getContext: function () { return this.context },
+  muteCommandResult: function () { this.cmdoutput = false },
+  unmuteCommandResult: function () { this.cmdoutput = true },
+  get_line: function () { return this.input.value.replace(/\s+/, ' ') },
+  set_line: function (val) { this.input.value = val },
+  get_cursor_pos: function () { return this.input.selectionStart },
+  set_cursor_pos: function (c) { this.input.selectionStart = c },
   /* UI part */
-  clear: function() { this.monitor.innerHTML = '' },
+  clear: function () {
+    this.monitor.innerHTML = ''
+    setTimeout(() => window.scroll(0, 0), this.timeout.scroll)
+  },
   // Scroll the window to the last element (bottom of page)
   // TODO: replace with a function which focus on 'active' element
   scrl: function (timeout, retry) {
     var t = this
     var m = t.monitor
-    retry = d(retry, 2)
-    var misspos = m.parentNode.offsetTop + m.offsetTop + m.offsetHeight + t.inputdiv.offsetHeight - window.pageYOffset - window.innerHeight
-    if (misspos > 0) {
-      if (!t.scrl_lock) {
-        if (!def(timeout)) {
-          window.scrollBy(0, misspos)
-          return true
+    // let hm = m.parentNode.offsetTop + m.offsetTop + m.offsetHeight
+    let poffset = window.pageYOffset + window.innerHeight
+    // let hi = t.inputdiv.offsetHeight
+    // let y =  hm + hi - poffset
+    let deltay = t.inputdiv.offsetParent.offsetTop + t.inputdiv.offsetHeight - poffset
+    if (deltay > 0) {
+      if (t.scrl_lock || def(timeout)) {
+        retry = d(retry, 2)
+        timeout = d(timeout, t.timeout.scrl)
+        retry--
+        if (retry > 0) {
+          setTimeout(() => t.scrl(0, retry), timeout)
         }
-      }
-      timeout = d(timeout, 100)
-      retry--
-      if (retry > 0) {
-        setTimeout(function () {
-          t.scrl(0, retry)
-        }, timeout)
+      } else {
+        window.scrollBy(0, deltay)
       }
     }
   },
@@ -137,67 +140,72 @@ VTerm.prototype = union(Waiter.prototype, {
   _show_previous_prompt: function (txt) {
     addEl(this.monitor, 'p', 'input').innerText = txt
   },
-  _show_chars: function (msgidx, msg, txttab, dependant, safe, cb, txt, curvoice, cnt, opt) {
-    l = txttab.shift()
+  _show_chars: function (msgidx, msg, txttab, cb, txt, curvoice, opt) {
     var t = this
-    t.busy = true
-    if (def(l)) {
-      var timeout
-      if (l == '<') {
-        var tag = '<'
-        while (def(l) && (l != '>')) {
-          l = txttab.shift()
-          tag += l
-        }
-        var tagtype = tag.replace(/<([^ ]*).*>/, '$1')
-        if (tagtype == 'img') {
-          msg.innerHTML += tag
-          t.playSound('tag')
-          timeout = t.charfactor[l]
-        } else if (tagtype == 'voice') {
-          curvoice = tag.replace(/<([^ ]*)[ ]*([^ ]*)\/>/, '$2')
-          //          console.log('change voice to '+curvoice);
-        } else {
-          var tagend = ''
-          l = txttab.shift()
+    let direct = (t.charduration == 0) || opt.direct
+    if (direct) {
+      msg.innerHTML = txt
+      t.scrl()
+      if (cb) { cb() }
+      if (opt.cb) { opt.cb() }
+      t.busy = false
+    } else {
+      let l = txttab.shift()
+      t.busy = true
+      if (l) {
+        let timeout = 0
+        if (l == '<') {
+          /* parse tag */
+          var tag = '<'
           while (def(l) && (l != '>')) {
-            tagend += l
             l = txttab.shift()
+            tag += l
           }
-          msg.innerHTML += tag + tagend
-        }
-        t.scrl()
-      } else if (t.charfactor.hasOwnProperty(l)) {
-        msg.innerHTML += (t.charhtml[l] ? t.charhtml[l] : l)
-        t.playSound(l)
-        timeout = t.charfactor[l]
-        t.scrl()
-      } else {
-        msg.innerHTML += l
-        if (t.charfactor.char > 0 && cnt % 3 == 1) {
-          t.playSound(curvoice)
-        }
-        timeout = t.charfactor.char
-      }
-      if (!dependant || t.msg_idx == msgidx) {
-        setTimeout(function () {
-          t._show_chars(msgidx, msg, txttab, dependant, safe, cb, txt, curvoice, ++cnt, opt)
-        }, timeout * t.charduration)
-      } else {
-        if (t.SAFE_BROKEN_TEXT || safe) {
-          msg.innerHTML = txt
+          var tagtype = tag.replace(/<([^ ]*).*>/, '$1')
+          if (tagtype == 'img') {
+            msg.innerHTML += tag
+            t.playSound('tag')
+            timeout = t.charfactor[l]
+          } else if (tagtype == 'voice') {
+            curvoice = tag.replace(/<([^ ]*)[ ]*([^ ]*)\/>/, '$2')
+          } else {
+            var tagend = ''
+            l = txttab.shift()
+            while (l && (l != '>')) {
+              tagend += l
+              l = txttab.shift()
+            }
+            msg.innerHTML += tag + tagend
+          }
+          /* end parse html */
           t.scrl()
+        } else {
+          msg.innerHTML += (t.charhtml[l] ? t.charhtml[l] : l)
+          let f = t.charfactor[l]
+          t.playSound(def(f) ? l : curvoice)
+          timeout = def(f) ? f : (t.charfactor[curvoice] || t.charfactor.char)
+          if (l == '\n') t.scrl()
         }
-        t.playSound('brokentext')
+        if (opt.unbreakable || t.msgidx == msgidx) {
+          setTimeout(function () {
+            t._show_chars(msgidx, msg, txttab, cb, txt, curvoice, opt)
+          }, timeout * t.charduration)
+        } else if (t.SAFE_BROKEN_TEXT || opt.safe) {
+          t.playSound('brokentext')
+          if (opt.brokencb) {
+            opt.brokencb()
+          } else {
+            if (cb) { cb() }
+            if (opt.cb) { opt.cb() }
+          }
+          t.busy = false
+        }
+      } else {
+        t.playSound('endoftext')
         if (cb) { cb() }
         if (opt.cb) { opt.cb() }
         t.busy = false
       }
-    } else {
-      t.playSound('endoftext')
-      if (cb) { cb() }
-      if (opt.cb) { opt.cb() }
-      t.busy = false
     }
   },
   show_loading_element_in_msg: function (list, opt) {
@@ -216,9 +224,9 @@ VTerm.prototype = union(Waiter.prototype, {
     var finalvalue = opt.finalvalue
     var cb = opt.callback
     var i = 0
-    var id = t.msg_idx
+    var id = t.msgidx
     var loop = setInterval(function () {
-      if (t.msg_idx != id) {
+      if (t.msgidx != id) {
         clearInterval(loop)
         if (finalvalue) {
           innerEl.innerHTML = finalvalue
@@ -234,8 +242,8 @@ VTerm.prototype = union(Waiter.prototype, {
     }, period)
     if (duration) {
       setTimeout(function () {
-        if (id == t.msg_idx) {
-          t.msg_idx++
+        if (id == t.msgidx) {
+          t.msgidx++
         }
       }, duration)
     }
@@ -256,6 +264,8 @@ VTerm.prototype = union(Waiter.prototype, {
       t.busy = true; t.loop_waiting()
       if (typeof mesg === 'string') {
         mesg = _stdout(mesg)
+      } else if (typeof mesg == 'number'){
+        mesg = _stdout(String(mesg))
       }
       console.log(mesg)
       // FIXME
@@ -276,7 +286,6 @@ VTerm.prototype = union(Waiter.prototype, {
       }
       //
       var el = d(opt.el, t.monitor)
-      var direct = (t.charduration == 0) || opt.direct
       var cls = d(opt.cls, '')
       t.ghostel = addEl(t.ghost_monitor, 'p')
       t.current_msg = addEl(el, 'p', 'msg' + ' ' + cls)
@@ -287,21 +296,13 @@ VTerm.prototype = union(Waiter.prototype, {
         if (opt.cb) { opt.cb() }
         t.busy = false
       } else {
-        txt = msg.toString()// ensure in case we have an object
+        let txt = msg.toString()// in case we have an object
         txt = txt.replace(/(#[^#]+#)/g, '<i class="hashtag"> $1 </i>')
-        txttab = txt.split('')
-        t.msg_idx++
+        let txttab = txt.split('')
         txt = txt.replace(/\t/g, '&nbsp;&nbsp;').replace(/\n/g, '<br>').replace(/ /g, '&nbsp;')
+        t.msgidx++
         t.ghostel.innerHTML = txt.replace(/<div class='inmsg'.*><\/div>/, '').replace(/(<br>)/g, '<&nbsp;><br>').replace(/[«»]/g, '"').replace(/(\.\.\.)/g, '<br>')
-        if (direct) {
-          t.current_msg.innerHTML = txt
-          if (cb) { cb() }
-          if (opt.cb) { opt.cb() }
-          t.busy = false
-          t.scrl()
-        } else { // progressive
-          t._show_chars(t.msg_idx, t.current_msg, txttab, opt.dependant, opt.safe, cb, txt, 'char', 1, opt)
-        }
+        t._show_chars(t.msgidx, t.current_msg, txttab, cb, txt, 'char', opt)
       }
     }
     return this
@@ -431,17 +432,22 @@ VTerm.prototype = union(Waiter.prototype, {
   argsValid: function (args) {
     return _validArgs(args.shift(), args, this.context)
   },
+  enter_effect: function () {
+    if (this.context.room.enter_effect) {
+      this.context.room.enter_effect(this)
+    } else if (typeof enter_effect === 'function') {
+      enter_effect()
+    }
+  },
   enter: function () {
-    // Enter -> exec command
+    // Enter -> parse and execute command
     var t = this
     t.playSound('enter')
-    // TODO : put this in a clean way // depends on background.js
-    enter_effect()
-    //
+    t.enter_effect()
     var l = t.get_line().replace(/\s+$/, '')
     if (l.length > 0) {
-      var mon = t.monitor
-      t.monitor = addEl(mon, 'div', 'screen')
+      let m = t.monitor
+      t.monitor = addEl(m, 'div', 'screen')
 
       t.histindex = 0
       t._show_previous_prompt(t.input.value)
@@ -464,7 +470,7 @@ VTerm.prototype = union(Waiter.prototype, {
         t.hide_suggestions()
       }
 
-      t.monitor = mon
+      t.monitor = m
     }
   },
   /*****************/
@@ -488,10 +494,11 @@ VTerm.prototype = union(Waiter.prototype, {
     var pr = t.input
 
     dom.body.onkeydown = function (e) {
+      vt.busy = true
       e = e || window.event// Get event
-      if (def(t.battle_scene)) {
-        t.battle_scene.onkeydown(e)
-      } else if (def(t.choose_input) || def(t.password_input)) {
+      if (def(t.overapp)) {
+        t.overapp.onkeydown(e)
+      } else if (t.answer_input || t.choose_input || t.password_input) {
         e.preventDefault()
       } else {
         var k = e.key
@@ -509,11 +516,14 @@ VTerm.prototype = union(Waiter.prototype, {
       }
     }
     dom.body.onkeyup = function (e) {
+      vt.busy = false
       e = e || window.event// Get event
-      if (def(t.battle_scene)) {
-        t.battle_scene.onkeyup(e)
+      if (def(t.overapp)) {
+        t.overapp.onkeyup(e)
       } else if (def(t.choose_input)) {
         t._choose_key(e.key, e)
+      } else if (def(t.answer_input)) {
+        t._answer_key(e.key, e)
       } else if (def(t.password_input)) {
         t._password_key(e.key, e)
       } else {
@@ -574,7 +584,7 @@ VTerm.prototype = union(Waiter.prototype, {
         if (k === 'c') { // CTRL+C - clear
           overide(e)
           t._show_previous_prompt(t.get_line() + '^C')
-          t.msg_idx++
+          t.msgidx++
           t.set_line('')
         } else if (k === 'u') { // CTRL+U - clear line
           overide(e)
@@ -683,7 +693,7 @@ VTerm.prototype = union(Waiter.prototype, {
       curidx++
     }
     var choicebox = addEl(t.monitor, 'div', 'choicebox')
-    t.show_msg(question, { direct: direct, el: choicebox, dependant: false })
+    t.show_msg(question, { direct: direct, el: choicebox})
 
     t.set_line('')
     t.choose_input = addEl(choicebox, 'fieldset', 'choices')
@@ -702,7 +712,7 @@ VTerm.prototype = union(Waiter.prototype, {
     t.enterKey = function (e) {
       t.playSound('choiceselect')
       t.choose_input.value = choices[curidx]
-      t.show_msg(choices[curidx], { el: choicebox, dependant: false })
+      t.show_msg(choices[curidx], { el: choicebox, unbreakable: true })
       choicebox.removeChild(t.choose_input)
       t.choose_input = undefined
       if (reenable) { t.enable_input() }
@@ -765,29 +775,26 @@ VTerm.prototype = union(Waiter.prototype, {
     //    choices_btn[0].focus();
     t.scrl()
   },
-
-  /** Question prompt **/
-  battlescene: function (fu, cb) {
+  /** extra programs **/
+  exec: function (fu, cb) {
     var t = this
     t.set_line('')
-    var scont = t.monitor
-    //    var scont = document.body;
-    var cont = addEl(scont, 'div', 'battlescene-container')
-    t.battle_scene = addEl(cont, 'div', 'battlescene')
+    var m = t.monitor
+    //    var m = document.body;
+    var cont = addEl(m, 'div', 'app-container')
+    t.overapp = addEl(cont, 'div', 'app')
     t.disable_input()
-    var end_battle = function () {
-      t.battle_scene.setAttribute('disabled', true)
-      scont.removeChild(cont)
-      t.battle_scene = undefined
+    let endapp = () => {
+      t.overapp.setAttribute('disabled', true)
+      m.removeChild(cont)
+      t.overapp = undefined
       if (cb) cb()
     }
     /// 
     t.enterKey = function () { console.log('Enter Pressed but Battle Mode') }
-    return fu(vt, t.battle_scene, end_battle)
+    return fu(vt, t.overapp, endapp)
   },
   /** Question prompt **/
-  /** TODO : add generic confirmation button **/
-  /** TODO : add live action function option **/
   ask: function (question, callback, args) {
     var t = this
     t.set_line('')
@@ -832,7 +839,7 @@ VTerm.prototype = union(Waiter.prototype, {
           t.answer_input.placeholder = args.placeholder
         }
         t.answer_input.focus()
-
+        t.scrl()
         t.answer_input.onkeyup = function (e) {
           if (e.key === 'Enter') {
             if (e.ctrlKey || !args.multiline) { // ENTER
@@ -861,8 +868,7 @@ VTerm.prototype = union(Waiter.prototype, {
         }, intimeout + outtimeout)
       }
     },
-    el: choicebox,
-    dependant: false })
+    el: choicebox})
   },
   /** Password prompt **/
   _begin_password: function () {
@@ -929,7 +935,7 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   auto_shuffle_line: function (msg, fromcomplexicity, tocomplexicity, stepcomplexity, period, duration, incstep) {
     var t = this
-    var id = t.msg_idx
+    var idx = t.msgidx
     msg = msg || t.input.value
     if (t.input_operation_interval) {
       clearInterval(t.input_operation_interval)
@@ -940,7 +946,7 @@ VTerm.prototype = union(Waiter.prototype, {
     var limit = tocomplexicity * sens
     var step = (tocomplexicity - fromcomplexicity) / stepcomplexity
     t.input_operation_interval = setInterval(function () {
-      if (t.msg_idx != id) {
+      if (t.msgidx != idx) {
         clearInterval(t.input_operation_interval)
         t.set_line('')
       } else {
@@ -953,12 +959,13 @@ VTerm.prototype = union(Waiter.prototype, {
     }, period)
     if (duration) {
       setTimeout(function () {
-        if (id == t.msg_idx) {
-          t.msg_idx++
+        if (idx == t.msgidx) {
+          t.msgidx++
         }
       }, duration)
     }
   },
+
   // --------//
   // SOUND  //
   muteSound: function () {
@@ -997,38 +1004,22 @@ VTerm.prototype = union(Waiter.prototype, {
     var imgs = t.imgs[idx]
     if (imgs && imgs.length > 0) {
       let c = addEl(t.monitor, 'div', 'img-container')
-        while (im = imgs.shift()) {
-          im.render(c,() => {
-            t.scrl(1000)
-          }
-          )
+      while (im = imgs.shift()) {
+        im.render(c, () => {
+          t.scrl(1000)
         }
+        )
+      }
     }
   },
   rmCurrentImg: function (timeout) {
     var t = this
-      setTimeout(function () {
-        var y = t.current_msg.getElementsByClassName('img-container')
-          var i
-          for (i = 0; i < y.length; i++) {
-            msg.removeChild(y[i])
-          }
-      }, timeout)
-  },
-  epic_img_enter: function (i, clss, scrl_timeout, callback) {
-    var t = this
-      t.scrl_lock = true
-      var c = addEl(t.monitor, 'div', 'img-container ' + clss)
-      pic = new Pic(i)
-      pic.render(c, () => {
-        c.className += ' loaded'
-          setTimeout( () => {
-            t.scrl_lock = false
-              t.scrl()
-              if (callback) {
-                callback(t)
-              }
-          }, scrl_timeout)
-      })
+    setTimeout(function () {
+      var y = t.current_msg.getElementsByClassName('img-container')
+      var i
+      for (i = 0; i < y.length; i++) {
+        msg.removeChild(y[i])
+      }
+    }, timeout)
   }
 })

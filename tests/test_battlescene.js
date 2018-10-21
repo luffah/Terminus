@@ -300,7 +300,7 @@ var minigame_intro={
 };
 add_test(function(next){
   vt.wait_free(function(vt){
-    vt.battlescene(minigame_intro.start);
+    vt.exec(minigame_intro.start);
   });
   vt.loop_waiting();
 });

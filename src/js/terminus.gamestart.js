@@ -6,10 +6,11 @@
 var state = new GameState() // GameState to initialize in game script
 var vt = new VTerm('term')
 window.addEventListener('load', Game)
-function Game(){
+function Game () {
   var t = Game.prototype
   t.version = '0.2beta'
-  newRoom('home', undefined, {writable: true })
+  loadBackgroud('init')
+  newRoom('home', undefined, { writable: true })
   loadLevel1()
   loadLevel2()
   if (typeof doTest === 'function') {
@@ -17,31 +18,32 @@ function Game(){
     return
   }
   console.log('new game')
-  new Seq([t.demo_note,t.menu]).next()
+  new Seq([t.demo_note, t.menu]).next()
 }
 Game.prototype = {
-  demo_note(next) {
-      vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
-        function (vt, choice) {
-          vt.clear()
-          next()
-        },
-        { direct: true, cls: 'mystory' }
-      )
+  demo_note (next) {
+    vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
+      function (vt, choice) {
+        vt.clear()
+        next()
+      },
+      { direct: true, cls: 'mystory' }
+    )
   },
-  menu(next) {
-      // prepare game loading
-      var t = Game.prototype
-      let hasSave = state.startCookie('terminus' + t.version)
-      let choices = [_('cookie_yes_load'),_('cookie_yes'), _('cookie_no')]
-      flash(0, 800)
-      // TODO : add checkbox for snd and textspeed
-      // TODO : opt object for setting vt option
-      if (d(state._get_pre('snd'),true)){
-        load_soundbank(vt)
-      }
-      vt.epic_img_enter('titlescreen.gif', 'epicfromright', 2000, function (vt) {
-        vt.show_msg('version : ' + t.version)
+  menu (next) {
+    // prepare game loading
+    var t = Game.prototype
+    let hasSave = state.startCookie('terminus' + t.version)
+    let choices = [_('cookie_yes_load'), _('cookie_yes'), _('cookie_no')]
+    flash(0, 800)
+    // TODO : add checkbox for snd and textspeed
+    // TODO : opt object for setting vt option
+    if (d(state._get_pre('snd'), true)) {
+      load_soundbank(vt)
+    }
+    epic_img_enter(vt, 'titlescreen.gif', 'epicfromright', 2000,
+      function (vt) {
+        vt.show_msg('version : ' + t.version, {unbreakable:true})
         //        vt.playMusic('title',{loop:true});
         vt.ask_choose(_('cookie'), choices, t.start, {
           direct: true,
@@ -51,11 +53,12 @@ Game.prototype = {
   },
   start: function (vt, useCookies) {
     console.log('Start game')
+    loadBackgroud('game')
     var context
     if (pogencnt > 0) vt.show_msg(_('pogen_alert', pogencnt))
-    if (useCookies < 3) { // yes new game or load
+    if (useCookies < 2) { // yes new game or load
       state.setCookieDuration(7 * 24 * 60) // in minutes
-      if (useCookies < 2) context = state.loadContext()
+      if (useCookies == 0) context = state.loadContext()
     } else state.stopCookie() // do not use cookie
     vt.clear()
     if (context) {
