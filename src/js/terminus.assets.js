@@ -26,11 +26,10 @@ function load_soundbank(vt){
   music.set('chapter2', './music/place/slowdrum-cave.', ['wav'])
   music.set('academy', './music/mystic/caravan.', ['ogg'])
   music.set('battle', './music/danger/snd__bairustage_loop.', ['mp3'])
-  music.set('warning', './music/danger/trolls-beatdown-05l.', ['wav'])
+  music.set('warning', './music/danger/trolls-beatdown-05l.', ['ogg'])
   music.set('story', './music/cave/Searching.', ['ogg'])
   music.set('forest', './music/nature/Forest_Ambience.', ['mp3'])
-  music.set('yourduty', './music/Intro_Theme.', ['mp3'])
-  music.set('title', './music/Intro_Theme.', ['mp3'])
+  music.set('yourduty', './music/superpowa/enterTheHero.', ['ogg'])
   music.set('trl', './music/danger/trolls-beatdown-05l.', ['wav'])
 
   vt.soundbank = snd
