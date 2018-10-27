@@ -10,7 +10,7 @@ Modes.prototype = {
       chmo = String(chmo)
     }
     if (isNaN(chmo)) {
-      let curscope = ['u']
+      let curscope = [0, 1, 2]
       let change = 1
       for (let n = 0; n < chmo.length; n++) {
         let i = chmo[n]
@@ -23,9 +23,9 @@ Modes.prototype = {
         } else if (i == '-') {
           change = 0
         } else {
-          for (let m = 0; m < curscope.length; m++) {
-            this.modes[curscope[m]][this._rightidx[i]] = change
-          }
+          curscope.forEach((s) => {
+            this.modes[s][this._rightidx[i]] = change
+          })
         }
       }
     } else {

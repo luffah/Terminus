@@ -22,6 +22,26 @@ function File (name, picname, prop) {
   this._inheritable = ['poprefix']
   this._clonable = ['_listeners', 'cmd_event', 'cmd_hook', 'text']
   this._copiable = ['picture']
+  if (prop.states){
+    this.addStates(prop.states)
+  }
+  if (prop.events){
+    this.setCmdEvents(prop.events)
+  }
+  if (prop.hooks){
+    for (var i in prop.hooks) {
+      if (prop.hooks.hasOwnProperty(i)) {
+        this.setCmd(i, prop.hooks[i])
+      }
+    }
+  }
+  if (def(prop.v)){// contextual variables
+    this.v = prop.v
+  }
+  if (prop.var){
+    this.var = prop.var
+    window[prop.var] = this
+  }
 }
 
 File.prototype = union(EventTarget.prototype, {

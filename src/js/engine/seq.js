@@ -20,7 +20,9 @@ Seq.prototype = {
   },
   infect: function (idx, fu){
     if (idx < 0) { idx = this.seq.length + idx }
+    if (this.seq[idx]){
     fu(this.seq[idx])
+    }
   },
   append: function (it) {
     this.seq = this.seq.concat(this._getlist(it))

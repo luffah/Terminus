@@ -193,10 +193,13 @@ msgid "room"
 msgstr "%s"
 
 msgid "room_unreachable"
-msgstr "La pièce %s est inatteignable."
+msgstr "La pièce %s n'est pas atteignable."
 
 msgid "room_unreadable"
 msgstr "Un brouillard dans la pièce empêche de voir son contenu."
+
+msgid "room_forbidden"
+msgstr "Cet endroit est inaccessible."
 
 msgid "people_shell"
 msgstr "Palourde"

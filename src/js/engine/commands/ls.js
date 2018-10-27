@@ -16,8 +16,8 @@ function printLS (room, render_classes) {
           )) + tmpret ]
     ) + '\t\n'
   }
-  var items = room.items.filter(function (o) { return !o.people })
-  var peoples = room.items.filter(function (o) { return o.people })
+  var items = room.items.filter((o) => !o instanceof People)
+  var peoples = room.items.filter((o) => o instanceof People)
   for (i = 0; i < peoples.length; i++) {
     if (peoples[i].picture && peoples[i].picture.shown_in_ls) {
       peoples[i].picture.setOneShotRenderClass(render_classes.people)
@@ -25,7 +25,7 @@ function printLS (room, render_classes) {
     }
   }
   if (peoples.length > 0) {
-    ret += _('peoples', ['\t' + peoples.map(function (n) { return span('color-people', n.toString()) }).join('\n\t')]) + '\t\n'
+    ret += _('peoples', ['\t' + peoples.map((n) => span('color-people', n.toString())).join('\n\t')]) + '\t\n'
   }
   for (i = 0; i < items.length; i++) {
     if (items[i].picture && items[i].picture.shown_in_ls) {
@@ -51,6 +51,9 @@ _defCommand('ls', [ARGT.dir], function (args, ctx, vt) {
       }
       if (!room.ismod('r', ctx)) {
         return _('permission_denied') + ' ' + _('room_unreadable')
+      }
+      if (!room.checkAccess(ctx)) {
+        return _('permission_denied') + ' ' + _('room_forbidden')
       }
       if (room.children.length === 0 && room.items.length === 0) {
         prtls = { pics: {}, stderr: _('room_empty') }

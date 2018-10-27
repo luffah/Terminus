@@ -237,8 +237,10 @@ VTerm.prototype = union(Waiter.prototype, {
         msg += t.stdout
       }
       if (mesg.hasOwnProperty('cb')) {
-        cb = mesg.cb()
+        cb = mesg.cb
+        console.log(cb)
       }
+      console.log(msg)
       //
       var el = d(opt.el, t.monitor)
       var cls = d(opt.cls, '')
@@ -850,9 +852,9 @@ VTerm.prototype = union(Waiter.prototype, {
       this.soundbank.play(key)
     }
   },
-  playMusic: function (key) {
+  playMusic: function (key, p) {
     if (!this.mute && this.musicbank) {
-      this.musicbank.play(key)
+      this.musicbank.play(key, p)
     }
   },
 

@@ -9,9 +9,9 @@ function Room (roomname, text, picname, prop) {
   this.items = []
   this.commands_lock = {}
   this.text = d(text, _(PO_DEFAULT_ROOM_DESC))
-  this.starter_msg = null
-  this.enter_callback = null
-  this.leave_callback = null
+  this.starter_msg = prop.starterMsg || null
+  this.enter_callback = prop.enterCallback || null
+  this.leave_callback = prop.leaveCallback || null
   this._last_to = this
 }
 function enterRoom (new_room, vt) {
@@ -35,7 +35,7 @@ Room.parse = function (str) {
   return window[str]
 }
 Room.prototype = union(File.prototype, {
-  stringify: function () { return this.varname },
+  stringify: function () { return this.var },
   fire_event: function (vt, cmd, args, idx, ct) {
     ct = d(ct, {})
     var ev_trigger = null
@@ -233,7 +233,15 @@ Room.prototype = union(File.prototype, {
     return ret
   },
   checkAccess: function (ctx) {
-    return this.ismod('x', ctx) && (ctx.room.uid == this.room.uid ? true : this.room.checkAccess(ctx))
+    if (ctx.uid == this.room.uid){
+      return true
+    } else if (this.isParentOf(ctx.room)){
+       return this.ismod('x', ctx)
+    } else if (ctx.room.isParentOf(this)){
+       return this.ismod('x', ctx) && this.room.checkAccess(ctx)
+    } else {
+       return this.ismod('x', ctx) && (!this.room || this.room.checkAccess(ctx))
+    }
   },
   pathToRoom: function (path) {
     // returns [ room associated to the path,
@@ -291,20 +299,46 @@ Room.prototype = union(File.prototype, {
     this._last_to.addDoor(ret)
     this._last_to = ret
     return this
+  },
+  initConcat: function (){
+    this._last_to = this
+    return this
+  },
+  addItemOnQueue: function (id, picname, prop){
+    prop = d(prop, {})
+    prop.poid = d(prop.poid, id)
+    this._last_to.addItem(new Item('', '', picname, prop))
+    return this
+  },
+  addItemBatchOnQueue: function (id, names, picname, prop) {
+    prop = d(prop, {})
+    prop.poid = id
+    for (let i = 0; i < names.length; i++) {
+      prop.povars = [names[i]]
+      this._last_to.addItem(new Item('', '', picname, prop))
+    }
+    return this
+  },
+  addPeopleOnQueue: function (id, picname, prop){
+    prop = d(prop, {})
+    prop.poid = d(prop.poid, id)
+    this._last_to.addItem(new People('', '', picname, prop))
+    return this
   }
+
 })
 
 function newRoom (id, picname, prop) {
   // this function automatically set the variable $id to ease game saving
   var poid = POPREFIX_ROOM + id
+  prop = prop || {}
+  prop.var = prop.var || '$' + id // currently undefined for user created rooms, see mkdir
   var n = new Room(
     _(poid, [], { or: PO_DEFAULT_ROOM }),
     _(poid + POSUFFIX_DESC, [], { or: PO_DEFAULT_ROOM_DESC }),
     picname,
     prop)
-  n.varname = '$' + id// currently undefined for user created rooms, see mkdir
   n.poid = poid
-  n.picture.setImgClass(n.varname.replace('$', 'room-'))
-  window[n.varname] = n
+  n.picture.setImgClass('room-' + id)
   return n
 }

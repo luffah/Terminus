@@ -112,7 +112,7 @@ Using, the API, the code is basically :
 If you want to have more readable code, you can use `concatNew` method and alter the prototype to use syntaxic sugar.
 
 ```javascript
-    var in=(id, img, prop) => window.hasOwnProperty('$'+id) ? window['$'+id] : newRoom(id,img,prop)
+    var into=(id, img, prop) => window.hasOwnProperty('$'+id) ? window['$'+id] : newRoom(id,img,prop)
     File.prototype.and=() => this.room
     Room.prototype.then=Room.prototype.concatNew
     Room.prototype.go=Room.prototype.addDoor
@@ -122,17 +122,17 @@ If you want to have more readable code, you can use `concatNew` method and alter
 
 Therefore, our code example become :
 ```javascript
-    in('forest', 'forest.png'
+    into('forest', 'forest.png'
     ).go(
-      in('clearing', 'clearing.png')
+      into('clearing', 'clearing.png')
        .then('exit')
        .then('oblivion')
     ).go(
-      in('waiting_room')
+      into('waiting_room')
     )
-    in('exit').meet('freehugger','hug.png')
-        .and().meet('normal_cop')
-        .and().find('pen')
+    into('exit').meet('freehugger','hug.png')
+      .and()    .meet('normal_cop')
+      .and()    .find('pen')
 ```
 
 Feel free to adapt this to your own language.
