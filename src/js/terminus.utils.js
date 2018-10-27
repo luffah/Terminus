@@ -1,9 +1,21 @@
+File.prototype.and=() => this.room
+var into=(id, img, prop) => window.hasOwnProperty('$'+id) ? window['$'+id] : newRoom(id,img,prop)
+Room.prototype.or=Room.prototype.initConcat
+Room.prototype.then=Room.prototype.concatNew
+Room.prototype.where_u_meet=Room.prototype.addPeopleOnQueue
+Room.prototype.where_u_find=Room.prototype.addItemOnQueue
+Room.prototype.where_u_findMany=Room.prototype.addItemBatchOnQueue
+Room.prototype.go=Room.prototype.addDoor
+Room.prototype.at=Room.prototype.newRoom
+Room.prototype.find=Room.prototype.newItem
+Room.prototype.meet=Room.prototype.newPeople
+
 function getTime () {
   var d, h, m; d = new Date(); h = d.getHours(); m = d.getMinutes()
   return h + 'h' + (m < 10 ? '0' : '') + m
 }
 
-function learn (vt, cmds, re) {
+function learn (cmds, re) {
   if (typeof cmds === 'string') {
     cmds = [cmds]
   }
@@ -50,12 +62,27 @@ function mesg (msg, re, opt) {
     }
   }
 }
+function addGroup(grp){
+  vt.context.addGroup(grp)
+}
+
+function hasGroup(grp){
+  return vt.context.hasGroup(grp)
+}
+
+function playMusic(key, p) {
+  vt.playMusic(key, p)
+}
+
+function playSound(key) {
+  vt.playSound(key, p)
+}
 
 function ondone (fu) {
   global_fireables.done.push(fu)
 }
 
-function success (vt, txt, re) {
+function success (txt, re) {
   if (!re) {
     global_fireables.done.push(
       function () {

@@ -26,8 +26,18 @@ addTest(function (next) {
   vt.enter()
   setTimeout(next, 1000)
 })
+
 addTest(function (next) {
   vt.context.currentuser = 'sure'
   vt.context.addGroup('dir')
+  setTimeout(next, 1000)
+})
+
+addTest(function (next) {
+  vt.context.currentuser = 'sure'
+  vt.context.addGroup('whoami')
+  vt.context.addGroup('groups')
+  vt.set_line('whoami; groups')
+  vt.enter()
   setTimeout(next, 1000)
 })
