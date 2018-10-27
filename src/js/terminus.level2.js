@@ -2,7 +2,7 @@
 //---------------LEVEL 2---------------------
 //TOWN SQUARE
 function loadLevel2(){
-$portal.addPath(
+$portal.addDoor(
   newRoom("townsquare", "loc_square.gif")
 );
 $townsquare.setEnterCallback(function(){
@@ -34,7 +34,7 @@ var lady=$townsquare.newPeople('citizen3',"item_lady.png")
 
 //MARKETPLACE
 var disabled_sell_choices=[];
-$townsquare.addPath(
+$townsquare.addDoor(
   newRoom('market',"loc_market.gif",{writable:true})
 );
 
@@ -111,7 +111,7 @@ $market.newItem("rm_spell","item_manuscript.png");
 $market.newItem("mkdir_spell","item_manuscript.png");
 
 //LIBRARY
-$townsquare.addPath(
+$townsquare.addDoor(
 newRoom("library", "loc_library.gif")
 );
 $library.newItem('radspellbook',"item_radspellbook.png");
@@ -140,7 +140,7 @@ lever=$library.newItem("lever", "item_lever.png",{mod:777})
   .setCmdEvent('exec','pullLever')
   .addStates({
     pullLever:function(re){
-      $library.addPath($backroom);
+      $library.addDoor($backroom);
       if (!re){
         vt.show_msg(_('item_lever_exec'));
       }
@@ -150,7 +150,7 @@ lever=$library.newItem("lever", "item_lever.png",{mod:777})
   ;
 
 //BACK ROOM
-$library.addPath(
+$library.addDoor(
 newRoom('backroom',"loc_backroom.gif")
 );
 
@@ -167,7 +167,7 @@ $backroom.newPeople("grep", "grep.png")
 $backroom.newPeople("librarian", "item_librarian.png");
 
 //ROCKY PATH
-$townsquare.addPath(
+$townsquare.addDoor(
   newRoom("rockypath", "loc_rockypath.gif",{writable:true})
 );
 // TODO play on filesize concept
@@ -176,7 +176,7 @@ $rockypath.newItem("largeboulder", "item_boulder.png")
   .addStates({
     rm: function(re){
       vt.show_msg(_('item_largeboulder_rm'))
-      $rockypath.addPath($farm);
+      $rockypath.addDoor($farm);
       if (re) {
         if (re) $rockypath.removeItem('largeboulder');
       }
@@ -184,7 +184,7 @@ $rockypath.newItem("largeboulder", "item_boulder.png")
   });
 
 //ARTISAN'S SHOP
-$townsquare.addPath(
+$townsquare.addDoor(
   newRoom("artisanshop", "loc_artisanshop.gif")
   .setCmdEvents({
     touch:function(ct){
@@ -266,7 +266,7 @@ newRoom("farm", "loc_farm.gif")
 var Farmer=$farm.newPeople('farmer',"item_farmer.png");
 
 //BROKEN BRIDGE
-$townsquare.addPath(
+$townsquare.addDoor(
   newRoom("brokenbridge", "loc_bridge.gif")
   .setCmdEvent('touch',function(ct){return (ct.arg === _("item_plank")) ? "touchPlank" : "";})
   .addStates({
@@ -282,7 +282,7 @@ $townsquare.addPath(
 );
 
 //CLEARING
-$brokenbridge.addPath(
+$brokenbridge.addDoor(
   newRoom("clearing", "loc_clearing.gif",{mod:0})
   .setCmdEvent('mkdir',function(ct){
     return (ct.arg == _('room_house') ? 'HouseMade':'');
@@ -303,7 +303,7 @@ $brokenbridge.addPath(
 var CryingMan=$clearing.newPeople('cryingman',"item_man.png");
 
 //OMINOUS-LOOKING PATH
-$clearing.addPath(
+$clearing.addDoor(
   newRoom("ominouspath", "loc_path.gif",{writable:true})
 );
 $ominouspath.newItem("brambles", "item_brambles.png",{cls:'large'})
@@ -314,7 +314,7 @@ $ominouspath.newItem("brambles", "item_brambles.png",{cls:'large'})
   })
   .addStates({
     rmBrambles:function(re){
-      $ominouspath.addPath($trollcave) ;
+      $ominouspath.addDoor($trollcave) ;
       if (re) $ominouspath.removeItem('brambles');
     }
   });
@@ -349,7 +349,7 @@ $trollcave.newPeople('supertroll', "item_supertroll.png")
   .setCmdEvent("mv", () => {vt.show_msg(_('people_supertroll_mv'))})
 
 //CAGE
-$trollcave.addPath(
+$trollcave.addDoor(
   newRoom('cage', "item_cage.png",{cls:'covering',mod:666,pic_shown_as_item:true})
   .setCmd("cd", (args) => { {ret:_stdout(_('room_cage_cd'))}})
 );
@@ -361,18 +361,18 @@ var Kid=$cage.newPeople('kidnapped', "item_boy.png")
     }
   });
 //SLIDE
-$trollcave.addPath(
+$trollcave.addDoor(
   newRoom("slide",null,{mod:0})
   .setCmd("cd", (args) => { {ret:_stdout(_('room_slide_cd'))}})
 );
 
 //KERNEL FILES
-$slide.addPath(
+$slide.addDoor(
   newRoom("kernel")
   .addCommand("sudo",{question:undefined,password:"IHTFP"})
   .addStates({
     sudoComplete : function(re){
-      $kernel.addPath($paradise);
+      $kernel.addDoor($paradise);
       vt.show_msg(_('room_kernel_sudo'));
     }
   })
@@ -387,7 +387,7 @@ $kernel.newItem("instructions")
     }
   });
 
-$kernel. addPath(
+$kernel.addDoor(
   newRoom("morekernel")
 );
 $morekernel.newItemBatch("bigfile",['L','M','P','Q','R','S','U','V','W']);

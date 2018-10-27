@@ -5,7 +5,7 @@ function Seq (list) {
 Seq.prototype = {
   _getlist: function (it) {
     let list = []
-    if (list instanceof Seq) {
+    if (it instanceof Seq) {
       list = it.seq
     } else if (it instanceof Array) {
       list = it
@@ -17,6 +17,10 @@ Seq.prototype = {
   then: function (fu) {
     this.seq.push(fu)
     return this
+  },
+  infect: function (idx, fu){
+    if (idx < 0) { idx = this.seq.length + idx }
+    fu(this.seq[idx])
   },
   append: function (it) {
     this.seq = this.seq.concat(this._getlist(it))

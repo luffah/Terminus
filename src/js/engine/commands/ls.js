@@ -11,7 +11,9 @@ function printLS (room, render_classes) {
       }
     }
     ret += _('directions',
-      ['\t' + (room.isRoot ? '' : span('color-room', '..') + ' (revenir sur tes pas)\n\t') + tmpret ]
+      ['\t' + (!room.room ? '' : (
+          span('color-room', '..') + ( (room.uid == $home.uid) ? '': ' (revenir sur tes pas)')+ '\n\t'
+          )) + tmpret ]
     ) + '\t\n'
   }
   var items = room.items.filter(function (o) { return !o.people })
@@ -38,18 +40,16 @@ function printLS (room, render_classes) {
 }
 
 _defCommand('ls', [ARGT.dir], function (args, ctx, vt) {
-  var pic
-  var cwd = ctx.room
-  console.log(cwd)
+  let pic
 
   if (args.length > 0) {
-    var room = cwd.traversee(args[0],ctx).room
+    let room = ctx.traversee(args[0]).room
     if (room) {
       if ('ls' in room.cmd_hook) {
         hret = room.cmd_hook['ls'](args)
         if (d(hret.ret, false)) return hret.ret
       }
-      if (!room.readable) {
+      if (!room.ismod('r', ctx)) {
         return _('permission_denied') + ' ' + _('room_unreadable')
       }
       if (room.children.length === 0 && room.items.length === 0) {
@@ -66,6 +66,7 @@ _defCommand('ls', [ARGT.dir], function (args, ctx, vt) {
       return { stderr: _('room_unreachable') }
     }
   } else {
+    let cwd = ctx.room
     if ('ls' in cwd.cmd_hook) {
       hret = cwd.cmd_hook['ls'](args)
       if (d(hret.ret, false)) return hret.ret

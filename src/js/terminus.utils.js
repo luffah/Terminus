@@ -11,7 +11,7 @@ function learn (vt, cmds, re) {
     global_fireables.done.push(
       function () {
         for (var j = 0; j < cmds.length; j++) {
-          vt.badge(cmds[j], _('you_learn', [cmds[j]]))
+          badge(cmds[j], _('you_learn', [cmds[j]]))
           vt.playSound('learned')
         }
       }
@@ -24,7 +24,7 @@ function unlock (vt, unlocked, re) {
     global_fireables.done.push(
       function () {
         vt.playSound('unlocked')
-        vt.badge(_('you_unlock', [unlocked]))
+        badge(_('you_unlock', [unlocked]))
       }
     )
   }
@@ -60,7 +60,7 @@ function success (vt, txt, re) {
     global_fireables.done.push(
       function () {
         vt.playSound('success')
-        vt.badge(_('you_success', [txt]))
+        badge(_('you_success', [txt]))
         mesg(_('congrat', [txt]))
       }
     )

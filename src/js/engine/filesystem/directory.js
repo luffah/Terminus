@@ -2,39 +2,23 @@ var globalSpec = {}
 
 function Room (roomname, text, picname, prop) {
   prop = prop || {}
+  if (!prop.mod) { prop.mod = 755 }
   File.call(this, d(roomname, _(PO_DEFAULT_ROOM, [])), picname, prop)
-  this.chmod(755)
-  this.parents = []
   this.previous = this
   this.children = []
   this.items = []
-  this.isRoot = true
   this.commands_lock = {}
   this.text = d(text, _(PO_DEFAULT_ROOM_DESC))
   this.starter_msg = null
   this.enter_callback = null
   this.leave_callback = null
-}
-function newRoom (id, picture, prop) {
-  // this function automatically set the variable $id to ease game saving
-  var poid = POPREFIX_ROOM + id
-  var n = new Room(
-    _(poid, [], { or: PO_DEFAULT_ROOM }),
-    _(poid + POSUFFIX_DESC, [], { or: PO_DEFAULT_ROOM_DESC }),
-    picture,
-    prop)
-  n.varname = '$' + id// currently undefined for user created rooms, see mkdir
-  n.poid = poid
-  n.picture.setImgClass(n.varname.replace('$', 'room-'))
-  window[n.varname] = n
-  return n
+  this._last_to = this
 }
 function enterRoom (new_room, vt) {
   var ctx = vt.getContext()
   console.log('enterRoom', new_room, ctx)
   var prev = ctx.room
-  if (prev || !new_room.hasParent(prev)) {
-    console.log(prev.toString(), 'doLeaveCallbackTo', new_room.toString())
+  if (prev && !prev.isParentOf(new_room)) {
     prev.doLeaveCallbackTo(new_room)
   }
   ctx.room = new_room
@@ -103,34 +87,18 @@ Room.prototype = union(File.prototype, {
   // Room picture
   // item & people management
   addItem: function (newitem) {
-    this.items.push(newitem);
+    this.items.push(newitem)
     newitem.room = this
     return this
   },
-  newItem: function (id, picname, prop) {
-    prop = d(prop, {})
-    prop.poid = d(prop.poid, id)
-    var ret = new Item('', '', picname, prop)
-    this.addItem(ret)
-    return ret
-  },
-  newPeople: function (id, picname, prop) {
-    prop = d(prop, {})
-    prop.poid = d(prop.poid, id)
-    var ret = new People('', '', picname, prop)
-    this.addItem(ret)
-    return ret
-  },
-  newItemBatch: function (id, names, picname, prop) {
-    var ret = []
-    prop = d(prop, {})
-    for (var i = 0; i < names.length; i++) {
-      prop.poid = id
-      prop.povars = [names[i]]
-      ret[i] = new Item('', '', picname, prop)
-      this.addItem(ret[i])
+  addDoor: function (newchild, wayback) {
+    if (def(newchild) && !this.hasChild(newchild)) {
+      this.children.push(newchild)
+      if (d(wayback, true)) {
+        newchild.room = this
+      }
     }
-    return ret
+    return this
   },
   removeItemByIdx: function (idx) {
     return ((idx == -1) ? null : this.items.splice(idx, 1)[0])
@@ -173,6 +141,19 @@ Room.prototype = union(File.prototype, {
   getItem: function (name) {
     return this.getItemFromName(_('item_' + name))
   },
+  getDir: function (arg, ctx) {
+    let r = null
+    if (arg === '~') {
+      r = $home
+    } else if (arg === '..') {
+      r = this.room
+    } else if (arg === '.') {
+      r = this
+    } else if (arg && arg.indexOf('/') == -1) {
+      r = this.children.filter((i) => arg == i.toString()).shift()
+    }
+    return (r) || null
+  },
 
   // linked room management
   getChildFromName: function (name) {
@@ -183,60 +164,39 @@ Room.prototype = union(File.prototype, {
     idx = this.children.map(objToStr).indexOf(child.name)
     return ((idx == -1) ? null : this.children[idx])
   },
-  addPath: function (newchild, wayback) {
-    if (def(newchild) && !this.hasChild(newchild)) {
-      this.children.push(newchild)
-      if (d(wayback, true)) {
-        newchild.parents.push(this)
-        newchild.isRoot = false
-      }
-    }
-    return this
-  },
   doLeaveCallbackTo: function (to) {
     t = this
-    if (t.uid === to.uid) {
-    } else if (t.parents.length) {
-      var p = t.parents[0]
+    console.log(t.toString(), 'doLeaveCallbackTo', to.toString())
+    if (t.uid != to.uid && t.room) {
       if (typeof t.leave_callback === 'function') {
         t.leave_callback()
       }
-      if (p) {
-        p.doLeaveCallbackTo(to)
-      }
+      t.room.doLeaveCallbackTo(to)
     }
   },
   doEnterCallbackTo: function (to) {
     t = this
     if (t.uid === to.uid) {
     } else if (t.children.length) {
-      var p = t.parents[0]
       if (typeof t.leave_callback === 'function') {
         t.enter_callback()
       }
-      if (p) {
-        p.doEnterCallbackTo(to)
+      if (t.room) {
+        t.room.doEnterCallbackTo(to)
       }
     }
   },
-  hasParent: function (par, symbolic) {
-    symbolic = d(symbolic, false)
-    var ret = false; var p = this.parents
-    for (var i = 0; i < (symbolic ? p.length : (p.length ? 1 : 0)); i++) {
-      ret = ((p[i].uid == par.uid) || ret) || p[i].hasParent(par)
-    }
-    return ret
-  },
-  removeParentPath: function (par) {
-    rmIdxOf(this.parents, par)
+  isParentOf: function (par) {
+    return par.room && (par.room.uid == this.uid || this.isParentOf(par.room))
   },
   removePath: function (child) {
     if (rmIdxOf(this.children, child)) {
-      rmIdxOf(child.parents, this)
+      child.room = null
     }
   },
   destroy: function () {
-    rmIdxOf(this.parents[0], this)
+    rmIdxOf(this.room.children, this)
+    this.room = null
   },
   setOutsideEvt: function (name, fun) {
     globalSpec[this.name][name] = fun
@@ -256,75 +216,95 @@ Room.prototype = union(File.prototype, {
     delete this.commands_lock[cmd]
     return this
   },
-  /* Checks if arg can be reached from this room
-   * Returns the room if it can
-   * Returns false if it cannot
-   *
-   * 'arg' is a single node, not a path
-   * i.e. $home.can_cd("next_room") returns true
-   *      $home.can_cd("next_room/another_room") is invalid
-   */
-  can_cd: function (arg, ctx) {
-    // Don't allow for undefined or multiple paths
-    let r = null
-    if (arg === '~') {
-      r = $home
-    } else if (arg === '..') {
-      r = this.parents[0]
-    } else if (arg === '.') {
-      r = this
-    } else if (arg && arg.indexOf('/') == -1) {
-      r = this.children.filter((i) => arg == i.toString()).shift()
-    }
-    return (r && r.ismod('x', ctx)) ? r : null
-  },
 
   /* Returns the room and the item corresponding to the path
    * if item is null, then the path describe a room and  room is the full path
    * else room is the room containing the item */
-  traversee: function (path, ctx) {
-    var item; var pa = this.pathToRoom(path, ctx); var ret = {}
-    ret.room = pa[0]; ret.item_name = pa[1]; ret.item_idx = -1
-    if (ret.room) {
-      ret.room_name = ret.room.name
-      if (ret.item_name) {
-        for (i = 0; i < ret.room.items.length; i++) {
-          if (ret.item_name === ret.room.items[i].toString()) {
-            ret.item = ret.room.items[i]
-            ret.item_idx = i
-            break
-          }
-        }
+  traversee: function (path) {
+    let [room, lastcomponent] = this.pathToRoom(path)
+    let ret = { room: room, item_name: lastcomponent, item_idx: -1 }
+    if (room) {
+      ret.room_name = room.name
+      if (lastcomponent) {
+        ret.item = ret.room.items.find((it, i) =>
+          lastcomponent === it.toString() && (ret.item_idx = i) + 1)
       }
     }
     return ret
   },
-  pathToRoom: function (path, ctx) {
-    var pat = path.split('/')
+  checkAccess: function (ctx) {
+    return this.ismod('x', ctx) && (ctx.room.uid == this.room.uid ? true : this.room.checkAccess(ctx))
+  },
+  pathToRoom: function (path) {
+    // returns [ room associated to the path,
+    //           non room part of path,
+    //           valid path ]
     var room = this
-    var lastcomponent = null
-    var cancd = true
-    var pathstr = ''
-    for (var i = 0; i < pat.length - 1; i++) {
-      if (room) {
-        room = room.can_cd(pat[i],ctx)
-        if (room) {
-          pathstr += (i > 0 ? '/' : '') + pat[i]
-        }
-      } else {
-        break
-      }
-    }
+    let pat = path.split('/')
+    let end = pat.slice(0, -1).findIndex((r) => !(room = room.getDir(r)))
+    console.log(end)
+    let pathstr = pat.slice(0, end).join('/')
+    let lastcomponent = null
+    let cancd
     if (room) {
-      lastcomponent = pat[pat.length - 1]
-      cancd = room.can_cd(lastcomponent,ctx)
-      if (cancd) {
+      lastcomponent = pat.pop() || null
+      if (cancd = room.getDir(lastcomponent)) {
         room = cancd
-        pathstr += (i > 0 ? '/' : '') + lastcomponent + '/'
+        pathstr += (end <= 0 ? '' : '/') + lastcomponent + '/'
         lastcomponent = null
       }
     }
     return [room, lastcomponent, pathstr]
+  },
+  newItemBatch: function (id, names, picname, prop) {
+    var ret = []
+    prop = d(prop, {})
+    for (var i = 0; i < names.length; i++) {
+      prop.poid = id
+      prop.povars = [names[i]]
+      ret[i] = new Item('', '', picname, prop)
+      this.addItem(ret[i])
+    }
+    return ret
+  },
+  newItem: function (id, picname, prop) {
+    prop = d(prop, {})
+    prop.poid = d(prop.poid, id)
+    var ret = new Item('', '', picname, prop)
+    this.addItem(ret)
+    return ret
+  },
+  newPeople: function (id, picname, prop) {
+    prop = d(prop, {})
+    prop.poid = d(prop.poid, id)
+    var ret = new People('', '', picname, prop)
+    this.addItem(ret)
+    return ret
+  },
+  newRoom: function (id, picname, prop) {
+    var ret = newRoom(id, picname, prop)
+    this.addDoor(ret)
+    return ret
+  },
+  concatNew: function (id, picname, prop) {
+    var ret = newRoom(id, picname, prop)
+    this._last_to.addDoor(ret)
+    this._last_to = ret
+    return this
   }
-
 })
+
+function newRoom (id, picname, prop) {
+  // this function automatically set the variable $id to ease game saving
+  var poid = POPREFIX_ROOM + id
+  var n = new Room(
+    _(poid, [], { or: PO_DEFAULT_ROOM }),
+    _(poid + POSUFFIX_DESC, [], { or: PO_DEFAULT_ROOM_DESC }),
+    picname,
+    prop)
+  n.varname = '$' + id// currently undefined for user created rooms, see mkdir
+  n.poid = poid
+  n.picture.setImgClass(n.varname.replace('$', 'room-'))
+  window[n.varname] = n
+  return n
+}

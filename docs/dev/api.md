@@ -2,41 +2,46 @@ Room API
 ========
 
 #  CREATE ROOMS, ITEMS and PEOPLES
-* newRoom(room, img, props) set a new room variable named $room
-* var item=$room.newItem(id, img)
-* var people=$room.newPeople(id, img)
 
-Note : creating $home is required , in order to define path '~/', and command 'cd'.
 
-## Rooms parameters
-
-*  id : non 'room_' part of a key 'room_{id}' in GameDialogs file
-* img : img file in image directory
-* props : hash with many optionnal properties like executable, readable, writable
- 
-GameDialogs file shall contain :
-
-* room_{roomid} :      the name of the room
-* room_{roomid}_text : the description of what happening in the room
-
-## Items and peoples
-*  non 'item_' (or 'people_') part of a key 'item_{id}' in GameDialogs file
-* img : img file in image directory
-* props : hash with many optionnal properties like executable, readable, writable
-
-GameDialogs file shall contain :
-
-* item_{id}   :      the name of the item
-* ( people_{id} :      the name of the person 
-* item_{id}_text   : a description
-* ( - people_{id}_text : a description )
- 
- 
-# CONNECT ROOMS
+To set a new room instance, accessible with the variable 'room'.
 ```
-$room.addPath($other_room)
+var room=newRoom(id,     // identifier in dialog file (.po)
+                 img,      // optionnal path in ./src/img/ to the picture
+                 props     // optionnal properties
+                )
 ```
- 
+
+To add child nodes of the room, use the action methods beginning by `add*` :
+```
+     room.addDoor(sub_room) == room
+     room.addItem(it) == room
+```
+
+To create a "child" of the room, use the creation methods beginning by `new*`
+(the arguments are the same) :
+```
+var item=room.newItem('it', img, props)         // imply room.addItem(item)
+var person=room.newPeople('person', img, props) // imply room.addItem(person)
+var subroom=room.newRoom('subroom', img, props) // imply room.addDoor(sub_room)
+```
+
+Note : in order to define path '~/', either calling `newRoom('home')` or set `$home = some_room` is required.
+
+## ABOUT THE ARGUMENTS
+* id : the identifier in game dialog file
+       GameDialogs file shall contain :
+        - room_{id} :      the name of the room
+        - room_{id}_text : the description of what happening in
+                              the room
+        - item_{id}   :      the name
+        - people_{id} :      the name
+        - item_{id}_text   : description of the item
+        - people_{id}_text : description of the people, possibly an interaction
+
+* img : img file in image directory
+* props : hash with many optionnal properties
+
 #  PROMPTS IN THE ROOM
 ## Starting game in the room
 If the player start a game or load it from saved state,
@@ -59,8 +64,78 @@ $room.setLeaveCallback(function(){
 // the code to display a message
 });
 ```
-#  DEFINING A TEXT AS RESULT OF A COMMAND
+## Alter the result of a command
+You can alter result of a command by defining a hook that can be a text or a function :
 ```
-$room.setCmdText({cmd_name},{cmd_result})
-item.setCmdText({cmd_name},{cmd_result})
+$room.setCmd({cmd_name},{cmd_result})
+item.setCmd({cmd_name},{cmd_result})
 ```
+
+# Syntaxic sugar
+
+A room is also accessible with a variable nammed from its own id '$'+id at creation.
+Autonamming of room variables allow to structure the code.
+
+## Example
+
+We try to reproduce this file structure:
+```
+ forest/
+ |- clearing/
+ |  '- exit/
+ |     |- oblivion/
+ |     |- freehugger
+ |     |- normal_cop
+ |     '- pen
+ '- waiting_room/
+```
+
+Using, the API, the code is basically :
+```javascript
+    newRoom('forest', 'forest.png'
+    ).addDoor(
+       newRoom('clearing', 'clearing.png')
+       .addDoor(
+          newRoom('exit')
+          .addDoor(
+             newRoom('oblivion')
+         )
+       )
+    ).addDoor(
+        newRoom('waiting_room')
+    )
+    $exit.newPeople('freehugger')
+    $exit.newPeople('normal_cop')
+    $exit.newItem('pen')
+```
+
+If you want to have more readable code, you can use `concatNew` method and alter the prototype to use syntaxic sugar.
+
+```javascript
+    var in=(id, img, prop) => window.hasOwnProperty('$'+id) ? window['$'+id] : newRoom(id,img,prop)
+    File.prototype.and=() => this.room
+    Room.prototype.then=Room.prototype.concatNew
+    Room.prototype.go=Room.prototype.addDoor
+    Room.prototype.find=Room.prototype.newItem
+    Room.prototype.meet=Room.prototype.newPeople
+```
+
+Therefore, our code example become :
+```javascript
+    in('forest', 'forest.png'
+    ).go(
+      in('clearing', 'clearing.png')
+       .then('exit')
+       .then('oblivion')
+    ).go(
+      in('waiting_room')
+    )
+    in('exit').meet('freehugger','hug.png')
+        .and().meet('normal_cop')
+        .and().find('pen')
+```
+
+Feel free to adapt this to your own language.
+
+You shall check `filesystem/file.js` and `filesystem/directory.js` to ensure it doesn't overwrite another method.
+// All bash shortcuts : https://ss64.com/bash/syntax-keyboard.html

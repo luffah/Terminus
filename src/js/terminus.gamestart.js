@@ -10,7 +10,9 @@ function Game () {
   var t = Game.prototype
   t.version = '0.2beta'
   loadBackgroud('init')
-  newRoom('home', undefined, { writable: true })
+  newRoom('root', undefined, {owner:'root' })
+  .newRoom('users', undefined, {owner:'root'})
+  .newRoom('home', undefined)
   loadLevel1()
   loadLevel2()
   if (typeof doTest === 'function') {
@@ -20,10 +22,12 @@ function Game () {
   console.log('new game')
   new Seq([t.demo_note, t.menu]).next()
 }
+
+var visualchar = { 'ArrowUp': '↑', 'ArrowLeft': '←', 'ArrowRight': '→', 'ArrowDown': '↓', 'Tab': '↹' }
 Game.prototype = {
   demo_note (next) {
     vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
-      function (vt, choice) {
+      (vt, choice) => {
         vt.clear()
         next()
       },
@@ -32,8 +36,8 @@ Game.prototype = {
   },
   menu (next) {
     // prepare game loading
-    var t = Game.prototype
-    let hasSave = state.startCookie('terminus' + t.version)
+    var g = Game.prototype
+    let hasSave = state.startCookie('terminus' + g.version)
     let choices = [_('cookie_yes_load'), _('cookie_yes'), _('cookie_no')]
     flash(0, 800)
     // TODO : add checkbox for snd and textspeed
@@ -42,16 +46,16 @@ Game.prototype = {
       load_soundbank(vt)
     }
     epic_img_enter(vt, 'titlescreen.gif', 'epicfromright', 2000,
-      function (vt) {
-        vt.show_msg('version : ' + t.version, {unbreakable:true})
+      (vt) => {
+        vt.show_msg('version : ' + g.version, { unbreakable: true })
         //        vt.playMusic('title',{loop:true});
-        vt.ask_choose(_('cookie'), choices, t.start, {
+        vt.ask_choose(_('cookie'), choices, g.start, {
           direct: true,
           disabled_choices: hasSave ? [] : [0]
         })
       })
   },
-  start: function (vt, useCookies) {
+  start (vt, useCookies) {
     console.log('Start game')
     loadBackgroud('game')
     var context
@@ -65,7 +69,7 @@ Game.prototype = {
       vt.setContext(context)
       state.loadActions()
       vt.unmuteSound()
-      vt.notification(_('game_loaded'))
+      notification(_('game_loaded'))
       vt.show_msg(vt.context.room.getStarterMsg(_('welcome_msg', vt.context.currentuser) + '\n'))
       vt.enable_input()
     } else {
@@ -73,155 +77,96 @@ Game.prototype = {
       vt.setContext(context)
       vt.unmuteSound()
       vt.playMusic('preload')
-      var loadel
-      new Seq().then(function (next) {
+      let loadel
+      let loader = (title, id, val, duration, next) => {
+        vt.show_msg(title, { cb: () => {
+          loadel = dom.Id(id)
+          vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
+            el: loadel,
+            finalvalue: val,
+            duration: duration,
+            cb: next })
+        } })
+      }
+      new Seq([
+        (next) => {
         // vt.unmuteSound();
-        vt.ask(_('prelude_text'), function (val) {
-          if (_match('re_hate', val)) {
-            vt.context.user.judged = _('user_judged_bad')
-          } else if (_match('re_love', val)) {
-            vt.context.user.judged = _('user_judged_lovely')
-          } else {
-            vt.context.user.judged = _('user_judged' + Math.min(5, Math.round(val.length / 20)))
+          vt.ask(_('prelude_text'), (val) => {
+            if (_match('re_hate', val)) {
+              vt.context.user.judged = _('user_judged_bad')
+            } else if (_match('re_love', val)) {
+              vt.context.user.judged = _('user_judged_lovely')
+            } else {
+              vt.context.user.judged = _('user_judged' + Math.min(5, Math.round(val.length / 20)))
+            }
+          },
+          { cls: 'mystory', disappear: (cb) => { cb(); next() }
           }
+          )
+        }, (next) => {
+          vt.ask(vt.context.user.judged + '\n' + _('username_prompt'), (val) => { vt.context.setUserName(val); next() }, { placeholder: vt.context.currentuser, cls: 'megaprompt', disappear: (cb) => { cb() }, wait: 500 })
         },
-        { cls: 'mystory', disappear: function (cb) { cb(); next() }
-        }
-        )
-      })
-        .then(function (next) {
-          vt.ask(vt.context.user.judged + '\n' + _('username_prompt'), function (val) { vt.context.setUserName(val); next() }, { placeholder: vt.context.currentuser, cls: 'megaprompt', disappear: function (cb) { cb() }, wait: 500 })
-        })
-        .then(function (next) {
-          vt.ask(_('useraddress_prompt'), function (val) { vt.context.setUserAddress(val); next() }, { placeholder: vt.context.user.address,
+        (next) => {
+          vt.ask(_('useraddress_prompt'), (val) => { vt.context.setUserAddress(val); next() }, { placeholder: vt.context.user.address,
             cls: 'megaprompt',
-            disappear: function (cb) {
+            disappear: (cb) => {
               cb()
             },
             wait: 500 })
-        })
-        .then(function (next) {
-          vt.ask(_('gameintro_setup_ok'), function (val) {
+        },
+        (next) => {
+          vt.ask(_('gameintro_setup_ok'), (val) => {
           },
           { value: '_ _ _ !',
             cls: 'mystory',
-            evkey: {
-              'ArrowUp': function () {
-                vt.answer_input.value = '_ ↑ _ ?'
-              },
-              'ArrowLeft': function () {
-                vt.answer_input.value = '← _ _ ?'
-              },
-              'ArrowRight': function () {
-                vt.answer_input.value = '_ _ → ?'
-              },
-              'ArrowDown': function () {
-                vt.answer_input.value = '_ ↓ _ ?'
-              },
-              'Tab': function () {
-                vt.answer_input.value = '_ ↹ _ ?'
+            readOnly: true,
+            anykeyup: (t, e) => {
+              let c = visualchar[e.key] || e.key
+              if (e.ctrlKey) {
+                t.answer_input.value = '_ ^' + c.toUpperCase() + ' _'
+              } else {
+                t.answer_input.value = '_ ' + c + ' _'
               }
+              e.preventDefault()
             },
-            disappear: function (cb) {
+            disappear: (cb) => {
               cb()
               flash(0, 800)
               next()
             }
           }
           )
-        })
-        .then(function (next) {
-          vt.show_loading_element_in_msg(['_', ' '], { duration: 800, finalvalue: ' ', callback: next })
-        })
-        .then(function (next) {
+        },
+        (next) => {
           vt.muteSound()
-          vt.show_loading_element_in_msg(['_', ' '], { duration: 800, finalvalue: ' ', callback: next })
-        })
-        .then(function (next) {
-          vt.show_msg(_('gameintro_text_initrd'), { cb: next })
-        })
-        .then(function (next) {
-          loadel = dom.Id('initload')
-          vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
-            el: loadel,
-            finalvalue: "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
-            duration: 800,
-            callback: next })
-        })
-        .then(function (next) {
-          vt.show_msg(_('gameintro_text_domainname'), { cb: next })
-        })
-        .then(function (next) {
-          loadel = dom.Id('domainsetup')
-          vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
-            el: loadel,
-            finalvalue: "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
-            duration: 800,
-            callback: next })
-        })
-        .then(function (next) {
-          vt.show_msg(_('gameintro_text_fsck'), { cb: next })
-        })
-        .then(function (next) {
-          loadel = dom.Id('initfsck')
-          vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
-            el: loadel,
-            finalvalue: "<span class='color-ko'>" + _('gameintro_failure') + '</span>',
-            duration: 800,
-            callback: next })
-        })
-        .then(function (next) {
+          vt.show_loading_element_in_msg(['_', ' '], { duration: 800, finalvalue: ' ', cb: next })
+        },
+        (next) => {
+          loader(_('gameintro_text_initrd'), 'initload',
+            "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
+            800, next)
+        },
+        (next) => {
+          loader(_('gameintro_text_domainname'), 'domainsetup',
+            "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
+            800, next)
+        },
+        (next) => {
+          loader(_('gameintro_text_fsck'), 'initfsck',
+            "<span class='color-ko'>" + _('gameintro_failure') + '</span>',
+            800, next)
+        },
+        (next) => {
           vt.show_msg(_('gameintro_text_terminus'), { cb: next })
-        })
-        .then(function (next) {
+        },
+        (next) => {
           vt.show_msg(_('gamestart_text'))
           vt.unmuteSound()
           vt.playMusic('story')
           vt.enable_input()
-          vt.auto_shuffle_line(_('press_enter'), 0.9, 0.1, 8, 20, null, 50)
-        })
-        .next()
+          auto_shuffle_line(vt, _('press_enter'), 0.9, 0.1, 8, 20, null, 50)
+        }
+      ]).next()
     }
   }
 }
-/**
- * API:
- * CREATE ROOMS, ITEMS and PEOPLES
- *     <Room>=newRoom(id, img, props) set a new room variable named $id
- *     <Item>=<Room>.newItem(id, img)
- *     <People>=<Room>.newPeople(id, img)
- *     id : non 'room_' part of a key 'room_<id>' in GameDialogs file
- *              GameDialogs file shall contain :
- *               - room_<roomid> :      the name of the room
- *               - room_<roomid>_text : the description of what happening in
- *                                      the room
- *          non 'item_' (or 'people_') part of a key 'item_<id>' in GameDialogs file
- *              GameDialogs file shall contain :
- *               - item_<id>   :      the name of the item
- *              ( - people_<id> :      the name of the person )
- *               - item_<id>_text   : a description
- *              ( - people_<id>_text : a description )
- *     img : img file in image directory
- *
- *     props : hash without many optionnal properties like executable, readable, writable
- *
- *    Return the <Room> object and define $varname variable (='$'+id)
- *
- *    Note : $home is required , in order to define path '~/', and command 'cd'.
- *
- * CONNECT ROOMS
- *    <Room>.addPath(<Room>)
- *
- * FIRST PROMPT
- *    If the player start a game or load it from saved state,
- *    you can display a message for the room she/he starts.
- *    Default is the result of 'pwd'.
- *    <Room>.setStarterMsg(<welcome_message>);
- *
- * COMMANDS
- *    // alter result of the command
- *    <Room>.setCmdText(<cmd_name>,<cmd_result>)
- *    <Item>.setCmdText(<cmd_name>,<cmd_result>)
- *
- */
-// All bash shortcuts : https://ss64.com/bash/syntax-keyboard.html

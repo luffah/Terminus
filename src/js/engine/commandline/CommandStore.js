@@ -17,9 +17,13 @@ function Command (name, syntax, fu, prop) {
   this.mod = new Modes(prop.mod || 'a+x')
   this.preargs = prop.preargs || [] // default arguments (for aliases)
 }
-Command.prototype.ismod = File.prototype.ismod
-Command.prototype.chmod = File.prototype.chmod
-
+Command.prototype = {
+  ismod: File.prototype.ismod,
+  chmod: File.prototype.chmod,
+  getSyntax: function(args, idx){
+   return idx > this.syntax.length ? this.syntax[-1][0] : this.syntax[idx][0]
+  }
+}
 var global_commands_fu = {}
 
 function _defCommand (cmd, syntax, fu, prop) {
@@ -54,14 +58,18 @@ function global_fire_done () { global_fire('done') }
 
 function cmd_done (vt, fireables, ret, cmd, args) {
   // fire events *_done when ret is shown
+  console.log('done',vt, fireables, ret, cmd, args)
   if (typeof ret === 'string') {
     ret = _stdout(ret)
   }
-  ret.cb = () => {
-    fireables.forEach((f) => {
-      f[0].fire_event(vt, cmd + '_done', args, f[1])
-      global_fire_done()
-    })
-  }
+  ret = new Seq(ret)
+  ret.infect(-1, (it) => {
+    it.cb = () => {
+      fireables.forEach((f) => {
+        f[0].fire_event(vt, cmd + '_done', args, f[1])
+        global_fire_done()
+      })
+    }
+  })
   return ret
 }

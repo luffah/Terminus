@@ -1,35 +1,27 @@
 var regexpStr = /^['"].*['"]$/
 var regexpStar = /.*\*.*/
 function _expandArgs (args, ctx) {
-  var newargs = []; var room; var lastcomponent; var path; var re; var r = ctx.room
-  //  console.log('_expandArgs',args,r);
-  for (var i = 0; i < args.length; i++) {
-    //    console.log(args[i]);
-    if (regexpStr.test(args[i])) {
-      newargs.push(args[i].slice(1, args[i].length - 1))
-    } else if (regexpStar.test(args[i])) {
-      roomp = r.pathToRoom(args[i])
-
-      room = roomp[0]
-      lastcomponent = roomp[1]
-      re = new RegExp(lastcomponent.replace(/\./g, '\\\.').replace(/\*/g, '.*'))
+  var newargs = []
+  args.forEach((arg) => {
+    if (regexpStr.test(arg)) {
+      newargs.push(arg.slice(1, arg.length - 1))
+    } else if (regexpStar.test(arg)) {
+      let [room, lastcomponent, path] = ctx.room.pathToRoom(arg)
       if (room && lastcomponent) {
-        //        console.log(lastcomponent);
-        path = roomp[2]
-        var expanded = []
-        for (var j = 0; j < room.items.length; j++) {
-          if (re.test(room.items[j].toString())) {
-            expanded.push(path + (path.length ? '/' : '') + room.items[j].toString())
-          }
-        }
-        newargs = newargs.concat(expanded.sort())
+        let regexpArg = new RegExp(lastcomponent.replace(/\./g, '\\\.').replace(/\*/g, '.*'))
+        let xargs = []
+        room.items.map(objToStr).filter((a) => regexpArg.test(a)).forEach((it) => {
+          console.log(it)
+          xargs.push(path + (path.length ? '/' : '') + it)
+        })
+        newargs = newargs.concat(xargs.sort())
       } else {
-        newargs.push(args[i])
+        newargs.push(arg)
       }
     } else {
-      newargs.push(args[i])
+      newargs.push(arg)
     }
-  }
+  })
   return newargs
 }
 
@@ -54,11 +46,10 @@ function _completeArgs (args, argidx, tocomplete, ctx, compl) { // return comple
 
   var substrMatches = []
 
-  let argtype = argidx ? ctx.getCommand(args[0]).syntax[argidx-1][0] : 'cmdname'
+  let argtype = argidx ? ctx.getCommand(args[0]).getSyntax(args.slice(1), argidx - 1) : 'cmdname'
 
   if (argtype == 'cmdname') {
     var cmds = ctx.getUserCommands()
-    //    tocomplete=args.shift();
     cmds.forEach((i) => {
       if (compl(cmds[i])) {
         substrMatches.push(cmds[i] + ((cmds[i] == tocomplete) ? ' ' : ''))// if uniq, then go to next arg
@@ -70,36 +61,32 @@ function _completeArgs (args, argidx, tocomplete, ctx, compl) { // return comple
       return i.match('^' + tocomplete)
     }).slice(0, 20)
   } else {
-    var path = tocomplete.split('/')
+    let path = tocomplete.split('/')
     if (argtype == 'dir' && path.length == 1 && path[0].length === 0) {
       substrMatches.push('..')
     }
     for (let i = 0; i < path.length; i++) {
-      roomNext = roomCurrent.can_cd(path[i], ctx)
+      roomNext = roomCurrent.getDir(path[i])
       if (roomNext) {
         roomCurrent = roomNext
         if (i === path.length - 1) {
           ret.push(roomNext.name + '/')
         }
-      } else {
+      } else if (i === path.length - 1) {
         // We've made it to the final room,
         // so we should look for things to complete our journey
-        if (i == path.length - 1) {
-          // Compare to this room's children
-          if (['strictfile', 'file', 'dir'].indexOf(argtype) != -1) {
-            for (child_num = 0; child_num < roomCurrent.children.length; child_num++) {
-              if (compl(roomCurrent.children[child_num].name, path[i])) {
-                substrMatches.push(roomCurrent.children[child_num].name + '/')
-              }
+        // Compare to this room's children
+        if (['strictfile', 'file', 'dir'].indexOf(argtype) != -1) {
+          roomCurrent.children.forEach((c) => {
+            if (compl(c.name, path[i])) {
+              substrMatches.push(c.name + '/')
             }
-            // Compare to this room's items
-            if (['strictfile', 'file'].indexOf(argtype) != -1) {
-              for (itemIdx = 0; itemIdx < roomCurrent.items.length; itemIdx++) {
-                if (compl(roomCurrent.items[itemIdx].name, path[i])) {
-                  substrMatches.push(roomCurrent.items[itemIdx].name)
-                }
-              }
-            }
+          })
+          // Compare to this room's items
+          if (argtype != 'dir') {
+            roomCurrent.items.forEach((it) => {
+              if (compl(it.name, path[i])) { substrMatches.push(it.name) }
+            })
           }
         }
       }
@@ -112,7 +99,8 @@ function _parse_exec (vt, line) {
   var commands = line.split(';')
   let ret = new Seq()
   for (let i = 0; i < commands.length; i++) {
-    ret.append(_parse_command(vt, commands[i]))
+    let res = _parse_command(vt, commands[i])
+    ret.append(res)
   }
   return ret
 }
@@ -122,12 +110,12 @@ function _parse_command (vt, line) {
   var ctx = vt.getContext()
   var cmd = arrs[0]; var r = ctx.room; var ret = ''
   arrs.push(arrs.pop().replace(/\/$/, ''))
-  console.log('parse and execute : ', arrs, r)
-  var args = _expandArgs(arrs.slice(1), r)
+  console.log('parse and execute : ', arrs, ctx)
+  var args = _expandArgs(arrs.slice(1), ctx)
   // find the program to launch
   var cmdexec = null
   if (cmd.match(/^(\.\/|\/)/)) { // find a local program
-    console.log('matched')
+    // console.log('matched')
     var tr = r.traversee(cmd)
     if (tr.item && tr.item.ismod('x', ctx)) {
       cmdexec = function (args, ctx, vt) {

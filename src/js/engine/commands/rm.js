@@ -5,7 +5,7 @@ _defCommand('rm', [ARGT.file], function (args, ctx, vt) { // event arg -> object
     var ret = []
     var item, room, idx
     for (var i = 0; i < args.length; i++) {
-      var tgt = ctx.room.traversee(args[i],ctx)
+      var tgt = ctx.traversee(args[i])
       room = tgt.room
       item = tgt.item
       if ('rm' in item.cmd_hook) {
@@ -17,7 +17,7 @@ _defCommand('rm', [ARGT.file], function (args, ctx, vt) { // event arg -> object
       }
       idx = tgt.item_idx
       if (idx > -1) {
-        if (room.writable) {
+        if (room.ismod('w')) {
           var removedItem = room.removeItemByIdx(idx)
           if (removedItem) {
             room.fire_event(vt, 'rm', args, i)

@@ -8,11 +8,12 @@ function File (name, picname, prop) {
   prop = prop || {}
   this.mod = new Modes(prop.mod || 'a+r')
   this.picture = new Pic(picname, prop)
-  if (prop.group) {this.group = prop.group}
-  if (prop.owner) {this.owner = prop.owner}
+  this.owner = prop.owner || 'user'
+  this.group = prop.group || 'user'
   this.cmd_event = {}
   this.cmd_hook = {}
   this.name = name
+  this.room = null
   this.text = ''
   this.uid = prop.uid || genUID(prop.poid || name)
   //  console.log(name,this.uid)
@@ -24,8 +25,6 @@ function File (name, picname, prop) {
 }
 
 File.prototype = union(EventTarget.prototype, {
-  user:'user',
-  group:'user',
   toString: function () {
     return this.name
   },
@@ -57,6 +56,25 @@ File.prototype = union(EventTarget.prototype, {
       }
     }
     return false
+  },
+  setBranch(nu){
+    this.branch_ref = nu || true
+    return this
+  },
+  unsetBranch(){
+    this.branch_ref = undefined
+    return this
+  },
+  backBranch(nu){
+    let branch_ref = nu || true
+    if (this.room) {
+      if (this.room.branch_ref || branch_ref == this.room.branch_ref){
+        return this.room
+      } else {
+        return this.room.backBranch(branch_ref)
+      }
+    }
+    return this
   },
   chmod: function (chmod) {
     this.mod.parse(chmod)
@@ -173,7 +191,6 @@ function Item (name, intro, picname, prop) {
   File.call(this, name, picname, prop)
   this._inheritable.push('room')
   this.text = intro || _(PO_DEFAULT_ITEM)
-  this.room = null
   if (prop.poid) {
     this.setPo(prop.poid, prop.povars)
   }

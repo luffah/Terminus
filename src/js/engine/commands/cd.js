@@ -13,9 +13,9 @@ _defCommand('cd', [ARGT.dir], function (args, ctx, vt) {
     return _stdout(_('cmd_cd_home'))
   } else if (args[0] === '..') {
     cwd.fire_event(vt, 'cd', args, 0)
-    if (cwd.parents.length >= 1) {
-      cwd.parents[0].previous = cwd
-      return _stdout(_('cmd_cd_parent', enterRoom(cwd.parents[0], vt)))
+    if (cwd.room) {
+      cwd.room.previous = cwd
+      return _stdout(_('cmd_cd_parent', enterRoom(cwd.room, vt)))
     } else {
       return _stderr(_('cmd_cd_no_parent'))
     }
@@ -23,9 +23,9 @@ _defCommand('cd', [ARGT.dir], function (args, ctx, vt) {
     vt.push_img(img.room_none)
     return _stdout(_('cmd_cd', enterRoom(cwd, vt)))
   } else {
-    var dest = ctx.traversee(args[0])
-    var room = dest.room
-    if (room ) {
+    let dest = ctx.traversee(args[0])
+    let room = dest.room
+    if (room) {
       if ('cd' in room.cmd_hook) {
         hret = room.cmd_hook['cd'](args)
         if (def(hret)){

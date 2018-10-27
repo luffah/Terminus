@@ -2,7 +2,7 @@ _defCommand('grep', [ARGT.pattern, ARGT.strictfile], function (args, ctx, vt) {
   var word_to_find = args[0]
   var ret = []
   for (var i = 1; i < args.length; i++) {
-    var tgt = ctx.room.traversee(args[1],ctx)
+    var tgt = ctx.traversee(args[1])
     if (tgt.item) {
       if ('grep' in tgt.item.cmd_hook) {
         hret = tgt.item.cmd_hook['grep']([word_to_find,args[i]])

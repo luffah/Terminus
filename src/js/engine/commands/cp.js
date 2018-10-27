@@ -2,8 +2,8 @@ _defCommand('cp', [ARGT.file, ARGT.filenew], function (args, ctx, vt) { // event
   if (args.length != 2) {
     return _stderr(_('incorrect_syntax'))
   } else {
-    var src = ctx.traversee(args[0],ctx)
-    var dest = ctx.traversee(args[1],ctx)
+    var src = ctx.traversee(args[0])
+    var dest = ctx.traversee(args[1])
     if (src.item) {
       if (dest.item) {
         return _stderr(_('tgt_already_exists', [dest.item_name]))

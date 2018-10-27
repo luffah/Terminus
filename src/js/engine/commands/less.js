@@ -10,12 +10,12 @@ _defCommand('less', [ARGT.strictfile], function (args, ctx, vt) { // event arg -
   } else {
     var ret = []
     for (var i = 0; i < args.length; i++) {
-      var tgt = ctx.traversee(args[i],ctx)
+      var tgt = ctx.traversee(args[i])
       var room = tgt.room
       if ('less' in room.cmd_hook) {
-         hret = room.cmd_hook['less']([args[i]])
-         if (d(hret.ret, false)) ret.push(hret.ret)
-         if (d(hret.pass, false)) continue
+        hret = room.cmd_hook['less']([args[i]])
+        if (d(hret.ret, false)) ret.push(hret.ret)
+        if (d(hret.pass, false)) continue
       }
       if (room) {
         var item = tgt.item

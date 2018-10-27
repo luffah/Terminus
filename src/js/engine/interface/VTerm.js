@@ -20,13 +20,13 @@ function VTerm (container_id, context) {
   t.history = []
   t.disabled = {}
 
-  t.timeout = { badge: 3000, scrl: 100, notification: 4000 }
+  t.timeout = { scrl: 100 }
   t.charduration = 13.125
   t.charfactor = { char: 1, ' ': 25, ' ': 4, '!': 10, '?': 10, ',': 5, '.': 8, '\t': 2, '\n': 10, 'tag': 10 }
   t.charhtml = { ' ': '&nbsp;', '\n': '<br>', '\t': '&nbsp;&nbsp;' }
 
   t.enterKey = t.enter
-  t.complete_opts = { case: 'i', fuzzy: no_accents, humanized: true }
+  t.complete_opts = { case: 'i', normalize: no_accents, humanized: true }
 
   t.scrl_lock = false
   t.cmdoutput = true
@@ -43,8 +43,6 @@ function VTerm (container_id, context) {
     'aria-live': 'polite'
     //    'aria-relevant':'additions removals'
   })
-  t.notifications = addEl(document.body, 'div', 'notifications')
-  t.last_notify = Date.now()
   t.inputdiv = addEl(addEl(t.container, 'div', 'input-container'), 'div', 'input-div')
   t.cmdline = addEl(t.inputdiv, 'p', {
     class: 'input',
@@ -67,7 +65,6 @@ function VTerm (container_id, context) {
   })
   t.btn_tab = addBtn(k, 'key', '↹', 'Tab', function (e) { t.make_suggestions() })
   t.btn_enter = addBtn(k, 'key', '↵', 'Enter', function (e) { t.enterKey() })
-  t.badge_pic = new Pic('badge.png')
   Waiter.call(this)
   t.behave()
   t.disable_input()
@@ -142,17 +139,33 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   _show_chars: function (msgidx, msg, txttab, cb, txt, curvoice, opt) {
     var t = this
-    let direct = (t.charduration == 0) || opt.direct
-    if (direct) {
+    if (t.kill && !opt.unbreakable) {
+      t.playSound('brokentext')
+      if (opt.brokencb) {
+        opt.brokencb()
+      }
+      if (t.SAFE_BROKEN_TEXT || opt.safe) {
+        if (cb) { cb() }
+        if (opt.cb) { opt.cb() }
+      }
+      t.busy = false
+      t.printing = false
+    } else if ((t.msgidx != msgidx) || (t.charduration == 0) || opt.direct) {
       msg.innerHTML = txt
       t.scrl()
       if (cb) { cb() }
       if (opt.cb) { opt.cb() }
       t.busy = false
+      t.printing = false
     } else {
       let l = txttab.shift()
-      t.busy = true
-      if (l) {
+      if (!l) {
+        t.playSound('endoftext')
+        if (cb) { cb() }
+        if (opt.cb) { opt.cb() }
+        t.busy = false
+        t.printing = false
+      } else {
         let timeout = 0
         if (l == '<') {
           /* parse tag */
@@ -186,74 +199,16 @@ VTerm.prototype = union(Waiter.prototype, {
           timeout = def(f) ? f : (t.charfactor[curvoice] || t.charfactor.char)
           if (l == '\n') t.scrl()
         }
-        if (opt.unbreakable || t.msgidx == msgidx) {
-          setTimeout(function () {
-            t._show_chars(msgidx, msg, txttab, cb, txt, curvoice, opt)
-          }, timeout * t.charduration)
-        } else if (t.SAFE_BROKEN_TEXT || opt.safe) {
-          t.playSound('brokentext')
-          if (opt.brokencb) {
-            opt.brokencb()
-          } else {
-            if (cb) { cb() }
-            if (opt.cb) { opt.cb() }
-          }
-          t.busy = false
-        }
-      } else {
-        t.playSound('endoftext')
-        if (cb) { cb() }
-        if (opt.cb) { opt.cb() }
-        t.busy = false
+        setTimeout(function () {
+          t._show_chars(msgidx, msg, txttab, cb, txt, curvoice, opt)
+        }, timeout * t.charduration)
       }
     }
-  },
-  show_loading_element_in_msg: function (list, opt) {
-    var t = this
-    opt = opt || {}
-    var containingel = d(opt.container, t.monitor)
-    var innerEl
-    if (opt.el) {
-      innerEl = opt.el
-    } else {
-      innerEl = addEl(containingel, 'div', 'inmsg')
-    }
-    var period = d(opt.period, 100)
-    //    var duration=d(opt.duration,period*list.length);
-    var duration = opt.duration
-    var finalvalue = opt.finalvalue
-    var cb = opt.callback
-    var i = 0
-    var id = t.msgidx
-    var loop = setInterval(function () {
-      if (t.msgidx != id) {
-        clearInterval(loop)
-        if (finalvalue) {
-          innerEl.innerHTML = finalvalue
-          t.ghostel.innerHTML += ' ' + finalvalue + ' '
-        }
-        if (cb) {
-          cb()
-        }
-      } else {
-        innerEl.innerHTML = list[i % list.length]
-        i++
-      }
-    }, period)
-    if (duration) {
-      setTimeout(function () {
-        if (id == t.msgidx) {
-          t.msgidx++
-        }
-      }, duration)
-    }
-    return this
   },
   show_msg: function (mesg, opt) {
     if (def(mesg)) {
       var t = this
       if (mesg instanceof Array) {
-        console.log(mesg)
         for (m in mesg) {
           t.show_msg(mesg[m], opt)
         }
@@ -261,10 +216,10 @@ VTerm.prototype = union(Waiter.prototype, {
       }
       opt = opt || {}
       var cb
-      t.busy = true; t.loop_waiting()
+      t.busy = t.printing = true; t.loop_waiting()
       if (typeof mesg === 'string') {
         mesg = _stdout(mesg)
-      } else if (typeof mesg == 'number'){
+      } else if (typeof mesg === 'number') {
         mesg = _stdout(String(mesg))
       }
       console.log(mesg)
@@ -307,6 +262,40 @@ VTerm.prototype = union(Waiter.prototype, {
     }
     return this
   },
+  show_loading_element_in_msg: function (list, opt) {
+    var t = this
+    opt = opt || {}
+    var innerEl
+    if (opt.el) {
+      innerEl = opt.el
+    } else {
+      innerEl = addEl(opt.container || t.monitor, 'div', 'inmsg')
+    }
+    var i = 0
+    var idx = t.msgidx
+    var loop = setInterval(function () {
+      if (t.msgidx != idx) {
+        clearInterval(loop)
+        if (opt.finalvalue) {
+          innerEl.innerHTML = opt.finalvalue
+          t.ghostel.innerHTML += ' ' + opt.finalvalue + ' '
+        }
+        if (opt.cb) {
+          opt.cb()
+        }
+      } else {
+        innerEl.innerHTML = list[i++ % list.length]
+      }
+    }, d(opt.period, 100))
+    if (opt.duration) {
+      setTimeout(function () {
+        if (idx == t.msgidx) {
+          t.msgidx++
+        }
+      }, opt.duration)
+    }
+    return this
+  },
   /* Suggestion part */
   make_suggestions: function (tabidx, autocomplete) {
     var ret = true
@@ -326,12 +315,10 @@ VTerm.prototype = union(Waiter.prototype, {
       }
       var tocomplete = args[idx]
       var match = []
-      //      console.log('suggestions',ac,l,args);
       // which word to guess
       let trymatch = (potential, tocomplete) => {
-        var tocompleterx = new RegExp('^' + t.complete_opts.fuzzy(tocomplete), t.complete_opts.case)
-        console.log(potential, tocompleterx)
-        return t.complete_opts.fuzzy(potential).match(tocompleterx)
+        var tocompleterx = new RegExp('^' + t.complete_opts.normalize(tocomplete), t.complete_opts.case)
+        return t.complete_opts.normalize(potential).match(tocompleterx)
       }
       if (tocomplete && idx > 0) { // at least 1 arg
         match = _completeArgs(args, idx, tocomplete, t.context, trymatch)
@@ -339,18 +326,9 @@ VTerm.prototype = union(Waiter.prototype, {
         if (t.context.hasRightForCommand(args[0])) { // propose argument
           match = _completeArgs(args, idx, tocomplete, t.context, trymatch)
         } else { // propose command completion
-          var cmds = t.context.getCommands()
-          idx = 0
-          for (var i = 0; i < cmds.length; i++) {
-            console.log(cmds[i], tocomplete)
-            var tocompleterx = new RegExp('^' + t.complete_opts.fuzzy(tocomplete), t.complete_opts.case)
-            if (cmds[i].match(tocompleterx)) {
-              match.push(cmds[i])
-            }
-          }
+          t.context.getCommands().forEach((c) => { if (trymatch(c, tocomplete)) { match.push(c) } })
         }
       } else { // propose commands
-        console.log('this case', t.context.getCommands())
         tocomplete = ''
         match = t.context.getCommands().map(addspace)
       }
@@ -409,14 +387,6 @@ VTerm.prototype = union(Waiter.prototype, {
     console.log(txt, hlcls)
     addBtn(t.suggestions, hlcls, txt.replace(/(#[^#]+#)/g, '<i class="hashtag"> $1 </i>'), txt, function (e) {
       t.input.value += txt
-      //      var l=t.get_line();
-      //      var sp=l.split(" ");
-      // replace word by complete suggestion
-      //      var last=sp.pop();
-      //      sp.push('');
-      //      var newl=sp.join(' ')+txt;
-      // set the line content and try to nxec
-      //      t.set_line(newl);
       if (t.argsValid(t.input.value.replace(/\s+$/, '').split(' '))) {
         t.enter()
       } else {
@@ -433,7 +403,7 @@ VTerm.prototype = union(Waiter.prototype, {
     return _validArgs(args.shift(), args, this.context)
   },
   enter_effect: function () {
-    if (this.context.room.enter_effect) {
+    if (this.context && this.context.room.enter_effect) {
       this.context.room.enter_effect(this)
     } else if (typeof enter_effect === 'function') {
       enter_effect()
@@ -454,12 +424,12 @@ VTerm.prototype = union(Waiter.prototype, {
       t.history.push(t.input.value)
 
       var echo = _parse_exec(t, l)
+      console.log(echo)
       if (echo) {
         if (t.cmdoutput) {
           var supercb = []
           for (var i = 0; i < echo.length(); i++) {
             supercb.push(() => {
-              console.log('pass')
               t.show_img({ index: echo.getIdx() })
               t.show_msg(echo.next(), { cb: supercb.shift() })
             })
@@ -485,24 +455,22 @@ VTerm.prototype = union(Waiter.prototype, {
       return 'Quit the game ?'
     }
   },
-  _cmdline_key: function () {
-
-  },
   input_behavior: function () {
     // behavior
     var t = this
     var pr = t.input
+    var lastkey = [null, 0]
 
     dom.body.onkeydown = function (e) {
       vt.busy = true
       e = e || window.event// Get event
       if (def(t.overapp)) {
         t.overapp.onkeydown(e)
-      } else if (t.answer_input || t.choose_input || t.password_input) {
+      } else if (t.choose_input || t.password_input) {
         e.preventDefault()
+      } else if (t.answer_input) {
       } else {
-        var k = e.key
-        if (k === 'ArrowRight' || k === 'ArrowLeft' || k === 'ArrowUp' || k === 'ArrowDown') {
+        if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].indexOf(e.key) != -1) {
           if (e.shiftKey) {
             e.preventDefault()
           }
@@ -516,19 +484,17 @@ VTerm.prototype = union(Waiter.prototype, {
       }
     }
     dom.body.onkeyup = function (e) {
-      vt.busy = false
       e = e || window.event// Get event
       if (def(t.overapp)) {
         t.overapp.onkeyup(e)
       } else if (def(t.choose_input)) {
-        t._choose_key(e.key, e)
-      } else if (def(t.answer_input)) {
-        t._answer_key(e.key, e)
+        t._choose_key(e)
       } else if (def(t.password_input)) {
-        t._password_key(e.key, e)
+        t._password_key(e)
+      } else if (def(t.answer_input)) {
+        t._answer_key(e)
       } else {
-        var k = e.key
-        if (k === 'PageUp' || k === 'PageDown' || k === 'ArrowRight' || k === 'ArrowLeft' || k === 'ArrowUp' || k === 'ArrowDown') {
+        if (['PageUp', 'PageDown', 'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'].indexOf(e.key) != -1) {
           if (e.shiftKey) {
             e.preventDefault()
           }
@@ -540,22 +506,19 @@ VTerm.prototype = union(Waiter.prototype, {
           pr.onkeyup(e)
         }
       }
+      vt.busy = false
     }
-    var lastkey = [null, 0]
     pr.onkeydown = function (e) {
       var k = e.key
-      if (k === 'Tab' || k == 'Enter') {
+      if (['Tab', 'Enter', 'ArrowUp', 'ArrowDown'].indexOf(k) != -1) {
         overide(e)
       } else if (e.ctrlKey) {
-        if (k === 'c' || k === 'v' || k === 'x' || k === 'y' || k === 'z') {
+        if (['c', 'v', 'x', 'y', 'z'].indexOf(k) != -1) {
           overide(e)
         }
       } else if (k === 'PageUp' || k === 'PageDown') {
         window.focus()
         pr.blur()
-      }
-      if (k === 'ArrowUp' || k === 'ArrowDown') {
-        overide(e)
       }
       return !e.defaultPrevented
     }
@@ -583,7 +546,11 @@ VTerm.prototype = union(Waiter.prototype, {
       } else if (e.ctrlKey) {
         if (k === 'c') { // CTRL+C - clear
           overide(e)
-          t._show_previous_prompt(t.get_line() + '^C')
+          if (t.busy) {
+            t.current_msg.innerHTML += '<br>^C'
+          } else {
+            t._show_previous_prompt(t.get_line() + '^C')
+          }
           t.msgidx++
           t.set_line('')
         } else if (k === 'u') { // CTRL+U - clear line
@@ -613,7 +580,6 @@ VTerm.prototype = union(Waiter.prototype, {
           t.set_line(t.history[t.history.length - 1 - t.histindex])
         }
       } else if (k === 'ArrowUp') { // up
-        //        console.log(t.histindex, t.history);
         if (t.histindex < t.history.length) {
           var prev = t.history[t.history.length - 1 - t.histindex]
           if (t.histindex === 0) {
@@ -625,59 +591,28 @@ VTerm.prototype = union(Waiter.prototype, {
           t.set_line(prev)
           t.histindex++
         }
-      } else {
-
       }
-      //      console.log(e);
       return !e.defaultPrevented
     }
   },
-  /** Badge rewards **/
-  badge: function (title, text) {
+  /** extra programs **/
+  exec: function (fu, cb) {
     var t = this
-    var badge = addEl(t.notifications, 'div', 'badge')
-    var now = Date.now()
-    var diff = t.last_notify - now
-    var uptimeout = 0
-    if (diff > 0) {
-      uptimeout = diff
+    t.set_line('')
+    var m = t.monitor
+    //    var m = document.body;
+    var cont = addEl(m, 'div', 'app-container')
+    t.overapp = addEl(cont, 'div', 'app')
+    t.disable_input()
+    let endapp = () => {
+      t.overapp.setAttribute('disabled', true)
+      m.removeChild(cont)
+      t.overapp = undefined
+      if (cb) cb()
     }
-    var disappeartimeout = uptimeout + (t.timeout.badge / 2)
-    var downtimeout = uptimeout + t.timeout.badge
-    setTimeout(function () {
-      t.notifications.removeChild(badge)
-    }, downtimeout)
-    setTimeout(function () {
-      badge.className += ' disappear'
-    }, disappeartimeout)
-    setTimeout(function () {
-      t.badge_pic.render(badge)
-      addEl(badge, 'span', 'badge-title').innerHTML = title
-      addEl(badge, 'p', 'badge-desc').innerText = text
-    }, uptimeout)
-    t.last_notify = now + downtimeout
-  },
-  notification: function (text) {
-    var t = this
-    var notification = addEl(t.notifications, 'div', 'notification')
-    var now = Date.now()
-    var diff = t.last_notify - now
-    var uptimeout = 0
-    if (diff > 0) {
-      uptimeout = diff
-    }
-    var disappeartimeout = uptimeout + (t.timeout.notification / 2)
-    var downtimeout = uptimeout + t.timeout.notification
-    setTimeout(function () {
-      t.notifications.removeChild(notification)
-    }, downtimeout)
-    setTimeout(function () {
-      notification.className += ' disappear'
-    }, disappeartimeout)
-    setTimeout(function () {
-      addEl(notification, 'p').innerHTML = text
-    }, uptimeout)
-    t.last_notify = now + downtimeout
+    /// 
+    t.enterKey = function () { console.log('Enter Pressed but Battle Mode') }
+    return fu(vt, t.overapp, endapp)
   },
   /** Choice prompt **/
   /** TODO : add live action function option **/
@@ -688,12 +623,11 @@ VTerm.prototype = union(Waiter.prototype, {
     opts = d(opts, {})
     disabled_choices = d(opts.disabled_choices, [])
     direct = d(opts.direct, false)
-    console.log(opts.disabled_choices)
     while (disabled_choices.indexOf(curidx) > -1) {
       curidx++
     }
     var choicebox = addEl(t.monitor, 'div', 'choicebox')
-    t.show_msg(question, { direct: direct, el: choicebox})
+    t.show_msg(question, { direct: direct, el: choicebox })
 
     t.set_line('')
     t.choose_input = addEl(choicebox, 'fieldset', 'choices')
@@ -707,7 +641,7 @@ VTerm.prototype = union(Waiter.prototype, {
       return t.enterKey()
     }
     var onkeydown = function (e) {
-      t._choose_key(e.key, e)
+      t._choose_key(e)
     }
     t.enterKey = function (e) {
       t.playSound('choiceselect')
@@ -718,8 +652,8 @@ VTerm.prototype = union(Waiter.prototype, {
       if (reenable) { t.enable_input() }
       t.show_msg(callback(t, curidx))
     }
-    t._choose_key = function (k, e) {
-      //      console.log(k);
+    t._choose_key = function (e) {
+      let k = e.key
       if (k == 'ArrowDown' || k == 'ArrowUp' || k == 'Tab') {
         t.playSound('choicemove')
         choices_btn[curidx].removeAttribute('checked')
@@ -775,102 +709,77 @@ VTerm.prototype = union(Waiter.prototype, {
     //    choices_btn[0].focus();
     t.scrl()
   },
-  /** extra programs **/
-  exec: function (fu, cb) {
-    var t = this
-    t.set_line('')
-    var m = t.monitor
-    //    var m = document.body;
-    var cont = addEl(m, 'div', 'app-container')
-    t.overapp = addEl(cont, 'div', 'app')
-    t.disable_input()
-    let endapp = () => {
-      t.overapp.setAttribute('disabled', true)
-      m.removeChild(cont)
-      t.overapp = undefined
-      if (cb) cb()
-    }
-    /// 
-    t.enterKey = function () { console.log('Enter Pressed but Battle Mode') }
-    return fu(vt, t.overapp, endapp)
-  },
   /** Question prompt **/
-  ask: function (question, callback, args) {
+  ask: function (question, cb, args) {
     var t = this
     t.set_line('')
-    var intimeout = args.wait || 0
-    var outtimeout = args.timeout || null
+    var reenable = t.disable_input()
     var choicebox = addEl(t.monitor, 'div', args.cls || 'choicebox')
-    var input_enabled = !t.disabled.input
-    var destroy = null
-    if (args.disappear) {
-      destroy = function () {
-        choicebox.outerHTML = ''
+    var create_answer = () => {
+      t.answer_input = (args.multiline
+        ? addEl(choicebox, 'textarea', { cols: 78 })
+        : addEl(choicebox, 'input', { size: 78 })
+      )
+      addBtn(addEl(choicebox, 'div', 'keys'), 'key', '↵', 'Enter', function (e) { t.enterKey() })
+      t.answer_input.value = args.value || ''
+      t.answer_input.placeholder = args.placeholder || ''
+      t.answer_input.readOnly = args.readOnly || false
+      t.answer_input.focus()
+      t.scrl()
+      t.answer_input.onkeyup = t._answer_key
+      if (args.anykeydown) {
+        t.answer_input.ondown = (e) => {
+          if (e.ctrlKey && args.ctrlkeydown && args.ctrlkeydown.hasOwnProperty(e.key)) {
+            args.ctrlkeydown[e.key](t, e)
+          } else if (args.keydown && args.keydown.hasOwnProperty(e.key)) {
+            args.keydown[e.key](t, e)
+          } else if (args.anykeydown) {
+            args.anykeydown(t, e)
+          }
+        }
       }
     }
-    t.disable_input()
-    var end_answer = function () {
+    var end_answer = () => {
       t.answer_input.setAttribute('disabled', true)
       t.answer_input = undefined
-      if (args.disappear) args.disappear(destroy)
-      if (input_enabled) t.enable_input()
+      if (args.disappear) args.disappear(() => { choicebox.outerHTML = '' })
+      if (reenable) t.enable_input()
     }
-    /// 
-    t.enterKey = function () {
+    t._answer_key = args.ev || ((e) => {
+      if (e.ctrlKey && args.ctrlkeyup && args.ctrlkeyup.hasOwnProperty(e.key)) {
+        args.ctrlkeyup[e.key](t, e)
+      } else if (args.keyup && args.keyup.hasOwnProperty(e.key)) {
+        args.keyup[e.key](t, e)
+      } else if (e.key === 'Enter') {
+        t.enterKey()
+        e.preventDefault()
+        t.scrl()
+      } else if (args.anykeyup) {
+        args.anykeyup(t, e)
+      }
+    })
+    t.enterKey = () => {
       t.playSound('choiceselect')
-      var ret = t.answer_input.value
-      ret = callback ? callback(ret) : ret
+      let ret = t.answer_input.value
+      ret = cb ? cb(ret) : ret
       end_answer()
       t.show_msg(ret)
     }
-    t.show_msg(question, { cb: function () {
-      setTimeout(function () {
-        if (args.multiline) {
-          t.answer_input = addEl(choicebox, 'textarea', { cols: 78 })
-        } else {
-          t.answer_input = addEl(choicebox, 'input', { size: 78 })
+
+    t.show_msg(question, { el: choicebox,
+      cb: () => {
+        setTimeout(create_answer, args.wait || 0)
+        if (args.timeout) {
+          setTimeout(t.enterKey, (args.wait || 0) + args.timeout)
         }
-        var k = addEl(choicebox, 'div', 'keys')
-        addBtn(k, 'key', '↵', 'Enter', function (e) { t.enterKey() })
-        if (args.value) {
-          t.answer_input.value = args.value
-        }
-        if (args.placeholder) {
-          t.answer_input.placeholder = args.placeholder
-        }
-        t.answer_input.focus()
-        t.scrl()
-        t.answer_input.onkeyup = function (e) {
-          if (e.key === 'Enter') {
-            if (e.ctrlKey || !args.multiline) { // ENTER
-              t.enterKey()
-              e.preventDefault()
-              t.scrl()
-            } else { // line return
-              var strt = t.answer_input.selectionStart
-              var bef = t.answer_input.value.substr(0, strt); var aft = t.answer_input.value.substr(strt)
-              t.answer_input.value = bef + '\n' + aft
-              t.answer_input.selectionStart = strt + 1
-              t.answer_input.selectionEnd = strt + 1
-            }
-          } else if (args.evkey && args.evkey.hasOwnProperty(e.key)) {
-            args.evkey[e.key]()
-          }
-        }
-      }, intimeout)
-      if (outtimeout) {
-        setTimeout(function () {
-          t.playSound('choiceselect')
-          var ret = t.answer_input.value
-          ret = callback ? callback(ret) : ret
-          end_answer()
-          t.show_msg(ret)
-        }, intimeout + outtimeout)
-      }
-    },
-    el: choicebox})
+      } })
   },
   /** Password prompt **/
+  /** TODO : maybe, add live action function option **/
+  ask_password: function (cmdpass, callback) {
+    this._begin_password()
+    this._ask_password_rec(cmdpass, callback)
+  },
   _begin_password: function () {
     var t = this
     t.set_line('')
@@ -896,7 +805,7 @@ VTerm.prototype = union(Waiter.prototype, {
     t._div = undefined
     t.enable_input()
   },
-  _password_key: function (k, e) {
+  _password_key: function (e) {
   // nothing
   },
   _ask_password_rec: function (cmdpass, callback) {
@@ -928,44 +837,6 @@ VTerm.prototype = union(Waiter.prototype, {
       t._end_password()
     }
   },
-  /** TODO : maybe, add live action function option **/
-  ask_password: function (cmdpass, callback) {
-    this._begin_password()
-    this._ask_password_rec(cmdpass, callback)
-  },
-  auto_shuffle_line: function (msg, fromcomplexicity, tocomplexicity, stepcomplexity, period, duration, incstep) {
-    var t = this
-    var idx = t.msgidx
-    msg = msg || t.input.value
-    if (t.input_operation_interval) {
-      clearInterval(t.input_operation_interval)
-    }
-    var inccnt = 0
-    var tmpc = fromcomplexicity
-    var sens = (tocomplexicity > fromcomplexicity ? 1 : -1)
-    var limit = tocomplexicity * sens
-    var step = (tocomplexicity - fromcomplexicity) / stepcomplexity
-    t.input_operation_interval = setInterval(function () {
-      if (t.msgidx != idx) {
-        clearInterval(t.input_operation_interval)
-        t.set_line('')
-      } else {
-        if (((tmpc * sens) < limit) && ((inccnt % incstep) == 0)) {
-          tmpc = tmpc + step
-        }
-        t.set_line(shuffleStr(msg, tmpc))
-        inccnt++
-      }
-    }, period)
-    if (duration) {
-      setTimeout(function () {
-        if (idx == t.msgidx) {
-          t.msgidx++
-        }
-      }, duration)
-    }
-  },
-
   // --------//
   // SOUND  //
   muteSound: function () {
