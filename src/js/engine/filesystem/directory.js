@@ -7,7 +7,6 @@ function Room (roomname, text, picname, prop) {
   this.previous = this
   this.children = []
   this.items = []
-  this.commands_lock = {}
   this.text = d(text, _(PO_DEFAULT_ROOM_DESC))
   this.starter_msg = prop.starterMsg || null
   this.enter_callback = prop.enterCallback || null
@@ -204,16 +203,6 @@ Room.prototype = union(File.prototype, {
   },
   unsetOutsideEvt: function (name) {
     delete globalSpec[this.name][name]
-    return this
-  },
-
-  // command management
-  setCommandOptions: function (cmd, options) {
-    this.commands_lock[cmd] = options
-    return this
-  },
-  removeCommandOptions: function (cmd) {
-    delete this.commands_lock[cmd]
     return this
   },
 

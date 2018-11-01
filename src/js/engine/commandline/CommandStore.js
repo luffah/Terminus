@@ -8,7 +8,7 @@ function _stderr(a){return {stderr:a};}
 function Command (name, syntax, fu, prop) {
   // syntax example : cmd dir [-d|-e] (undo|redo) -> [ARGT.dir(),ARGT.opt.concat(['-d','e']),ARGT.instr.concat['undo','redo']],
   // fu example : (args, ctx, vt) => console.log(args,ctx,vt)
-  this.fu = fu
+  this.exec = fu
   this.syntax = syntax
   prop = prop || {}
   this.group = prop.group || name
@@ -40,7 +40,7 @@ function _setCommandGroup (group, commands) {
 
 function _aliasCommand (cmd, cmdb, args) {
   var c = (isStr(cmdb)) ? global_commands_fu[cmdb] : cmdb
-  _defCommand(cmd, c.syntax, c.fu)
+  _defCommand(cmd, c.syntax, c.exec)
   if (args) {
     global_commands_fu[cmd].preargs = args
   }

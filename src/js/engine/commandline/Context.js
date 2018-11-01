@@ -36,26 +36,31 @@ Context.prototype = {
     if (val.length) this.user.address=val;
   },
   getCommand(cmdname){
-    return global_commands_fu[cmdname]
+    if (cmdname.match(/^(\.\/|\/)/)) { // find a local program
+      // console.log('matched')
+      let tr = this.room.traversee(cmdname)
+      if (tr.item && tr.item.ismod('x', ctx)) {
+        return tr.item
+      }
+    }
+    cmd = global_commands_fu[cmdname]
+    if (cmd && cmd.ismod('x', this)) return cmd
   },
   hasRightForCommand(cmdname) {
-    cmd = this.getCommand(cmdname)
-    return ( cmd && cmd.ismod('x', this) ? (
-          this.user.isRoot || this.currentuser == cmd.owner || this.user.groups.indexOf(cmd.group) > -1
-          ) : false)
-  },
-  getUserCommands () {
-    var t=this
-    return Object.keys(global_commands_fu).filter((c) => t.hasRightForCommand(c))
+    let cmd = getCommand(cmdname)
+    return cmd && cmd.ismod('x', this)
   },
   getCommands () {
-    var ret = []; var cmd; var i; var r = this.room
+    var ret = []
+    var cmd; var i; var r = this.room
     for (i = 0; i < r.items.length; i++) {
-      if (r.items[i].executable) {
+      if (r.items[i].ismod('x', this)) {
         ret.push('./' + r.items[i].name)
       }
     }
-    return ret.concat(this.getUserCommands())
+    return ret.concat(
+        Object.keys(global_commands_fu).filter((c) => global_commands_fu[c].ismod('x', this))
+    )
   }
 }
 Context.parse = function(str){
