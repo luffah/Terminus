@@ -75,7 +75,7 @@ function playMusic(key, p) {
 }
 
 function playSound(key) {
-  vt.playSound(key, p)
+  vt.playSound(key)
 }
 
 function ondone (fu) {

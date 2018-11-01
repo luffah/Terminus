@@ -10,22 +10,23 @@ Modes.prototype = {
       chmo = String(chmo)
     }
     if (isNaN(chmo)) {
-      let curscope = [0, 1, 2]
+      let curscope = []
       let change = 1
       for (let n = 0; n < chmo.length; n++) {
         let i = chmo[n]
         if (i == 'a') {
           curscope = [0, 1, 2]
         } else if ('ugo'.indexOf(i) != -1) {
-          curscope = [ this._scopeidx[i] ]
+          curscope.push(this._scopeidx[i])
         } else if (i == '+') {
           change = 1
         } else if (i == '-') {
           change = 0
         } else {
-          curscope.forEach((s) => {
-            this.modes[s][this._rightidx[i]] = change
-          })
+          (curscope.length ? curscope : [0, 1, 2])
+            .forEach((s) => {
+              this.modes[s][this._rightidx[i]] = change
+            })
         }
       }
     } else {

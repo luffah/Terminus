@@ -126,7 +126,7 @@ function _parse_command (vt, line) {
     } else {
       r.fire_event(vt, 'cmd_not_found', args, 0)
       r.fire_event(vt, cmdname + '_cmd_not_found', args, 0)
-      ret = cmd_done(vt, [[r, 0]], psychologist(ctx, cmd, args), 'cmd_not_found', args)
+      ret = cmd_done(vt, [[r, 0]], psychologist(ctx, cmdname, args), 'cmd_not_found', args)
     }
     return ret
   }

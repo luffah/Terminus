@@ -14,7 +14,7 @@ function Command (name, syntax, fu, prop) {
   this.group = prop.group || name
   this.owner = prop.owner || name
   this.executable = prop.executable || true
-  this.mod = new Modes(prop.mod || 'a+x')
+  this.mod = new Modes(prop.mod || 'ug+x')
   this.preargs = prop.preargs || [] // default arguments (for aliases)
 }
 Command.prototype = {

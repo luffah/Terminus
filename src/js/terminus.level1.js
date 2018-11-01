@@ -27,8 +27,9 @@ function loadLevel1 () {
         $home.unsetCmdEvent('less_no_arg')
         mesg(_('cmd_cat_first_try'), re, { timeout: 500 })
       },
-      destination_unreachable: (re) => {
-        $home.unsetCmdEvent('destination_unreachable')
+      room_unreachable: 'item_not_exists',
+      item_not_exists: (re) => {
+        $home.unsetCmdEvent('item_not_exists')
         mesg(_('cmd_cat_second_try'), re, { timeout: 1000 })
       } })
     .where_u_meet('shell', { var: 'shelly',
@@ -45,12 +46,10 @@ function loadLevel1 () {
       into('western_forest', 'loc_forest.gif', { enterCallback: () => { playMusic('forest') } })
         .where_u_find('western_forest_academy_direction', 'item_sign.png')
         .where_u_find('western_forest_back_direction', undefined, { var: 'pwddecl',
-          events: { less: () => {
+          events: { less: (re) => {
             $western_forest.unsetCmdEvent('less')
-            if (hasGroup('pwd')) {
-              addGroup('pwd')
-              learn('pwd')
-            }
+            addGroup('pwd')
+            learn('pwd', re)
           } } })
         .go(
           into('spell_casting_academy', 'loc_academy.gif', { enterCallback: () => { playMusic('academy') } })

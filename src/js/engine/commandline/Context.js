@@ -47,8 +47,7 @@ Context.prototype = {
     if (cmd && cmd.ismod('x', this)) return cmd
   },
   hasRightForCommand(cmdname) {
-    let cmd = getCommand(cmdname)
-    return cmd && cmd.ismod('x', this)
+    return this.getCommand(cmdname)
   },
   getCommands () {
     var ret = []

@@ -13,13 +13,12 @@ function Game () {
   newRoom('root', undefined, {owner:'root' })
   .newRoom('users', undefined, {owner:'root'})
   .newRoom('home', undefined)
-  loadLevel1()
-  loadLevel2()
   if (typeof doTest === 'function') {
     doTest(vt)
     return
   }
-  console.log('new game')
+  loadLevel1()
+  loadLevel2()
   new Seq([t.demo_note, t.menu]).next()
 }
 

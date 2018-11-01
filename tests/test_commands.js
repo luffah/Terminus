@@ -6,6 +6,13 @@ addTest(function (next) {
 })
 
 addTest(function (next) {
+  vt.context.currentuser = 'touch'
+  vt.set_line('touch test')
+  vt.enter()
+  setTimeout(next, 1000)
+})
+
+addTest(function (next) {
   vt.context.currentuser = 'ls'
   vt.set_line('ls')
   vt.enter()
@@ -13,9 +20,16 @@ addTest(function (next) {
 })
 
 addTest(function (next) {
-  console.log('TEST CMD GREP')
   vt.context.currentuser = 'grep'
+  $home.meet('shell')
   vt.set_line('grep cd Palourde')
+  vt.enter()
+  setTimeout(next, 1000)
+})
+
+addTest(function (next) {
+  vt.context.currentuser = 'less'
+  vt.set_line('less ')
   vt.enter()
   setTimeout(next, 1000)
 })

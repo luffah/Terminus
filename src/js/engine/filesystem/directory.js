@@ -40,7 +40,7 @@ Room.prototype = union(File.prototype, {
     var ev_trigger = null
     console.log('EVENT ' + cmd)
     var context = { term: vt, room: this, arg: (def(idx) ? args[idx] : null), args: args, i: idx, ct: ct }
-    if (ct.hasOwnProperty('unreachable_room')) {
+    if (ct.unreachable_room) {
       if ((ct.unreachable_room.name in globalSpec) && (cmd in globalSpec[ct.unreachable_room.name])) {
         ev_trigger = globalSpec[ct.unreachable_room.name][cmd]
       }
