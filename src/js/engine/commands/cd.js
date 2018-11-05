@@ -5,19 +5,19 @@ _defCommand('cd', [ARGT.dir], function (args, ctx, vt) {
   } else if (args.length === 0) {
     return _stderr(_('cmd_cd_no_args') + (ctx.hasRightForCommand('pwd') ? ('\n' + _('cmd_cd_no_args_pwd')) : ''))
   } else if (args[0] === '-' && cwd.previous.checkAccess(ctx)){
-      cwd.previous.previous = cwd
+      ctx.previous_room = cwd
       enterRoom(cwd.previous, vt)
       return cmd_done(vt, [[cwd.previous, 0]], {}, 'cd', args)
   } else if (args[0] === '..' && cwd.room.checkAccess(ctx)) {
     cwd.fire_event(vt, 'cd', args, 0)
     if (cwd.room) {
-      cwd.room.previous = cwd
+      ctx.previous_room = cwd
       return _stdout(_('cmd_cd_parent', enterRoom(cwd.room, vt)))
     } else {
       return _stderr(_('cmd_cd_no_parent'))
     }
   } else if (args[0] === '~' && $home.checkAccess(ctx)) {
-    $home.previous = cwd
+    ctx.previous_room = cwd
     enterRoom($home, vt)
     return cmd_done(vt, [[$home, 0]], _stdout(_('cmd_cd_home')), 'cd', args)
   } else {
@@ -32,7 +32,7 @@ _defCommand('cd', [ARGT.dir], function (args, ctx, vt) {
           }
         }
         if (!dest.item_name) {
-          room.previous = cwd
+          ctx.previous_room = cwd
           return cmd_done(vt, [[room, 0]], _stdout(_('cmd_cd', enterRoom(room, vt))), 'cd', args)
         }
       } else {

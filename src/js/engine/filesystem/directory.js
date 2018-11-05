@@ -4,7 +4,6 @@ function Room (roomname, text, picname, prop) {
   prop = prop || {}
   if (!prop.mod) { prop.mod = 755 }
   File.call(this, d(roomname, _(PO_DEFAULT_ROOM, [])), picname, prop)
-  this.previous = this
   this.children = []
   this.items = []
   this.text = d(text, _(PO_DEFAULT_ROOM_DESC))
@@ -287,6 +286,19 @@ Room.prototype = union(File.prototype, {
     var ret = newRoom(id, picname, prop)
     this._last_to.addDoor(ret)
     this._last_to = ret
+    return this
+  },
+  concatLink: function (id, tgt, picname, prop) {
+    prop = d(prop, {})
+    prop.poid = d(prop.poid, id)
+    if (tgt instanceof Room){
+      let ret = new RoomLink(id, tgt, picname, prop)
+      this._last_to.addDoor(ret)
+      this._last_to = tgt
+    } else {
+      let ret = new Link(id, tgt, picname, prop)
+      this._last_to.addItem(ret)
+    }
     return this
   },
   initConcat: function (){

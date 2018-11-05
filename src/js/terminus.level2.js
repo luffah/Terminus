@@ -2,9 +2,7 @@
 //---------------LEVEL 2---------------------
 //TOWN SQUARE
 function loadLevel2(){
-$portal.addDoor(
-  newRoom("townsquare", "loc_square.gif")
-);
+$portal.findLink( "townsquare", newRoom("townsquare", "loc_square.gif"));
 $townsquare.setEnterCallback(function(){
   vt.playMusic('chapter2',{loop:true});
 });

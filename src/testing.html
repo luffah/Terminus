@@ -8,14 +8,12 @@
    *  Author :  luffah
    *  Licence : GPLv3
    *  Date :    2018-10-20
+   *  Usage :   testing.html?test1,test2...
    */
-  var __tests =[
-    '../tests/Testing.js',
-    '../tests/test_commands.js',
-    //'../tests/test_academy.js',
-    //'../tests/test_battlescene.js',
-    //'../tests/autoexplore.js',
-  ]
+  var __tests = [ '../tests/Testing.js' ].concat(
+    window.location.search.substr(1).split(',').map(
+      (s) => '../tests/test_' + s + '.js')
+  )
   document.open()
   var __el = document.createElement( 'html' )
   var __xhr = new XMLHttpRequest()

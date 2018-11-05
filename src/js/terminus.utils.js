@@ -2,6 +2,7 @@ File.prototype.and=() => this.room
 var into=(id, img, prop) => window.hasOwnProperty('$'+id) ? window['$'+id] : newRoom(id,img,prop)
 Room.prototype.or=Room.prototype.initConcat
 Room.prototype.then=Room.prototype.concatNew
+Room.prototype.findLink=Room.prototype.concatLink
 Room.prototype.where_u_meet=Room.prototype.addPeopleOnQueue
 Room.prototype.where_u_find=Room.prototype.addItemOnQueue
 Room.prototype.where_u_findMany=Room.prototype.addItemBatchOnQueue
