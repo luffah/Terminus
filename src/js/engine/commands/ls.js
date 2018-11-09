@@ -1,7 +1,7 @@
 function printLS (room, render_classes) {
   var ret = ''; var pics = {}; var i
   render_classes = render_classes || { item: 'item', people: 'people', subroom: 'inside-room' }
-  if ((room.children.length > 0) || !room.isRoot) {
+  if ((room.children.length > 0) || !room.room) {
     tmpret = ''
     for (i = 0; i < room.children.length; i++) {
       tmpret += span('color-room', room.children[i].toString() + '/') + '\n\t'

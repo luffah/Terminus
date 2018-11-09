@@ -9,7 +9,7 @@ function SoundBank(callback){
 
 SoundBank.prototype={
   set: function(ref,file,exts,extra){
-    var t=this;
+    let t=this;
     extra=d(extra,{});
     required=d(extra.required,true);
     t.ldr++;

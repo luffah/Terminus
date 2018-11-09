@@ -5,7 +5,7 @@ _defCommand('help', [ARGT.cmdname], function (args, ctx, vt) {
     if (d(hret.ret, false)) return hret.ret
   }
   ret = _('cmd_help_begin') + '\n'
-  var c = ctx.getUserCommands()
+  var c = ctx.getCommands()
   for (var i = 0; i < c.length; i++) {
     ret += '<pre>' + c[i] + '\t</pre>: ' + _('help_' + c[i]) + '\n'
   }

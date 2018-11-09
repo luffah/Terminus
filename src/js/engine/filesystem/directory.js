@@ -24,9 +24,7 @@ function enterRoom (new_room, vt) {
   if (typeof new_room.enter_callback === 'function') {
     new_room.enter_callback(new_room, vt)
   }
-  // TODO : put this in a clean way // depends on background.js
-  enter_room_effect()
-  //
+  vt.enter_effect()
   return [new_room.toString(), new_room.text]
 }
 Room.parse = function (str) {
@@ -84,16 +82,28 @@ Room.prototype = union(File.prototype, {
   },
   // Room picture
   // item & people management
-  addItem: function (newitem) {
-    this.items.push(newitem)
-    newitem.room = this
+  addItem: function (f) {
+    if (f) {
+      let i = 0
+      let name = f.name
+      while (this.idxItemFromName(f.name) != -1) {
+        f.name = name + '.' +(++i)
+      }
+      this.items.push(f)
+      f.room = this
+    }
     return this
   },
-  addDoor: function (newchild, wayback) {
-    if (def(newchild) && !this.hasChild(newchild)) {
-      this.children.push(newchild)
+  addDoor: function (f, wayback) {
+    if (f) {
+      let i = 0
+      let name = f.name
+      while (this.idxChildFromName(f.name) != -1) {
+        f.name = name + '.' +(++i)
+      }
+      this.children.push(f)
       if (d(wayback, true)) {
-        newchild.room = this
+        f.room = this
       }
     }
     return this
@@ -221,7 +231,7 @@ Room.prototype = union(File.prototype, {
     return ret
   },
   checkAccess: function (ctx) {
-    if (ctx.uid == this.room.uid){
+    if (ctx.uid == this.uid){
       return true
     } else if (this.isParentOf(ctx.room)){
        return this.ismod('x', ctx)
@@ -259,6 +269,7 @@ Room.prototype = union(File.prototype, {
       prop.poid = id
       prop.povars = [names[i]]
       ret[i] = new Item('', '', picname, prop)
+      ret.id = id + i
       this.addItem(ret[i])
     }
     return ret
@@ -267,6 +278,7 @@ Room.prototype = union(File.prototype, {
     prop = d(prop, {})
     prop.poid = d(prop.poid, id)
     var ret = new Item('', '', picname, prop)
+    ret.id = id
     this.addItem(ret)
     return ret
   },
@@ -274,6 +286,7 @@ Room.prototype = union(File.prototype, {
     prop = d(prop, {})
     prop.poid = d(prop.poid, id)
     var ret = new People('', '', picname, prop)
+    ret.id = id
     this.addItem(ret)
     return ret
   },
@@ -288,15 +301,28 @@ Room.prototype = union(File.prototype, {
     this._last_to = ret
     return this
   },
-  concatLink: function (id, tgt, picname, prop) {
+  newLink: function (id, tgt, picname, prop) {
     prop = d(prop, {})
     prop.poid = d(prop.poid, id)
+    let ret
     if (tgt instanceof Room){
-      let ret = new RoomLink(id, tgt, picname, prop)
+      ret = new RoomLink(id, tgt, picname, prop)
+      this.addDoor(ret)
+    } else {
+      ret = new Link(id, tgt, picname, prop)
+      this.addItem(ret)
+    }
+    ret.id = id
+    return ret
+  },
+  concatLink: function (id, tgt, picname, prop) {
+    let ret = this.newLink(id, tgt, picname, prop)
+    if (tgt instanceof Room){
+      ret = new RoomLink(id, tgt, picname, prop)
       this._last_to.addDoor(ret)
       this._last_to = tgt
     } else {
-      let ret = new Link(id, tgt, picname, prop)
+      ret = new Link(id, tgt, picname, prop)
       this._last_to.addItem(ret)
     }
     return this
@@ -340,6 +366,7 @@ function newRoom (id, picname, prop) {
     picname,
     prop)
   n.poid = poid
+  n.id = id
   n.picture.setImgClass('room-' + id)
   return n
 }

@@ -30,7 +30,7 @@ var minigame_intro={
     }
   },
   gravity:function(){
-    var t=this;t.falling_down=true;
+    let t=this;t.falling_down=true;
     setTimeout(function(){
       if (!t.setOffsetDeltaY(-5)){
         t.falling_down=false;

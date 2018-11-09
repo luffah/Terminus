@@ -22,6 +22,10 @@ function span (cls, content) {
   return "<span class='" + cls + "'>" + content + '</span>'
 }
 
+function t (tag, content, cls) {
+  return "<" + tag + (cls ? " class='" + cls + "'" : '') + ">" + content + '</' + tag + '>'
+}
+
 function addAttrs (el, attrs) {
   for (var i in attrs) {
     if (attrs.hasOwnProperty(i)) {

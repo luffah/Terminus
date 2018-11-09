@@ -8,9 +8,9 @@ _defCommand('cd', [ARGT.dir], function (args, ctx, vt) {
       ctx.previous_room = cwd
       enterRoom(cwd.previous, vt)
       return cmd_done(vt, [[cwd.previous, 0]], {}, 'cd', args)
-  } else if (args[0] === '..' && cwd.room.checkAccess(ctx)) {
+  } else if (args[0] === '..') {
     cwd.fire_event(vt, 'cd', args, 0)
-    if (cwd.room) {
+    if (cwd.room && cwd.room.checkAccess(ctx)) {
       ctx.previous_room = cwd
       return _stdout(_('cmd_cd_parent', enterRoom(cwd.room, vt)))
     } else {

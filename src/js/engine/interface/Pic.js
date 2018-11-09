@@ -31,17 +31,17 @@ function PlatformGrid(matrix,range){
 }
 
 PlatformGrid.prototype.check=function(x,y,w,h){
-  var t=this;
-  var ret=false;
+  let t=this;
+  let ret=false;
   if (
     x>=t.range[0][0]&&y>=t.range[1][0]&&
     (x+w)<=t.range[0][1]&&(y+h)<=t.range[1][1]
   ){
-    var cy=Math.floor(y/t.y),cx=Math.floor(x/t.x),ctoy=Math.floor((y+h)/t.y),ctox=Math.floor((x+w)/t.x);
+    let cy=Math.floor(y/t.y),cx=Math.floor(x/t.x),ctoy=Math.floor((y+h)/t.y),ctox=Math.floor((x+w)/t.x);
     if  (cy >= 0 && cx>=0 && cy < t.matrix.length ){
       ret=true;
-      for (var j=cy;j<=ctoy;j++){
-        for (var i=cx;i<=ctox;i++){
+      for (let j=cy;j<=ctoy;j++){
+        for (let i=cx;i<=ctox;i++){
           ret=ret&&(t.matrix[j][i]==0);
         }
       }
@@ -51,8 +51,8 @@ PlatformGrid.prototype.check=function(x,y,w,h){
 };
 PicLayers.prototype={
   _setOffset:function(x,y){
-    var t=this; var o=t.offset_prop;
-    var nowall=(!o.grid||(o.grid.check(
+    let t=this; let o=t.offset_prop;
+    let nowall=(!o.grid||(o.grid.check(
       x,y,
       (t.cont.offsetWidth*100/t.cont.parentNode.offsetWidth),
       0 // don't care about height
@@ -73,10 +73,10 @@ PicLayers.prototype={
 
   },
   collide:function(a){
-    var t=this;
-    var parw=t.cont.parentNode.offsetWidth;
-    var parh=t.cont.parentNode.offsetHeight;
-    var 
+    let t=this;
+    let parw=t.cont.parentNode.offsetWidth;
+    let parh=t.cont.parentNode.offsetHeight;
+    let 
       x1=t.offset[0],
       y1=t.offset[1],
       h1=(t.cont.offsetHeight*100/parh),
@@ -98,11 +98,11 @@ PicLayers.prototype={
     return this.offset_prop.grid;
   },
   fallTo:function(vals,steps,interval,cb){
-    var t=this; var x, y, cx, cy,o=t.offset_prop, of,down=(steps[1]<0);
+    let t=this; let x, y, cx, cy,o=t.offset_prop, of,down=(steps[1]<0);
     if (!t.falling||(steps[1]==0)){
 
       t.falling=true;
-      var it=function(){
+      let it=function(){
         if (steps[0]||steps[1]){
           x=t.offset[0]+steps[0];
           y=t.offset[1]+steps[1];
@@ -144,25 +144,25 @@ PicLayers.prototype={
     return this._setOffset(offset[0],offset[1]);
   },
   setOffsetDelta:function(xd,yd){
-    var t=this;
+    let t=this;
     yd=yd*t.gravity_coef;
     return t._setOffset(t.offset[0]+xd,t.offset[1]+yd);
   },
   setOffsetDeltaX:function(xd){
-    var t=this;
+    let t=this;
     return t._setOffset(t.offset[0]+xd,t.offset[1]);
   },
   setOffsetDeltaY:function(yd){
-    var t=this;
+    let t=this;
     yd=yd*t.gravity_coef;
     return t._setOffset(t.offset[0],t.offset[1]+yd);
   },
   setOffsetDeltaXStepped:function(xd,step,interval,cb){
-    var t=this;
+    let t=this;
     t.fallTo([t.offset[0]+xd,t.offset[1]],[step,0],interval,cb);
   },
   setOffsetDeltaYStepped:function(yd,step,interval,cb){
-    var t=this;
+    let t=this;
     yd=yd*t.gravity_coef;
     t.fallTo([t.offset[0],t.offset[1]+yd],[0,step],interval,cb);
   },
@@ -173,24 +173,24 @@ PicLayers.prototype={
     return this.offset_prop;
   },
   update:function(){
-    var t=this;
-    var cont=t.cont,onload=t.onload;
+    let t=this;
+    let cont=t.cont,onload=t.onload;
     //  ,over=t.over,behind=t.behind;
     //  over.innerHTML="";
     //  behind.innerHTML="";
     cont.innerHTML="";
     cont.className='layers '+t.pic.image_class+' '+t.othercls+(t.reverseX?' reverseX':'')+(t.reverseY?' reverseY':'');
-    var over=addEl(cont,'div',{'class':'foreground','aria-hidden':'true'});
-    var behind=addEl(cont,'div',{'class':'background','aria-hidden':'true'});
+    let over=addEl(cont,'div',{'class':'foreground','aria-hidden':'true'});
+    let behind=addEl(cont,'div',{'class':'background','aria-hidden':'true'});
     if (t.pic.src){
       addEl(cont,'img',{class:'main '+(t.pic.cls || '')+' '+(t.pic.tmpcls || ''),src:t.pic.img_dir + t.pic.src, 'aria-hidden':'true'})
         .onload=onload;
       delete t.pic.tmpcls;
     }
-    var cnt=0;
-    for (var name in t.pic.children){
+    let cnt=0;
+    for (let name in t.pic.children){
       if (t.pic.children.hasOwnProperty(name)){
-        var childpic=t.pic.children[name];
+        let childpic=t.pic.children[name];
         if (childpic.render_as_child((childpic.index<0?behind:over),cnt+1)){
           cnt++;
         }
@@ -218,7 +218,7 @@ Pic.prototype={
     });
   },
   addChildren:function(children){
-    for (var name in children){
+    for (let name in children){
       if (children.hasOwnProperty(name)){
         this.children[name]=children[name];
       }
@@ -238,10 +238,9 @@ Pic.prototype={
   render_as_child:function(cont,cnt){
     if (this.src) {
       addEl(cont,'img',{class:'layer layer-'+cnt+' '+(this.cls || '')+' '+(this.tmpcls || ''),src:this.img_dir + this.src, 'aria-hidden':'true'});
-      
-      for (var name in this.children){
+      for (let name in this.children){
         if (this.children.hasOwnProperty(name)){
-          var childpic=this.children[name];
+          let childpic=this.children[name];
           childpic.render_as_child(cont,cnt);
         }
       }
@@ -251,12 +250,12 @@ Pic.prototype={
     return false;
   },
   render:function(c,onload){
-    var t=this;
+    let t=this;
     if (t.exists()){
-      var cont=addEl(c,'div','layers');
+      let cont=addEl(c,'div','layers');
       cont.onload=onload ;
 //      console.log(t.image_class);
-      var picl=new PicLayers(t,cont,onload);
+      let picl=new PicLayers(t,cont,onload);
       picl.update();
       return picl; 
     }

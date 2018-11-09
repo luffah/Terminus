@@ -7,7 +7,7 @@ var state = new GameState() // GameState to initialize in game script
 var vt = new VTerm('term')
 window.addEventListener('load', Game)
 function Game () {
-  var t = Game.prototype
+  let t = Game.prototype
   t.version = '0.2beta'
   loadBackgroud('init')
   newRoom('root', undefined, {owner:'root' })
@@ -19,6 +19,7 @@ function Game () {
   }
   loadLevel1()
   loadLevel2()
+
   new Seq([t.demo_note, t.menu]).next()
 }
 

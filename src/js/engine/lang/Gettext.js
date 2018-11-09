@@ -5,6 +5,7 @@ var POPREFIX_CMD = 'cmd_'
 var POPREFIX_ROOM = 'room_'
 var POPREFIX_ITEM = 'item_'
 var POPREFIX_LINK = 'link_'
+var POPREFIX_ROOMLINK = 'link_'
 var POPREFIX_PEOPLE = 'people_'
 var POSUFFIX_DESC = '_text'
 var PO_NONE = 'none'
@@ -12,6 +13,7 @@ var PO_NONE_DESC = PO_NONE + POSUFFIX_DESC
 var PO_DEFAULT_ROOM = POPREFIX_ROOM + PO_NONE
 var PO_DEFAULT_ITEM = POPREFIX_ITEM + PO_NONE
 var PO_DEFAULT_LINK = POPREFIX_LINK + PO_NONE
+var PO_DEFAULT_ROOMLINK = POPREFIX_ROOMLINK + PO_NONE
 var PO_DEFAULT_PEOPLE = POPREFIX_PEOPLE + PO_NONE
 var PO_DEFAULT_ROOM_DESC = POPREFIX_ROOM + PO_NONE_DESC
 var PO_DEFAULT_ITEM_DESC = POPREFIX_ITEM + PO_NONE_DESC
@@ -55,15 +57,9 @@ function var_resolve (a) {
 }
 
 function _ (str, vars, args) {
-  if (!def(str)) return ''
-  if (typeof vars === 'string' || typeof vars === 'number') {
-    vars = [vars]
-  }
-  if (typeof vars !== 'object' || vars.length === 0) {
-    vars = ['', '', '', '']
-  }
+  if (!str) return ''
   args = d(args, {})
-  var ret
+  let ret
   if (str in dialog) {
     ret = dialog[str]
   } else {
@@ -75,9 +71,15 @@ function _ (str, vars, args) {
       ret = dialog[args.or]
     } else {
       ret = str
-      if (vars.length > 0) ret += ' ' + vars.join(' ')
+      if (vars && vars.length > 0) ret += ' ' + vars.join(' ')
       return ret
     }
+  }
+  if (typeof vars === 'string' || typeof vars === 'number') {
+    vars = [vars]
+  }
+  if (typeof vars !== 'object' || vars.length === 0) {
+    vars = ['', '', '', '']
   }
   while (var_regexp.test(ret)) {
     ret = ret.replace(var_regexp, var_resolve)
@@ -87,7 +89,6 @@ function _ (str, vars, args) {
   //     return ret + "#" + str +"#" ;
   //  }
   if (args.decorate) {
-    //    console.log('decorate',args.decorate);
     ret = args.decorate.printf([ret])
   }
   return ret

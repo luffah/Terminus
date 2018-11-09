@@ -30,6 +30,11 @@
          node.setAttribute('src', t)
          __body.appendChild(node)
       })
+      __head = __el.getElementsByTagName('head')[0]
+      let node = document.createElement('link')
+      node.setAttribute('rel', "stylesheet")
+      node.setAttribute('href', "./css/terminus.testing.css")
+      __head.appendChild(node)
       document.write(__el.innerHTML)
       document.close()
     }

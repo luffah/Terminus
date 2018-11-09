@@ -2,10 +2,14 @@
 //---------------LEVEL 2---------------------
 //TOWN SQUARE
 function loadLevel2(){
-$portal.findLink( "townsquare", newRoom("townsquare", "loc_square.gif"));
-$townsquare.setEnterCallback(function(){
-  vt.playMusic('chapter2',{loop:true});
-});
+  $portal.newLink( "townsquare",
+    newRoom("townsquare", "loc_square.gif",{
+      enterCallback:() => {
+        vt.playMusic('chapter2',{loop:true});
+      }
+    })
+  );
+
 var mayor_txtidx=1;
 var mayor=$townsquare.newPeople('citizen1',"item_citizen1.png")
   .setCmdEvent('less_done','id')
@@ -367,7 +371,7 @@ $trollcave.addDoor(
 //KERNEL FILES
 $slide.addDoor(
   newRoom("kernel")
-  .addCommand("sudo",{question:undefined,password:"IHTFP"})
+  // .addCommand("sudo",{question:undefined,password:"IHTFP"})
   .addStates({
     sudoComplete : function(re){
       $kernel.addDoor($paradise);

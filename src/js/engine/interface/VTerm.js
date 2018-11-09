@@ -4,7 +4,7 @@ function overide (e) {
   e.stopPropagation()
 }
 function VTerm (container_id, context) {
-  var t = this
+  let t = this
   /* non dom properties */
   t.context = context
   t.msgidx = 0
@@ -88,8 +88,8 @@ VTerm.prototype = union(Waiter.prototype, {
   // Scroll the window to the last element (bottom of page)
   // TODO: replace with a function which focus on 'active' element
   scrl: function (timeout, retry) {
-    var t = this
-    var m = t.monitor
+    let t = this
+    let m = t.monitor
     // let hm = m.parentNode.offsetTop + m.offsetTop + m.offsetHeight
     let poffset = window.pageYOffset + window.innerHeight
     // let hi = t.inputdiv.offsetHeight
@@ -110,7 +110,7 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   /* Setups */
   disable_input: function () { // disable can act as a mutex, if a widget don't get true then it shouldn't enable input
-    var t = this
+    let t = this
     if (!t.disabled.input) {
       t.disabled.input = true
       t.btn_clear.setAttribute('disabled', '')
@@ -121,7 +121,7 @@ VTerm.prototype = union(Waiter.prototype, {
     return false
   },
   enable_input: function () {
-    var t = this
+    let t = this
     if (t.disabled.input) {
       t.disabled.input = false
       t.inputdiv.prepend(t.cmdline)
@@ -138,7 +138,7 @@ VTerm.prototype = union(Waiter.prototype, {
     addEl(this.monitor, 'p', 'input').innerText = txt
   },
   _show_chars: function (msgidx, msg, txttab, cb, txt, curvoice, opt) {
-    var t = this
+    let t = this
     if (t.kill && !opt.unbreakable) {
       t.playSound('brokentext')
       if (opt.brokencb) {
@@ -169,26 +169,34 @@ VTerm.prototype = union(Waiter.prototype, {
         let timeout = 0
         if (l == '<') {
           /* parse tag */
-          var tag = '<'
+          let tag = '<'
           while (def(l) && (l != '>')) {
             l = txttab.shift()
             tag += l
           }
-          var tagtype = tag.replace(/<([^ ]*).*>/, '$1')
-          if (tagtype == 'img') {
+          let tagtype = tag.replace(/<(\w*).*>/, '$1')
+          
+           if (tag.slice(-1) == '/') {
             msg.innerHTML += tag
             t.playSound('tag')
-            timeout = t.charfactor[l]
+            timeout = t.charfactor.tag
           } else if (tagtype == 'voice') {
-            curvoice = tag.replace(/<([^ ]*)[ ]*([^ ]*)\/>/, '$2')
+            curvoice = tag.replace(/<(\w*)[ ]*(\w*)\/>/, '$2')
+          } else if (tagtype == 'table') {
+            let closelen = (tagtype.length + 3)
+            while ((txttab.length > closelen) && (txttab.slice(0,tagtype.length).join('') != '</'+tagtype+'>')) {
+              tag += txttab.shift()
+            }
+            tag += txttab.slice(0,closelen).join('')
+            txttab = txttab.slice(closelen)
+            msg.innerHTML += tag
           } else {
-            var tagend = ''
             l = txttab.shift()
             while (l && (l != '>')) {
-              tagend += l
+              tag += l
               l = txttab.shift()
             }
-            msg.innerHTML += tag + tagend
+            msg.innerHTML += tag
           }
           /* end parse html */
           t.scrl()
@@ -265,17 +273,17 @@ VTerm.prototype = union(Waiter.prototype, {
     return this
   },
   show_loading_element_in_msg: function (list, opt) {
-    var t = this
+    let t = this
     opt = opt || {}
-    var innerEl
+    let innerEl
     if (opt.el) {
       innerEl = opt.el
     } else {
       innerEl = addEl(opt.container || t.monitor, 'div', 'inmsg')
     }
-    var i = 0
-    var idx = t.msgidx
-    var loop = setInterval(function () {
+    let i = 0
+    let idx = t.msgidx
+    let loop = setInterval(function () {
       if (t.msgidx != idx) {
         clearInterval(loop)
         if (opt.finalvalue) {
@@ -300,26 +308,26 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   /* Suggestion part */
   make_suggestions: function (tabidx, autocomplete) {
-    var ret = true
-    var t = this
+    let ret = true
+    let t = this
     tabidx = d(tabidx, -1)
     autocomplete = d(autocomplete, true)
     t.suggestions.innerHTML = ''
-    var l = t.get_line(); var pos = t.input.selectionStart
-    var hlidxs = []
+    let l = t.get_line(); var pos = t.input.selectionStart
+    let hlidxs = []
     args = l.split(' ')
     t.suggestion_selected = null
     if (args.length > 0) {
-      var offset = 0; var idx
+      let offset = 0; let idx
       for (idx = 0; idx < args.length; idx++) {
         offset += args[idx].length + 1
         if (offset > pos) break
       }
-      var tocomplete = args[idx]
-      var match = []
+      let tocomplete = args[idx]
+      let match = []
       // which word to guess
       let trymatch = (potential, tocomplete) => {
-        var tocompleterx = new RegExp('^' + t.complete_opts.normalize(tocomplete), t.complete_opts.case)
+        let tocompleterx = new RegExp('^' + t.complete_opts.normalize(tocomplete), t.complete_opts.case)
         return t.complete_opts.normalize(potential).match(tocompleterx)
       }
       if (tocomplete && idx > 0) { // at least 1 arg
@@ -342,7 +350,7 @@ VTerm.prototype = union(Waiter.prototype, {
         setTimeout(function () { t.set_line(l) }, 200)
       } else if (match.length == 1) {
         if (autocomplete) {
-          var lb = tocomplete.split('/')
+          let lb = tocomplete.split('/')
           lb[lb.length - 1] = match[0]
           args.splice(idx, 1, lb.join('/')) // insert value at idx
           t.set_line(args.join(' ').replace('././', './'))// regex workaround
@@ -353,7 +361,7 @@ VTerm.prototype = union(Waiter.prototype, {
           t.show_suggestions(match)
         }
       } else {
-        var lcp = commonprefix(match)
+        let lcp = commonprefix(match)
         if (match.indexOf(lcp) > -1) {
           t.set_line(l + ' ')
         } else if (tabidx > -1) {
@@ -366,7 +374,7 @@ VTerm.prototype = union(Waiter.prototype, {
           }
         }
         if (lcp.length > 0 && autocomplete) {
-          var lb = tocomplete.split('/')
+          let lb = tocomplete.split('/')
           lb[lb.length - 1] = lcp
           args.splice(idx, 1, lb.join('/'))
           t.set_line(args.join(' '))
@@ -379,12 +387,12 @@ VTerm.prototype = union(Waiter.prototype, {
   show_suggestions: function (list, highlights) {
     highlights = highlights || []
     this.suggestions.innerHTML = '<div class="visually-hidden">' + _('Suggestions') + '</div>'
-    for (var i = 0; i < list.length; i++) {
+    for (let i = 0; i < list.length; i++) {
       this.show_suggestion(list[i], highlights[i])
     }
   },
   show_suggestion: function (txt, hlcls) {
-    var t = this
+    let t = this
     t.histindex = 0
     console.log(txt, hlcls)
     addBtn(t.suggestions, hlcls, txt.replace(/(#[^#]+#)/g, '<i class="hashtag"> $1 </i>'), txt, function (e) {
@@ -413,10 +421,10 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   enter: function () {
     // Enter -> parse and execute command
-    var t = this
+    let t = this
     t.playSound('enter')
     t.enter_effect()
-    var l = t.get_line().replace(/\s+$/, '')
+    let l = t.get_line().replace(/\s+$/, '')
     if (l.length > 0) {
       let m = t.monitor
       t.monitor = addEl(m, 'div', 'screen')
@@ -425,12 +433,12 @@ VTerm.prototype = union(Waiter.prototype, {
       t._show_previous_prompt(t.input.value)
       t.history.push(t.input.value)
 
-      var echo = _parse_exec(t, l)
+      let echo = _parse_exec(t, l)
       console.log(echo)
       if (echo) {
         if (t.cmdoutput) {
-          var supercb = []
-          for (var i = 0; i < echo.length(); i++) {
+          let supercb = []
+          for (let i = 0; i < echo.length(); i++) {
             supercb.push(() => {
               t.show_img({ index: echo.getIdx() })
               t.show_msg(echo.next(), { cb: supercb.shift() })
@@ -459,9 +467,9 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   input_behavior: function () {
     // behavior
-    var t = this
-    var pr = t.input
-    var lastkey = [null, 0]
+    let t = this
+    let pr = t.input
+    let lastkey = [null, 0]
 
     dom.body.onkeydown = function (e) {
       vt.busy = true
@@ -477,7 +485,7 @@ VTerm.prototype = union(Waiter.prototype, {
             e.preventDefault()
           }
         } else {
-          var focused = dom.activeElement
+          let focused = dom.activeElement
           if (!focused || focused != pr) {
             pr.focus(); t.scrl()
           }
@@ -501,7 +509,7 @@ VTerm.prototype = union(Waiter.prototype, {
             e.preventDefault()
           }
         } else {
-          var focused = dom.activeElement
+          let focused = dom.activeElement
           if (!focused || focused != pr) {
             pr.focus(); t.scrl()
           }
@@ -511,7 +519,7 @@ VTerm.prototype = union(Waiter.prototype, {
       vt.busy = false
     }
     pr.onkeydown = function (e) {
-      var k = e.key
+      let k = e.key
       if (['Tab', 'Enter', 'ArrowUp', 'ArrowDown'].indexOf(k) != -1) {
         overide(e)
       } else if (e.ctrlKey) {
@@ -562,10 +570,10 @@ VTerm.prototype = union(Waiter.prototype, {
         } else if (k === 'v' || k === 'x') {
           // replace CTRL + W - remove last component
           overide(e)
-          var line = t.get_line()
+          let line = t.get_line()
           line = line.replace(/\/$/, '')
-          var lineparts = line.split(' ')
-          var lastarg = lineparts.pop().split('/')
+          let lineparts = line.split(' ')
+          let lastarg = lineparts.pop().split('/')
           lastarg.pop()
           if (lastarg.length > 1) {
             lastarg.push('')
@@ -583,9 +591,9 @@ VTerm.prototype = union(Waiter.prototype, {
         }
       } else if (k === 'ArrowUp') { // up
         if (t.histindex < t.history.length) {
-          var prev = t.history[t.history.length - 1 - t.histindex]
+          let prev = t.history[t.history.length - 1 - t.histindex]
           if (t.histindex === 0) {
-            var txt = t.get_line()
+            let txt = t.get_line()
             if (txt.length > 0 && txt !== prev) {
               t.history.push(txt)
             }
@@ -599,11 +607,11 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   /** extra programs **/
   exec: function (fu, cb) {
-    var t = this
+    let t = this
     t.set_line('')
-    var m = t.monitor
+    let m = t.monitor
     //    var m = document.body;
-    var cont = addEl(m, 'div', 'app-container')
+    let cont = addEl(m, 'div', 'app-container')
     t.overapp = addEl(cont, 'div', 'app')
     t.disable_input()
     let endapp = () => {
@@ -619,30 +627,30 @@ VTerm.prototype = union(Waiter.prototype, {
   /** Choice prompt **/
   /** TODO : add live action function option **/
   ask_choose: function (question, choices, callback, opts) {
-    var t = this
-    var choices_btn = []
-    var curidx = 0
+    let t = this
+    let choices_btn = []
+    let curidx = 0
     opts = d(opts, {})
     disabled_choices = d(opts.disabled_choices, [])
     direct = d(opts.direct, false)
     while (disabled_choices.indexOf(curidx) > -1) {
       curidx++
     }
-    var choicebox = addEl(t.monitor, 'div', 'choicebox')
+    let choicebox = addEl(t.monitor, 'div', 'choicebox')
     t.show_msg(question, { direct: direct, el: choicebox })
 
     t.set_line('')
     t.choose_input = addEl(choicebox, 'fieldset', 'choices')
-    var reenable = t.disable_input()
+    let reenable = t.disable_input()
 
-    var click = function (e) {
-      var i = e.target.getAttribute('idx')
+    let click = function (e) {
+      let i = e.target.getAttribute('idx')
       addAttrs(choices_btn[curidx], { checked: '' })
       addAttrs(choices_btn[i], { checked: 'checked' })
       curidx = i
       return t.enterKey()
     }
-    var onkeydown = function (e) {
+    let onkeydown = function (e) {
       t._choose_key(e)
     }
     t.enterKey = function (e) {
@@ -679,7 +687,7 @@ VTerm.prototype = union(Waiter.prototype, {
       e.preventDefault()
     }
 
-    for (var i = 0; i < choices.length; i++) {
+    for (let i = 0; i < choices.length; i++) {
       if (disabled_choices.indexOf(i) == -1) {
         cho = addEl(t.choose_input, 'div', 'choice')
         choices[i] = choices[i]
@@ -713,11 +721,11 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   /** Question prompt **/
   ask: function (question, cb, args) {
-    var t = this
+    let t = this
     t.set_line('')
-    var reenable = t.disable_input()
-    var choicebox = addEl(t.monitor, 'div', args.cls || 'choicebox')
-    var create_answer = () => {
+    let reenable = t.disable_input()
+    let choicebox = addEl(t.monitor, 'div', args.cls || 'choicebox')
+    let create_answer = () => {
       t.answer_input = (args.multiline
         ? addEl(choicebox, 'textarea', { cols: 78 })
         : addEl(choicebox, 'input', { size: 78 })
@@ -741,7 +749,7 @@ VTerm.prototype = union(Waiter.prototype, {
         }
       }
     }
-    var end_answer = () => {
+    let end_answer = () => {
       t.answer_input.setAttribute('disabled', true)
       t.answer_input = undefined
       if (args.disappear) args.disappear(() => { choicebox.outerHTML = '' })
@@ -783,7 +791,7 @@ VTerm.prototype = union(Waiter.prototype, {
     this._ask_password_rec(cmdpass, callback)
   },
   _begin_password: function () {
-    var t = this
+    let t = this
     t.set_line('')
     t._cur_box = addEl(t.monitor, 'div', 'choicebox')
     t._div = addEl(t.inputdiv, 'div', { class: 'passinput' })
@@ -791,7 +799,7 @@ VTerm.prototype = union(Waiter.prototype, {
 
     t.password_input.focus()
     t.password_input.onkeyup = function (e) {
-      var k = e.key
+      let k = e.key
       if (k === 'Enter') { // ENTER
         t.enterKey()
         e.preventDefault()
@@ -801,7 +809,7 @@ VTerm.prototype = union(Waiter.prototype, {
     t.disable_input()
   },
   _end_password: function () {
-    var t = this
+    let t = this
     t.inputdiv.removeChild(t._div)
     t.password_input = undefined
     t._div = undefined
@@ -811,14 +819,14 @@ VTerm.prototype = union(Waiter.prototype, {
   // nothing
   },
   _ask_password_rec: function (cmdpass, callback) {
-    var t = this
+    let t = this
     if (cmdpass.length > 0) {
-      var p = cmdpass.shift()
-      var question = d(p.question, _('ask_password'))
+      let p = cmdpass.shift()
+      let question = d(p.question, _('ask_password'))
       t.show_msg(question, { el: t._cur_box })
       t.enterKey = function () {
         t.playSound('choiceselect')
-        var ret = t.password_input.value
+        let ret = t.password_input.value
         t.password_input.value = ''
         if (p.password === ret) {
           if (p.passok) {
@@ -863,7 +871,7 @@ VTerm.prototype = union(Waiter.prototype, {
   push_img: function (img, opt) {
     if (img) {
       opt = opt || {}
-      var idx = d(opt.index, -1)
+      let idx = d(opt.index, -1)
       if (!this.imgs[idx]) { this.imgs[idx] = [] }
       this.imgs[d(opt.index, -1)].push(img)
     }
@@ -871,10 +879,10 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   show_img: function (opt) {
     opt = opt || {}
-    var t = this
+    let t = this
     let idx = d(opt.index, -1)
-    var im
-    var imgs = t.imgs[idx]
+    let im
+    let imgs = t.imgs[idx]
     if (imgs && imgs.length > 0) {
       let c = addEl(t.monitor, 'div', 'img-container')
       while (im = imgs.shift()) {
@@ -886,10 +894,10 @@ VTerm.prototype = union(Waiter.prototype, {
     }
   },
   rmCurrentImg: function (timeout) {
-    var t = this
+    let t = this
     setTimeout(function () {
-      var y = t.current_msg.getElementsByClassName('img-container')
-      var i
+      let y = t.current_msg.getElementsByClassName('img-container')
+      let i
       for (i = 0; i < y.length; i++) {
         msg.removeChild(y[i])
       }
