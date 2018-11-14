@@ -12,59 +12,66 @@ function Game () {
   loadBackgroud('init')
   newRoom('root', undefined, {owner:'root' })
   .newRoom('users', undefined, {owner:'root'})
-  .newRoom('home', undefined)
+  .newRoom('home')
+  console.log('ici')
+  console.log($home)
   if (typeof doTest === 'function') {
     doTest(vt)
     return
   }
   loadLevel1()
   loadLevel2()
-
-  new Seq([t.demo_note, t.menu]).next()
+  t.menu()
+  // new Seq([t.demo_note, t.menu]).next()
 }
 
 var visualchar = { 'ArrowUp': '↑', 'ArrowLeft': '←', 'ArrowRight': '→', 'ArrowDown': '↓', 'Tab': '↹' }
 Game.prototype = {
   demo_note (next) {
-    vt.ask_choose(_('demo_note'), [_('demo_note_continue')],
-      (vt, choice) => {
-        vt.clear()
-        next()
-      },
+    vt.ask_choose(_('demo_note'), [_('demo_note_continue')], next,
       { direct: true, cls: 'mystory' }
     )
   },
   menu (next) {
+    vt.clear()
     // prepare game loading
-    var g = Game.prototype
+    let g = Game.prototype
     let hasSave = state.startCookie('terminus' + g.version)
     let choices = [_('cookie_yes_load'), _('cookie_yes'), _('cookie_no')]
-    flash(0, 800)
+    flash(0,550)
     // TODO : add checkbox for snd and textspeed
     // TODO : opt object for setting vt option
     if (d(state._get_pre('snd'), true)) {
       load_soundbank(vt)
     }
-    epic_img_enter(vt, 'titlescreen.gif', 'epicfromright', 2000,
-      (vt) => {
-        vt.show_msg('version : ' + g.version, { unbreakable: true })
-        //        vt.playMusic('title',{loop:true});
-        vt.ask_choose(_('cookie'), choices, g.start, {
-          direct: true,
-          disabled_choices: hasSave ? [] : [0]
+    vt.muteSound()
+    setTimeout(() => {
+      epic_img_enter(vt, 'titlescreen.gif', 'epic', 1500,
+        () => {
+          vt.unmuteSound()
+          //        vt.playMusic('title',{loop:true});
+          vt.ask_choose(_('cookie'), choices, g.start, {
+            direct: true,
+            disabled_choices: hasSave ? [] : [0]
+          })
         })
-      })
+      showBackground()
+    }, 500)
+    setTimeout(() => {
+    vt.show_msg('version : ' + g.version, { unbreakable: true })
+    }, 1200)
   },
   start (vt, useCookies) {
+    vt.clear()
     console.log('Start game')
     loadBackgroud('game')
-    var context
+    let context
     if (pogencnt > 0) vt.show_msg(_('pogen_alert', pogencnt))
     if (useCookies < 2) { // yes new game or load
       state.setCookieDuration(7 * 24 * 60) // in minutes
       if (useCookies == 0) context = state.loadContext()
     } else state.stopCookie() // do not use cookie
-    vt.clear()
+
     if (context) {
       vt.setContext(context)
       state.loadActions()
@@ -100,19 +107,17 @@ Game.prototype = {
               vt.context.user.judged = _('user_judged' + Math.min(5, Math.round(val.length / 20)))
             }
           },
-          { cls: 'mystory', disappear: (cb) => { cb(); next() }
-          }
+          { cls: 'mystory', disappear: next}
           )
         }, (next) => {
-          vt.ask(vt.context.user.judged + '\n' + _('username_prompt'), (val) => { vt.context.setUserName(val); next() }, { placeholder: vt.context.currentuser, cls: 'megaprompt', disappear: (cb) => { cb() }, wait: 500 })
+          vt.ask(vt.context.user.judged + '\n' + _('username_prompt'),
+            (val) => { vt.context.setUserName(val)},
+            { placeholder: vt.context.currentuser, cls: 'megaprompt', disappear: next, wait: 500 })
         },
         (next) => {
-          vt.ask(_('useraddress_prompt'), (val) => { vt.context.setUserAddress(val); next() }, { placeholder: vt.context.user.address,
-            cls: 'megaprompt',
-            disappear: (cb) => {
-              cb()
-            },
-            wait: 500 })
+          vt.ask(_('useraddress_prompt'),
+            (val) => { vt.context.setUserAddress(val)},
+            { placeholder: vt.context.user.address, cls: 'megaprompt', disappear: next, wait: 500 })
         },
         (next) => {
           vt.ask(_('gameintro_setup_ok'), (val) => {
@@ -129,9 +134,8 @@ Game.prototype = {
               }
               e.preventDefault()
             },
-            disappear: (cb) => {
-              cb()
-              flash(0, 800)
+            disappear: () => {
+              flash()
               next()
             }
           }

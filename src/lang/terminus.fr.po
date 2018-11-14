@@ -80,8 +80,7 @@ msgid "demo_note_continue"
 msgstr "Continuer"
 
 msgid "cookie"
-msgstr "Afin de conserver ton avancement dans le jeu, il faut manger un cookie.\n"
-"Manger un cookie ?"
+msgstr "Manger un cookie ?"
 
 msgid "cookie_yes"
 msgstr "oui (utiliser une nouvelle sauvegarde)"

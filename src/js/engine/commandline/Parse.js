@@ -140,3 +140,18 @@ function _parse_command (vt, line) {
   }
   return ret
 }
+
+function _getOpts (opts) {
+    let ret = {}
+    opts.forEach((it) => {
+      if (it[0].slice(0,2) == '--'){
+         ret[it[0].slice(2)] == {idx:it[1]}
+      } else {
+
+         it[0].split('').forEach((c) => {
+            ret[c] = {idx:it[1]}
+         })
+      }
+    })
+    return ret
+}

@@ -1,21 +1,12 @@
 
-function RoomLink (linkname, file, text, picname, prop) {
+function Link (linkname, file, picname, prop) {
   prop = prop || {}
   prop.mod = 777
-  prop.poprefix = d(prop.poprefix, POPREFIX_ROOMLINK)
-  Link.call(this, linkname || _(PO_DEFAULT_LINK, []), picname, prop)
-  this.link = file
-  this.enter_callback = prop.enterCallback || null
-  this.children = file.children
-  this.items = file.items
+  prop.poprefix = prop.poprefix || ((file instanceof Room) ? POPREFIX_ROOMLINK : POPREFIX_LINK)
+  prop.picname = picname
+  prop.link = file
+  File.call(this, linkname || _(PO_DEFAULT_LINK, []), undefined, prop)
 }
-RoomLink.prototype = Room.prototype
-
-function Link (linkname, file, text, picname, prop) {
-  prop = prop || {}
-  prop.mod = 777
-  prop.poprefix = d(prop.poprefix, POPREFIX_LINK)
-  File.call(this, linkname || _(PO_DEFAULT_LINK, []), picname, prop)
-  this.link = file
-}
+RoomLink = Link
 Link.prototype = File.prototype
+RoomLink.prototype = Room.prototype

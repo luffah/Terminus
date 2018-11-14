@@ -127,6 +127,7 @@ color:grey;
 }
 .choicebox {
 border: 10px solid #efefef;
+background:black;
 padding: 1.4rem;
 position: relative;
 z-index: 10;
@@ -140,6 +141,10 @@ box-sizing: border-box;
   z-index:-1;
   border:4px solid #22b14c;
 box-sizing: border-box;
+}
+.choicebox p {
+  margin-top:2px;
+  margin-bottom:0;
 }
 .choicebox:before {
   width:calc(100% + 8px);
@@ -225,16 +230,16 @@ z-index: -1;
 .img-container .layers .foreground {
   z-index:1;
 }
-.epicfromright {
-  /* overflow:hidden; */
+.epic .layers {
+  left: 50%;
+  transform:translateX(-50%);
 }
-
 .epicfromright .layers {
   position:relative;
-  left:100%;
+  left:200%;
 }
 .epicfromright.loaded .layers {
-   animation:a 1.4s ease-out forwards;
+  animation:a 1.3s forwards;
 }
 .msg img {
   float:left;
@@ -482,25 +487,10 @@ padding:3px;
 
 @keyframes a {
   from {
-    transform:translateX(-50%) rotate(-45deg);
-    left:100%;
-  }
-  20% {
-    transform:translateX(-50%) rotate(-360deg);
-    left:0;
-  }
-  40%{
-    transform:translateX(-50%) rotate(-360deg);
-    left:0;
-  }
-  50% {
-    transform:translateX(-50%) rotate(0deg);
-    bottom:10px;
-    left:25%;
+    left:300%;
   }
   to {
-    transform:translateX(-50%) rotate(360deg);
-    bottom:0;
+    transform:translateX(-50%) rotate(720deg);
     left:50%;
   }
 }

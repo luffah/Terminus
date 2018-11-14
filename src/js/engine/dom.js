@@ -5,7 +5,7 @@ dom.El = dom.createElement
 
 function prEl (root, tag, attrs) {
   var el = dom.El(tag)
-  root.prepend(el)
+  root.insertBefore(el, root.childNodes[0])
   var ty = typeof attrs
   if (ty == 'string') { el.className = attrs } else if (ty == 'object') { addAttrs(el, attrs) }
   return el

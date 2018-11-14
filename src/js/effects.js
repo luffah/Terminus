@@ -10,8 +10,8 @@ function flash (timeout, timeoutdisappear) {
     document.body.className += ' flash'
     setTimeout(function () {
       document.body.className = document.body.className.replace(/[ ]*flash/, '')
-    }, timeoutdisappear)
-  }, timeout)
+    }, timeoutdisappear || 800)
+  }, timeout || 0)
 }
 
 function badge (title, text) {

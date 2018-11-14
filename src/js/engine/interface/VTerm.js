@@ -20,9 +20,10 @@ function VTerm (container_id, context) {
   t.history = []
   t.disabled = {}
 
-  t.timeout = { scrl: 100 }
+  t.timeout = { scrl: 100, ask:600 }
+  // t.charduration = 26.25
   t.charduration = 13.125
-  t.charfactor = { char: 1, ' ': 25, ' ': 4, '!': 10, '?': 10, ',': 5, '.': 8, '\t': 2, '\n': 10, 'tag': 10 }
+  t.charfactor = { char: {char: 1, voy: 3, tag: 10, ' ': 25, ' ': 2, '!': 10, '?': 10, ',': 5, '.': 8, '\t': 2, '\n': 10 } }
   t.charhtml = { ' ': '&nbsp;', '\n': '<br>', '\t': '&nbsp;&nbsp;' }
 
   t.enterKey = t.enter
@@ -124,7 +125,7 @@ VTerm.prototype = union(Waiter.prototype, {
     let t = this
     if (t.disabled.input) {
       t.disabled.input = false
-      t.inputdiv.prepend(t.cmdline)
+      t.inputdiv.insertBefore(t.cmdline, t.inputdiv.childNodes[0])
       t.btn_clear.removeAttribute('disabled')
       t.btn_tab.removeAttribute('disabled')
       t.enterKey = t.enter
@@ -159,68 +160,48 @@ VTerm.prototype = union(Waiter.prototype, {
       t.printing = false
     } else {
       let l = txttab.shift()
-      if (!l) {
+      if (l) {
+        let timeout = 0
+        if (l instanceof Node) {
+          if (l.nodeName == 'VOICE') {
+            curvoice = l.innerText
+          } else {
+            timeout = get(t.charfactor[curvoice], 'tag') || t.charfactor.char.tag
+            msg.innerHTML += l.outerHTML
+          }
+        } else {
+          msg.innerHTML += (t.charhtml[l] ? t.charhtml[l] : l)
+          if (l.length > 1){
+            timeout = get(t.charfactor[curvoice], 'voy') || t.charfactor.char.voy
+            t.playSound(curvoice)
+          } else {
+            let f = get(t.charfactor[curvoice], l) || t.charfactor.char[l]
+            t.playSound(def(f) ? l : curvoice)
+            timeout = d(f, t.charfactor.char.char)
+            if (l == '\n') t.scrl()
+          }
+
+        }
+        setTimeout(function () {
+          t._show_chars(msgidx, msg, txttab, cb, txt, curvoice, opt)
+        }, timeout * t.charduration)
+      } else {
         t.playSound('endoftext')
         if (cb) { cb() }
         if (opt.cb) { opt.cb() }
         t.busy = false
         t.printing = false
-      } else {
-        let timeout = 0
-        if (l == '<') {
-          /* parse tag */
-          let tag = '<'
-          while (def(l) && (l != '>')) {
-            l = txttab.shift()
-            tag += l
-          }
-          let tagtype = tag.replace(/<(\w*).*>/, '$1')
-          
-           if (tag.slice(-1) == '/') {
-            msg.innerHTML += tag
-            t.playSound('tag')
-            timeout = t.charfactor.tag
-          } else if (tagtype == 'voice') {
-            curvoice = tag.replace(/<(\w*)[ ]*(\w*)\/>/, '$2')
-          } else if (tagtype == 'table') {
-            let closelen = (tagtype.length + 3)
-            while ((txttab.length > closelen) && (txttab.slice(0,tagtype.length).join('') != '</'+tagtype+'>')) {
-              tag += txttab.shift()
-            }
-            tag += txttab.slice(0,closelen).join('')
-            txttab = txttab.slice(closelen)
-            msg.innerHTML += tag
-          } else {
-            l = txttab.shift()
-            while (l && (l != '>')) {
-              tag += l
-              l = txttab.shift()
-            }
-            msg.innerHTML += tag
-          }
-          /* end parse html */
-          t.scrl()
-        } else {
-          msg.innerHTML += (t.charhtml[l] ? t.charhtml[l] : l)
-          let f = t.charfactor[l]
-          t.playSound(def(f) ? l : curvoice)
-          timeout = def(f) ? f : (t.charfactor[curvoice] || t.charfactor.char)
-          if (l == '\n') t.scrl()
-        }
-        setTimeout(function () {
-          t._show_chars(msgidx, msg, txttab, cb, txt, curvoice, opt)
-        }, timeout * t.charduration)
       }
     }
   },
   show_msg: function (mesg, opt) {
+    let t = this
     if (def(mesg)) {
-      var t = this
       if (mesg instanceof Array) {
         for (m in mesg) {
           t.show_msg(mesg[m], opt)
         }
-        return this
+        return t
       }
       opt = opt || {}
       var cb
@@ -230,7 +211,6 @@ VTerm.prototype = union(Waiter.prototype, {
       } else if (typeof mesg === 'number') {
         mesg = _stdout(String(mesg))
       }
-      console.log(mesg)
       // FIXME
       // work arounded -- std / err flux shall be separated...
       msg = ''
@@ -246,31 +226,30 @@ VTerm.prototype = union(Waiter.prototype, {
       }
       if (mesg.hasOwnProperty('cb')) {
         cb = mesg.cb
-        console.log(cb)
       }
-      console.log(msg)
       //
-      var el = d(opt.el, t.monitor)
-      var cls = d(opt.cls, '')
-      t.ghostel = addEl(t.ghost_monitor, 'p')
-      t.current_msg = addEl(el, 'p', 'msg' + ' ' + cls)
+      t.current_msg = addEl(opt.el || t.monitor, 'p', 'msg' + ' ' + (opt.cls || ''))
+      let txt = msg.toString()// in case we have an object
       if (msg.nodeType == 1) {
         t.current_msg.appendChild(msg)
-        t.ghostel.innerHTML = msg.outerHTML.replace(/<div class='inmsg'.*><\/div>/, '')
+        t.blindPrint(msg)
         if (cb) { cb() }
         if (opt.cb) { opt.cb() }
         t.busy = false
       } else {
-        let txt = msg.toString()// in case we have an object
-        txt = txt.replace(/(#[^#]+#)/g, '<i class="hashtag"> $1 </i>')
-        let txttab = txt.split('')
+        txt = txt.replace(/(#[^#]+#)/g, '<i class="hashtag"> $1 </i>').replace(/<voice (\w*)\/>/g, '<voice>$1</voice>')
+        let txttab = articulate(txt)
         txt = txt.replace(/\t/g, '&nbsp;&nbsp;').replace(/\n/g, '<br>').replace(/ /g, '&nbsp;')
         t.msgidx++
-        t.ghostel.innerHTML = txt.replace(/<div class='inmsg'.*><\/div>/, '').replace(/(<br>)/g, '<&nbsp;><br>').replace(/[«»]/g, '"').replace(/(\.\.\.)/g, '<br>')
+        t.blindPrint(txt)
         t._show_chars(t.msgidx, t.current_msg, txttab, cb, txt, 'char', opt)
       }
     }
-    return this
+    return t
+  },
+  blindPrint: function(txt){
+    this.ghostel = addEl(this.ghost_monitor, 'p')
+    this.ghostel.innerHTML = txt.replace(/<div class='inmsg'.*><\/div>/, '').replace(/(<br>)/g, '<&nbsp;><br>').replace(/[«»]/g, '"').replace(/(\.\.\.)/g, '<br>')
   },
   show_loading_element_in_msg: function (list, opt) {
     let t = this
@@ -342,7 +321,7 @@ VTerm.prototype = union(Waiter.prototype, {
         tocomplete = ''
         match = t.context.getCommands().map(addspace)
       }
-      console.log(match)
+      // console.log(match)
       // find solutions
       if (match.length === 0) {
         t.set_line(l + '?')
@@ -394,7 +373,7 @@ VTerm.prototype = union(Waiter.prototype, {
   show_suggestion: function (txt, hlcls) {
     let t = this
     t.histindex = 0
-    console.log(txt, hlcls)
+    // console.log(txt, hlcls)
     addBtn(t.suggestions, hlcls, txt.replace(/(#[^#]+#)/g, '<i class="hashtag"> $1 </i>'), txt, function (e) {
       t.input.value += txt
       if (t.argsValid(t.input.value.replace(/\s+$/, '').split(' '))) {
@@ -440,8 +419,10 @@ VTerm.prototype = union(Waiter.prototype, {
           let supercb = []
           for (let i = 0; i < echo.length(); i++) {
             supercb.push(() => {
-              t.show_img({ index: echo.getIdx() })
-              t.show_msg(echo.next(), { cb: supercb.shift() })
+              let idx = echo.getIdx()
+              let n = echo.next()
+              t.show_img(n.pics, { index: idx })
+              t.show_msg(n, { cb: supercb.shift() })
             })
           }
           supercb.shift()()
@@ -467,9 +448,9 @@ VTerm.prototype = union(Waiter.prototype, {
   },
   input_behavior: function () {
     // behavior
-    let t = this
-    let pr = t.input
-    let lastkey = [null, 0]
+    var t = this
+    var pr = t.input
+    var lastkey = [null, 0]
 
     dom.body.onkeydown = function (e) {
       vt.busy = true
@@ -656,11 +637,11 @@ VTerm.prototype = union(Waiter.prototype, {
     t.enterKey = function (e) {
       t.playSound('choiceselect')
       t.choose_input.value = choices[curidx]
-      t.show_msg(choices[curidx], { el: choicebox, unbreakable: true })
+      t.show_msg(choices[curidx], { direct:direct, el: choicebox, unbreakable: true })
       choicebox.removeChild(t.choose_input)
       t.choose_input = undefined
       if (reenable) { t.enable_input() }
-      t.show_msg(callback(t, curidx))
+      setTimeout(()=> t.show_msg(callback(t, curidx), {direct:direct}), t.timeout.ask)
     }
     t._choose_key = function (e) {
       let k = e.key
@@ -750,10 +731,13 @@ VTerm.prototype = union(Waiter.prototype, {
       }
     }
     let end_answer = () => {
+      if (args.disappear) args.disappear()
+      if (reenable) t.enable_input()
+    }
+    let lock_answer = () => {
       t.answer_input.setAttribute('disabled', true)
       t.answer_input = undefined
-      if (args.disappear) args.disappear(() => { choicebox.outerHTML = '' })
-      if (reenable) t.enable_input()
+      if (args.disappear) choicebox.outerHTML = ''
     }
     t._answer_key = args.ev || ((e) => {
       if (e.ctrlKey && args.ctrlkeyup && args.ctrlkeyup.hasOwnProperty(e.key)) {
@@ -771,9 +755,12 @@ VTerm.prototype = union(Waiter.prototype, {
     t.enterKey = () => {
       t.playSound('choiceselect')
       let ret = t.answer_input.value
-      ret = cb ? cb(ret) : ret
-      end_answer()
-      t.show_msg(ret)
+      lock_answer()
+      setTimeout(()=> {
+        ret = cb ? cb(ret) : ret
+        end_answer()
+        t.show_msg(ret)
+      }, t.timeout.ask)
     }
 
     t.show_msg(question, { el: choicebox,

@@ -76,6 +76,9 @@ to_dokuwiki: ## Convert markdown files in wiki_md to wiki_dokuwiki
 			             --output="$${TGTDIR}/$${TGT}";\
 			done
 
+testfs:
+	firefox --jsconsole --safe-mode src/testing.html?filesystem
+
 help: ## Show this help
 	@sed -n \
 	 's/^\(\([a-zA-Z_-]\+\):.*\)\?#\(#\s*\([^#]*\)$$\|\s*\(.*\)\s*#$$\)/\2=====\4=====\5/p' \

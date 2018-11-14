@@ -39,6 +39,12 @@ function clone (obj) {
 // function isObj(v){
 //	 return (typeof v === 'object');
 // }
+
+function get(h, v){
+  if (h) {
+    return h[v]
+  }
+}
 // function pushDef(v,h){
 //   if (typeof v !== 'undefined'){
 //     h.push(v);

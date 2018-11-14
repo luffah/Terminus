@@ -1,20 +1,21 @@
 function genUID (name) {
-  inc(genUID.cnt, name)
-  return name.substr(0, 4) + genUID.cnt[name]
+  return name.substr(0, 4) + inc(genUID.cnt, name)
 }
 genUID.cnt = {}
 
-function File (name, picname, prop) {
+function File (name, text, prop) {
   prop = prop || {}
   this.mod = new Modes(prop.mod || 'a+r')
-  this.picture = new Pic(picname, prop)
+  this.picture = new Pic(prop.picname, prop)
   this.owner = prop.owner || 'user'
   this.group = prop.group || 'user'
   this.cmd_event = {}
   this.cmd_hook = {}
   this.name = name
   this.room = null
-  this.text = ''
+  this.text = text
+  this.tgt = prop.link || this
+  this.link = prop.link
   this.uid = prop.uid || genUID(prop.poid || name)
   //  console.log(name,this.uid)
   this.poprefix = prop.poprefix
@@ -22,32 +23,26 @@ function File (name, picname, prop) {
   this._inheritable = ['poprefix']
   this._clonable = ['_listeners', 'cmd_event', 'cmd_hook', 'text']
   this._copiable = ['picture']
-  if (prop.states){
+  if (prop.states) {
     this.addStates(prop.states)
   }
-  if (prop.events){
-    this.setCmdEvents(prop.events)
-  }
-  if (prop.hooks){
+  if (prop.events) this.setCmdEvents(prop.events)
+  if (prop.hooks) {
     for (var i in prop.hooks) {
       if (prop.hooks.hasOwnProperty(i)) {
         this.setCmd(i, prop.hooks[i])
       }
     }
   }
-  if (def(prop.v)){// contextual variables
-    this.v = prop.v
-  }
-  if (prop.var){
+  if (prop.poid) this.setPo(prop.poid, prop.povars)
+  this.v = prop.v // contextual variable
+  if (prop.var) {
     this.var = prop.var
     window[prop.var] = this
   }
 }
 
 File.prototype = union(EventTarget.prototype, {
-  toString: function () {
-    return this.name
-  },
   getHash: function () {
     hash = {}
     hash['m'] = this.mod.stringify()
@@ -59,69 +54,40 @@ File.prototype = union(EventTarget.prototype, {
     hash['picture'] = this.picture.src
     return hash
   },
-  ismod: function (right, ctx) {
-    if (this.mod.get('o', right)) {
-      return true
-    }
-    if (ctx) {
-      if (ctx.user.groups.indexOf(this.group) != -1) {
-        if (this.mod.get('g', right)) {
-          return true
-        }
-      }
-      if (ctx.currentuser == this.owner) {
-        if (this.mod.get('u', right)) {
-          return true
-        }
-      }
-    }
-    return false
-  },
-  setBranch(nu){
-    this.branch_ref = nu || true
+  toString: function () { return this.name },
+  getText: function () { return this.text },
+  setText: function (text) {
+    this.text = text
     return this
   },
-  unsetBranch(){
-    this.branch_ref = undefined
-    return this
-  },
-  backBranch(nu){
-    let branch_ref = nu || true
-    if (this.room) {
-      if (this.room.branch_ref || branch_ref == this.room.branch_ref){
-        return this.room
-      } else {
-        return this.room.backBranch(branch_ref)
-      }
-    }
-    return this
-  },
-  chmod: function (chmod) {
-    this.mod.parse(chmod)
-    return this
-  },
-  getName: function () {
-    return this.name
-  },
+  getName: function () { return this.name },
   setName: function (name) {
     this.name = name
     return this
   },
-  getPic: function () {
-    return this.picture
-  },
+  getPic: function () { return this.picture },
   setPic: function (pic) {
     this.picture.set(pic)
+  },
+  ismod: function (right, ctx) {
+    if (this.mod.get('o', right)) return true
+    if (ctx) {
+      return (
+        (ctx.user.groups.indexOf(this.group) != -1 &&
+          this.mod.get('g', right)) ||
+      (ctx.currentuser == this.owner &&
+          this.mod.get('u', right)))
+    }
+  },
+  chmod: function (chmod) {
+    this.mod.parse(chmod)
+    return this
   },
   setPo: function (name, vars) {
     this.poid = this.poprefix + name
     this.povars = vars
     this.name = _(this.poid, vars)
     this.text = _(this.poid + POSUFFIX_DESC, vars)
-    return this
-  },
-  setText: function (text) {
-    this.text = text
     return this
   },
   checkTextIdx: function (textidx) {
@@ -176,6 +142,7 @@ File.prototype = union(EventTarget.prototype, {
     this.cmd_event[name] = name
     return this
   },
+  // addStates shall receive a dictionnary {} as argument, if you want to declare only one state use addState
   addStates: function (h) {
     if (h instanceof Object) {
       for (var i in h) {
@@ -185,8 +152,6 @@ File.prototype = union(EventTarget.prototype, {
           this.cmd_event[i] = i
         }
       }
-    } else {
-      console.error('addStates shall receive a dictionnary {} as argument, if you want to declare only one state use addState')
     }
     return this
   },
@@ -202,43 +167,14 @@ File.prototype = union(EventTarget.prototype, {
       if (this.hasOwnProperty(attr)) nut[attr] = obj[attr]
     }
     return nut
-  }
-})
-
-function Item (name, intro, picname, prop) {
-  prop = prop || {}
-  prop.poprefix = d(prop.poprefix, POPREFIX_ITEM)
-  File.call(this, name, picname, prop)
-  this._inheritable.push('room')
-  this.text = intro || _(PO_DEFAULT_ITEM)
-  if (prop.poid) {
-    this.setPo(prop.poid, prop.povars)
-  }
-}
-Item.prototype = union(File.prototype, {
+  },
   addPicMod: function (id, picname, prop) {
-    var newpic = new Pic(picname, prop)
-    this.picture.setChild(id, newpic)
+    this.picture.setChild(id, new Pic(picname, prop))
     return this
   },
   rmPicMod: function (id, picname) {
-    this.picture.unsetChild(id, newpic)
+    this.picture.unsetChild(id)
     return this
-  },
-  setExecFunction: function (fu) {
-    this.exec_function = fu
-  },
-  unsetExecFunction: function () {
-    this.exec_function = undefined
-  },
-  exec: function (args, room, vt) {
-    var it = this
-    this.fire_event(vt, 'exec', args)
-    if (this.exec_function) {
-      return this.exec_function(this, args, room, vt)
-    } else {
-      return cmd_done(vt, [[it, 0]], it.text, 'exec', args)
-    }
   },
   setPoDelta: function (delta) {
     if (typeof delta === 'string') {
@@ -249,6 +185,34 @@ Item.prototype = union(File.prototype, {
     this.name = _(this.poid, this.povars)
     this.text = _(this.poid + POSUFFIX_DESC, this.povars)
     return this
+  }
+})
+
+function Item (name, text, picname, prop) {
+  prop = prop || {}
+  prop.poprefix = prop.poprefix || POPREFIX_ITEM
+  prop.picname = picname
+  File.call(this, name, text || _(PO_DEFAULT_ITEM), prop)
+  this._inheritable.push('room')
+  if (prop.exec) {
+    this.exec_function = prop.exec
+  }
+}
+Item.prototype = union(File.prototype, {
+  setExec: function (fu) {
+    this.exec_function = fu
+  },
+  unsetExec: function () {
+    this.exec_function = undefined
+  },
+  exec: function (args, room, vt) {
+    var it = this
+    this.fire_event(vt, 'exec', args)
+    if (this.exec_function) {
+      return this.exec_function(this, args, room, vt)
+    } else {
+      return cmd_done(vt, [[it, 0]], it.text, 'exec', args)
+    }
   },
   fire_event: function (vt, cmd, args, idx) {
     var ev_trigger = null
@@ -274,10 +238,9 @@ Item.prototype = union(File.prototype, {
     return this
   }
 })
-function People (name, intro, picname, prop) {
-  // Inherit instance properties
+function People (name, text, picname, prop) {
   prop = prop || {}
   prop.poprefix = d(prop.poprefix, POPREFIX_PEOPLE)
-  Item.call(this, name, intro, picname, prop)
+  Item.call(this, name, text, picname, prop)
 }
 People.prototype = Item.prototype

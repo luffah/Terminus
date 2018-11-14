@@ -1,6 +1,7 @@
 
 function inc (h, k) {
   if (h[k]) { h[k]++ } else { h[k] = 1 }
+  return h[k]
 }
 function hdef (h, k, v) {
   if (!def(h[k])) {

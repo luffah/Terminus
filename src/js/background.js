@@ -32,9 +32,13 @@ Background.prototype = {
     // setup
     this.data[idx] = buf
   },
-  draw: function (idx) {
+  draw: function (idx, cnt) {
+    let t = this
+    cnt = cnt || 0
     if (this.data[idx]) {
       this.ctx.drawImage(this.data[idx], 0, 0)
+    } else if (cnt < 10) {
+      setTimeout(() => t.draw(idx, ++cnt), 200)
     }
   }
 }
@@ -77,8 +81,6 @@ tmp.loadinitbg=function () {
   else {
   _bgl.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, gradient)
   _bg.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, igradient)
-  _bg.draw(-tmp.bgcnt)
-  _bgl.draw(-tmp.bgcnt)
   if (++tmp.bgcnt<3) { setTimeout(tmp.loadinitbg,600)}
   }
 }
@@ -86,13 +88,18 @@ tmp.bgcnt2 = 1
 tmp.loadgamebg=function () {
   if (vt.busy) {setTimeout(tmp.loadgamebg,1000)}
   else {
-  _bg.setRandomData(tmp.bgcnt2, 2 ** (tmp.bgcnt2+3), tmp.colorrange, gradient)
+  _bg.setRandomData(tmp.bgcnt2, Math.pow(2,tmp.bgcnt2+3), tmp.colorrange, gradient)
    if (++tmp.bgcnt2<5) { setTimeout(tmp.loadgamebg,1000)}
   }
 }
 
 function loadBackgroud(step){
   tmp['load'+step+'bg']()
+}
+
+function showBackground(){
+  _bg.draw(0)
+  _bgl.draw(0)
 }
 
 function enter_room_effect () {
@@ -112,7 +119,7 @@ function enter_room_effect () {
 var bgcnt = 0
 var bglcnt = 0
 function enter_effect () {
-  if ((bgcnt + bglcnt) % 3){
+  if ((bgcnt + bglcnt) % 3) {
     _bgl.draw(-(bglcnt++ % 3))
   } else {
     _bg.draw(-(bgcnt++ % 3))

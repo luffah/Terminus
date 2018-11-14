@@ -1,29 +1,3 @@
-function prtStat(r, path){
-  return t('tr',
-    t('td', r.link ? 'link ' : (r instanceof Room ? 'dir  ':'file ' ) )  +
-    t('td', r.mod.stringify() ) +
-    t('td', r.owner) +
-    t('td', r.group) +
-    t('td', (path || '') + '/' + (r.room ? r.id : '') ) +
-    t('td', '"' + r.toString() + '"' ) +
-    t('td', (r.link ? ' --> ' + r.link.id : ''))
-  )
-}
-
-function listFiles (room, path) {
-  let text = ''
-  let lFiles = (room, path) => {
-    room.children.forEach(r => {
-      text += prtStat(r, path)
-      lFiles(r, (path || '') + '/' + r.id)
-    })
-    room.items.forEach(i => { text += prtStat(i, path) })
-  }
-  text += prtStat(room)
-  lFiles(room, path)
-  return t('table',t('tbody',text))
-}
-
 addTest(function (next) {
   vt.setContext(new Context({ 'sure': { groups: ['user'], address: 'DTC' } }, 'sure', $home, {}))
   vt.context.addGroup('dir')
