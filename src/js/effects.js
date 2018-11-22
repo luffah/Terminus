@@ -65,7 +65,7 @@ function epic_img_enter (vt, i, clss, scrl_timeout, callback) {
   vt.scrl_lock = true
   vt.busy = true
   var c = addEl(vt.monitor, 'div', 'img-container ' + clss)
-  pic = new Pic(i)
+  pic = new Pic({img:i})
   pic.render(c, () => {
     c.className += ' loaded'
     setTimeout(() => {

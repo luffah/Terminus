@@ -23,6 +23,13 @@ body {
   min-height:101%
 }
 
+.logging {
+    font-family: monospace;
+    font-size:8px;
+    color:orange;
+    text-shadow: 0 0 1px yellow;
+}
+
 .color-ok {
 color:lightgreen;
 }

@@ -55,8 +55,10 @@ function hex2rgbrange (r) {
 }
 dom.Id('term').style = 'background:rgba(0,0,0,0.9)'
 
-var _bgl = new Background(window.innerWidth/2,window.innerHeight,0,0)
-var _bg = new Background(window.innerWidth/2,window.innerHeight,'50%',0)
+// var _bgl = new Background(window.innerWidth/2,window.innerHeight,0,0)
+// var _bg = new Background(window.innerWidth/2,window.innerHeight,'50%',0)
+
+var _bg = new Background(window.innerWidth,window.innerHeight,0,0)
 function gradient (i, j, m, w, h) {
   var mt = clone(m)
   m[0] = (1 + i / w) / mt[2]
@@ -79,7 +81,7 @@ tmp.colorrange=hex2rgbrange(['22b14c', '000000'])
 tmp.loadinitbg=function () {
   if (vt.busy) {setTimeout(tmp.loadinitbg,1000)}
   else {
-  _bgl.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, gradient)
+  // _bgl.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, gradient)
   _bg.setRandomData(-tmp.bgcnt, 7, tmp.colorrange, igradient)
   if (++tmp.bgcnt<3) { setTimeout(tmp.loadinitbg,600)}
   }
@@ -99,7 +101,7 @@ function loadBackgroud(step){
 
 function showBackground(){
   _bg.draw(0)
-  _bgl.draw(0)
+  // _bgl.draw(0)
 }
 
 function enter_room_effect () {
@@ -117,11 +119,11 @@ function enter_room_effect () {
 }
 
 var bgcnt = 0
-var bglcnt = 0
+// var bglcnt = 0
 function enter_effect () {
-  if ((bgcnt + bglcnt) % 3) {
-    _bgl.draw(-(bglcnt++ % 3))
-  } else {
+  // if ((bgcnt + bglcnt) % 3) {
+    // _bgl.draw(-(bglcnt++ % 3))
+  // } else {
     _bg.draw(-(bgcnt++ % 3))
-  }
+  // }
 }
