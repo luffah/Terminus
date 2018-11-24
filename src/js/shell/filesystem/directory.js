@@ -17,47 +17,24 @@ var PO_DEFAULT_ITEM_DESC = POPREFIX_ITEM + PO_NONE_DESC
 var PO_DEFAULT_PEOPLE_DESC = POPREFIX_PEOPLE + PO_NONE_DESC
 var globalSpec = {}
 
-function Room (prop) {
-  prop = prop || {}
-  console.log('room ' + prop.id, prop.var)
-  this.children = []
-  this.items = []
-  this.starter_msg = prop.starterMsg
-  this.enter_callback = prop.enterCallback || null
-  this.leave_callback = prop.leaveCallback || null
-  if (!prop.mod) { prop.mod = 755 }
-  if (!prop.name) { prop.name = prop.poid }
-  File.call(this, prop)
+class Room extends File {
+  constructor (prop) {
+    prop = inject({ mod: 755 }, prop)
+    prop.poprefix = prop.poprefix || POPREFIX_ROOM
+    // console.log('room ' + prop.id, prop.var)
+    super(prop)
     // name || _(PO_DEFAULT_ROOM),
     // text || _(PO_DEFAULT_ROOM_DESC),
-}
-function enterRoom (new_room, vt) {
-  let ctx = vt.ctx
-  console.log('enterRoom', new_room, ctx)
-  let prev = ctx.h.r
-  if (prev && !prev.isParentOf(new_room)) {
-    prev.doLeaveCallbackTo(new_room)
   }
-  ctx.h.r = new_room
-  state.saveContext(ctx)
-  if (new_room.music) {
-    vt.playMusic(new_room.music, { loop: true })
-  }
-  if (typeof new_room.enter_callback === 'function') {
-    new_room.enter_callback(new_room, vt)
-  }
-  if (typeof enter_room_effect === 'function') {
-    enter_room_effect()
-  }
-  return [new_room.toString(), new_room.text]
-}
-Room.parse = function (str) {
-  return window[str]
-}
-Room.prototype = union(File.prototype, {
-  _set: File.prototype.set,
-  set: function (prop) {
-    this._set(prop)
+
+  set (prop) {
+    super.set(prop)
+    if (!this.items) this.items = []
+    if (!this.children) this.children = []
+    if (prop.starterMsg) this.starter_msg = prop.starterMsg
+    if (prop.enter_callback) this.enter_callback = prop.enterCallback
+    if (prop.leave_callback) this.leave_callback = prop.leaveCallback
+    if (prop.pic_shown_as_item) this.pic_shown_as_item = prop.pic_shown_as_item
     let h
     if (h = prop.peoples) {
       Object.keys(h).forEach((i) => {
@@ -76,6 +53,7 @@ Room.prototype = union(File.prototype, {
       })
     }
     if (prop.children) {
+      this.children = []
       h = prop.children
       Object.keys(h).forEach((i) => {
         this.newRoom(i, h[i])
@@ -87,31 +65,30 @@ Room.prototype = union(File.prototype, {
       })
     }
     return this
-  },
-  isRoot: function () { return !this.room },
-  getDoors: function () { return this.tgt.children },
-  getItems: function () { return this.tgt.items.filter((o) => !(o instanceof People)) },
-  getPeoples: function () { return this.tgt.items.filter((o) => (o instanceof People)) },
+  }
+  isRoot () { return !this.room }
+  getDoors () { return this.tgt.children }
+  getItems () { return this.tgt.items.filter((o) => !(o instanceof People)) }
+  getPeoples () { return this.tgt.items.filter((o) => (o instanceof People)) }
   // a message displayed on game start
-  setStarterMsg: function (txt) { this.tgt.starter_msg = txt; return this.tgt },
-  getStarterMsg: function (prefix) {
-    prefix = prefix || ''
+  set starterMsg (txt) { this.tgt.starter_msg = txt; return this.tgt }
+  get starterMsg () {
     if (this.tgt.starter_msg) {
-      return prefix + this.tgt.starter_msg
+      return this.tgt.starter_msg
     } else {
-      return prefix + _(POPREFIX_CMD + 'pwd', [this.tgt.name]).concat('\n').concat(this.tgt.text)
+      return _(POPREFIX_CMD + 'pwd', [this.tgt.name]).concat('\n').concat(this.tgt.text)
     }
-  },
+  }
   // sub room management
-  idxChildFromName: function (name) {
+  idxChildFromName (name) {
     return this.tgt.children.map(objToStr).indexOf(name)
-  },
-  getChildFromName: function (name) {
+  }
+  getChildFromName (name) {
     let idx = this.idxChildFromName(name)
     return ((idx == -1) ? null : this.children[idx])
-  },
-  hasChild: function (child) { return this.getChildFromName(child.name) },
-  addDoor: function (f, wayback) {
+  }
+  hasChild (child) { return this.getChildFromName(child.name) }
+  addDoor (f, wayback) {
     if (f) {
       let i = 0
       let name = f.name
@@ -124,15 +101,13 @@ Room.prototype = union(File.prototype, {
       }
     }
     return this.tgt
-  },
-  removeDoor: function (child) { if (rmIdxOf(this.children, child)) { child.room = null } },
-  getRoot: function () { return (this.room ? this.tgt.getRoot() : this) },
-  getDir: function (arg, ctx) {
+  }
+  removeDoor (child) { if (rmIdxOf(this.children, child)) { child.room = null } }
+  getRoot () { return (this.tgt.room ? this.tgt.room.getRoot() : this.tgt) }
+  getDir (arg, ctx) {
     let r = null
 
-    if (arg === '') {
-      r = ctx.h.r.getRoot()
-    } else if (arg === '~') {
+    if (arg === '~') {
       r = ctx.h.v.HOME || ctx.h.r.getRoot()
     } else if (arg === '..') {
       r = this.room
@@ -142,43 +117,42 @@ Room.prototype = union(File.prototype, {
       r = this.tgt.children.filter((i) => arg == i.toString()).shift()
     }
     return (r) || null
-  },
+  }
   // callback when entering in the room
-  setLeaveCallback: function (fu) { this.tgt.leave_callback = fu; return this },
-  doLeaveCallbackTo: function (to) {
-    t = this
-    console.log(t.toString(), 'doLeaveCallbackTo', to.toString())
-    if (t.uid != to.uid && t.room) {
-      if (typeof t.leave_callback === 'function') {
-        t.leave_callback()
+  setLeaveCallback (fu) { this.tgt.leave_callback = fu; return this }
+  doLeaveCallbackTo (to) {
+    let r = this
+    // console.log(r.toString(), 'doLeaveCallbackTo', to.toString())
+    if (r.uid != to.uid && r.room) {
+      if (typeof r.leave_callback === 'function') {
+        r.leave_callback()
       }
-      t.room.doLeaveCallbackTo(to)
+      r.room.doLeaveCallbackTo(to)
     }
-  },
-  setEnterCallback: function (fu) { this.tgt.enter_callback = fu; return this },
-  doEnterCallbackTo: function (to) {
-    t = this
-    if (t.uid === to.uid) {
-    } else if (t.children.length) {
-      if (typeof t.leave_callback === 'function') {
-        t.enter_callback()
+  }
+  setEnterCallback (fu) { this.tgt.enter_callback = fu; return this }
+  doEnterCallbackTo (to) {
+    let r = this
+    if (r.uid === to.uid) {
+    } else if (r.children.length) {
+      if (typeof r.leave_callback === 'function') {
+        r.enter_callback()
       }
       if (t.room) {
-        t.room.doEnterCallbackTo(to)
+        r.room.doEnterCallbackTo(to)
       }
     }
-  },
-  isParentOf: function (par) { return par.room && (par.room.uid == this.uid || this.isParentOf(par.room)) },
-  destroy: function () { rmIdxOf(this.room.children, this); this.room = null },
-  setOutsideEvt: function (name, fun) { globalSpec[this.name][name] = fun; return this },
-  unsetOutsideEvt: function (name) { delete globalSpec[this.name][name]; return this },
-  isEmpty: function () { return (this.tgt.children.length === 0 && this.tgt.items.length === 0) },
+  }
+  isParentOf (par) { return par.room && (par.room.uid == this.uid || this.isParentOf(par.room)) }
+  destroy () { rmIdxOf(this.room.children, this); this.room = null }
+  setOutsideEvt (name, fun) { globalSpec[this.name][name] = fun; return this }
+  unsetOutsideEvt (name) { delete globalSpec[this.name][name]; return this }
+  isEmpty () { return (this.tgt.children.length === 0 && this.tgt.items.length === 0) }
   /* Returns the room and the item corresponding to the path
    * if item is null, then the path describe a room and  room is the full path
    * else room is the room containing the item */
-  traversee: function (path) {
-    // log(path)
-    let [room, lastcomponent] = this.pathToRoom(path)
+  traversee (path, ctx) {
+    let [room, lastcomponent] = this.pathToRoom(path, ctx)
     let ret = { room: room, item_name: lastcomponent, item_idx: -1 }
     if (room) {
       ret.room_name = room.name
@@ -188,8 +162,8 @@ Room.prototype = union(File.prototype, {
       }
     }
     return ret
-  },
-  checkAccess: function (ctx) {
+  }
+  checkAccess (ctx) {
     let c = ctx.h.r.tgt
     let r = this.tgt
     if (c.uid == r.uid) {
@@ -201,80 +175,70 @@ Room.prototype = union(File.prototype, {
     } else {
       return r.ismod('x', ctx) && (!r.room || r.room.checkAccess(ctx))
     }
-  },
-  pathToRoom: function (path) {
+  }
+  pathToRoom (path, ctx) {
     // returns [ room associated to the path,
     //           non room part of path,
     //           valid path ]
     let room = this.tgt
-    // log(path)
     let pat = path.split('/')
-    let end = pat.slice(0, -1).findIndex((r) => !(room = room.getDir(r)))
+    let end = pat.slice(0, -1).findIndex((r) => !(room = room.getDir(r, ctx)))
     let pathstr = pat.slice(0, end).join('/')
     let lastcomponent = null
     let cancd
     if (room) {
       lastcomponent = pat.pop() || null
-      if (cancd = room.getDir(lastcomponent)) {
+      if (cancd = room.getDir(lastcomponent, ctx)) {
         room = cancd
         pathstr += (end <= 0 ? '' : '/') + lastcomponent + '/'
         lastcomponent = null
       }
     }
     return [room, lastcomponent, pathstr]
-  },
+  }
   // item & people management
-  addItem: function (f) {
+  addItem (f) {
     if (f) {
       let i = 0
       let name = f.name
       while (this.tgt.idxItemFromName(f.name) != -1) {
         f.name = name + '.' + (++i)
       }
-      this.items.push(f)
+      this.tgt.items.push(f)
       f.room = this.tgt
     }
     return this.tgt
-  },
-  removeItemByIdx: function (idx) {
+  }
+  removeItemByIdx (idx) {
     return ((idx == -1) ? null : this.tgt.items.splice(idx, 1)[0])
-  },
-  idxItemFromName: function (name) {
+  }
+  idxItemFromName (name) {
     return this.tgt.items.map(objToStr).indexOf(name)
-  },
-  removeItemByName: function (name) {
-    idx = this.tgt.idxItemFromName(name)
-    return this.tgt.removeItemByIdx(idx)
-  },
-  hasItem: function (name, args) {
-    args = args || []
-    idx = this.tgt.idxItemFromName(_(POPREFIX_ITEM + name, args))
-    return (idx > -1)
-  },
-  removeItem: function (name, args) {
-    args = args || []
-    idx = this.tgt.idxItemFromName(_(POPREFIX_ITEM + name, args))
-    return this.tgt.removeItemByIdx(idx)
-  },
-  hasPeople: function (name, args) {
-    args = args || []
-    idx = this.tgt.idxItemFromName(_(POPREFIX_PEOPLE + name, args))
-    return (idx > -1)
-  },
-  removePeople: function (name, args) {
-    args = args || []
-    idx = this.tgt.idxItemFromName(_(POPREFIX_PEOPLE + name, args))
-    return this.tgt.removeItemByIdx(idx)
-  },
-  getItemFromName: function (name) {
-    idx = this.tgt.idxItemFromName(name)
+  }
+  removeItemByName (name) {
+    return this.tgt.removeItemByIdx(this.tgt.idxItemFromName(name))
+  }
+  hasItem (name, args) {
+    return (this.tgt.idxItemFromName(_(POPREFIX_ITEM + name, args || [])) > -1)
+  }
+  removeItem (name, args) {
+    return this.tgt.removeItemByIdx(this.tgt.idxItemFromName(_(POPREFIX_ITEM + name, args || [])))
+  }
+  hasPeople (name, args) {
+    return (this.tgt.idxItemFromName(_(POPREFIX_PEOPLE + name, args || [])) > -1)
+  }
+  removePeople (name, args) {
+    return this.tgt.removeItemByIdx(this.tgt.idxItemFromName(_(POPREFIX_PEOPLE + name, args || [])))
+  }
+  getItemFromName (name) {
+    let idx = this.tgt.idxItemFromName(name)
     return ((idx == -1) ? null : this.tgt.items[idx])
-  },
-  getItem: function (name) {
+  }
+  getItem (name) {
     return this.tgt.getItemFromName(_('item_' + name))
-  },
+  }
   // PO ready room and item definition
-  newItemBatch: function (id, names, prop) {
+  newItemBatch (id, names, prop) {
     let ret = []
     prop = prop || {}
     for (let i = 0; i < names.length; i++) {
@@ -285,52 +249,58 @@ Room.prototype = union(File.prototype, {
       this.tgt.addItem(ret[i])
     }
     return ret
-  },
-  newItem: function (id, prop) {
-    prop = prop || {}
-    prop.id = prop.id || id
-    prop.poid = prop.poid || id
-    let ret = new Item(prop)
+  }
+  newItem (id, prop) {
+    let ret = new Item(inject({poid:id, id:id},prop))
     this.tgt.addItem(ret)
     return ret
-  },
-  newPeople: function (id, prop) {
-    prop = prop || {}
-    prop.poid = prop.poid || id
-    prop.id = prop.id || id
-    let ret = new People(prop)
+  }
+  newPeople (id, prop) {
+    let ret = new People(inject({poid:id, id:id},prop))
     this.tgt.addItem(ret)
     return ret
-  },
-  newLink: function (id, tgt, prop) {
-    prop = prop || {}
-    prop.poid = prop.poid || id
-    prop.id = prop.id || id
-    let ret = new Link(tgt, prop)
+  }
+  newLink (id, tgt, prop) {
+    let ret = new Link(tgt, inject({poid:id, id:id},prop))
     if (tgt instanceof Room) {
       this.tgt.addDoor(ret)
     } else {
       this.tgt.addItem(ret)
     }
     return ret
-  },
-  newRoom: function (id, prop) {
+  }
+  newRoom (id, prop) {
     let ret = newRoom(id, prop)
     this.tgt.addDoor(ret)
     return ret
-  },
-  addRoom: function (id, prop) {
+  }
+  addRoom (id, prop) {
     this.tgt.addDoor(newRoom(id, prop))
     return this
   }
-})
+
+  static enter (new_room, vt) {
+    let ctx = vt.ctx
+    // console.log('enterRoom', new_room, ctx)
+    let prev = ctx.h.r
+    if (prev && !prev.isParentOf(new_room)) {
+      prev.doLeaveCallbackTo(new_room)
+    }
+    ctx.h.r = new_room
+    state.saveContext(ctx)
+    if (new_room.music) {
+      vt.playMusic(new_room.music, { loop: true })
+    }
+    if (typeof new_room.enter_callback === 'function') {
+      new_room.enter_callback(new_room, vt)
+    }
+    if (typeof enter_room_effect === 'function') {
+      enter_room_effect()
+    }
+    return [new_room.toString(), new_room.text]
+  }
+}
 function newRoom (id, prop) {
   // this function automatically set the variable $id to ease game saving
-  let poid = POPREFIX_ROOM + id
-  prop = prop || {}
-  prop.var = prop.var || ('$' + id) // currently undefined for user created rooms, see mkdir
-  prop.poid = poid
-  prop.id = id
-  let n = new Room(prop)
-  return n
+  return new Room(inject({poid:id, id:id, var: ('$' + id)},prop))
 }

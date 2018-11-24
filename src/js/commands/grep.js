@@ -4,12 +4,10 @@ Command.def('grep', [ARGT.pattern, ARGT.strictfile], function (args, ctx, vt) {
   for (var i = 1; i < args.length; i++) {
     var tgt = ctx.traversee(args[1])
     if (tgt.item) {
-      if ('grep' in tgt.item.cmd_hook) {
-        hret = tgt.item.cmd_hook['grep']([word_to_find,args[i]])
-        if (def(hret)){
-        if (d(hret.ret, false)) ret.push(hret.ret)
-        if (d(hret.pass, false)) continue
-        }
+      let hret = cwd.tryhook('grep', [word_to_find,args[i]])
+      if (hret){
+        if (hret.ret) ret.push(hret.ret)
+        if (hret.pass) continue
       }
       var return_arr = tgt.item.text.split('\n').filter(function (line) { return (line.indexOf(word_to_find) > 0) })
       ret.push(_stdout(return_arr.join('\n')))

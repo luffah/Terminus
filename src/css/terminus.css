@@ -30,22 +30,22 @@ body {
     text-shadow: 0 0 1px yellow;
 }
 
-.color-ok {
+.t-ok {
 color:lightgreen;
 }
-.color-ko {
+.t-ko {
 color:red;
 }
-.color-cmd {
+.t-cmd {
 color:chartreuse;
 }
-.color-room {
+.t-room {
 color:orange;
 }
-.color-people {
+.t-people {
 color:palevioletred;
 }
-.color-item {
+.t-item {
 color:magenta;
 }
 .mesg {
@@ -81,6 +81,11 @@ color:grey;
 .disappear {
   opacity:1;
   animation:disappear 2s forwards;
+}
+@keyframes appear {
+  to {
+    opacity:1;
+  }
 }
 @keyframes disappear {
   to {
@@ -251,6 +256,18 @@ z-index: -1;
 .msg img {
   float:left;
 }
+.msg span {
+  text-shadow:0 0 10px rgba(255,255,255,.8);
+  animation:blur 1s forwards;
+  opacity:1;
+  background:black;
+}
+@keyframes blur {
+  to {
+    text-shadow:0 0 0px black;
+    opacity:0.85;
+  }
+}
 
 #term .input-container {
 /*  position:fixed;*/
@@ -271,7 +288,7 @@ z-index: -1;
 /*  width:100%;*/
 /*  max-width:1024px;*/
   max-width:80ch;
-  background:#000;
+  background:rgba(0,0,0,.95);
   box-sizing:border-box;
   border-radius:8px;
 }

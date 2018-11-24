@@ -31,12 +31,12 @@ var Builtin = {
   get: (n) => Builtin.h[n],
   keys: () => Object.keys(Builtin.h).filter(k => !Builtin.h[k].hidden),
   hide (query) {
-    _builtins.keys().forEach((i) => {
+    Builtin.h.keys().forEach((i) => {
       if (i.match(query)) _builtins[i].hidden = 1
     })
   },
   unhide (query) {
-    _builtins.keys().forEach((i) => {
+    Builtin.h.keys().forEach((i) => {
       if (i.match(query)) _builtins[i].hidden = 0
     })
   }
@@ -54,7 +54,7 @@ function global_fire_done () { global_fire('done') }
 
 function cmd_done (vt, fireables, ret, cmd, args) {
   // fire events *_done when ret is shown
-  console.log('done', vt, fireables, ret, cmd, args)
+  // console.log('done', vt, fireables, ret, cmd, args)
   if (typeof ret === 'string') {
     ret = _stdout(ret)
   }

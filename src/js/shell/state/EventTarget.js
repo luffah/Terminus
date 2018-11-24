@@ -2,38 +2,29 @@
 // MIT License
 // taken from http://www.nczonline.net/blog/2010/03/09/custom-events-in-javascript/
 
-function EventTarget () {
-  this._listeners = {}
-}
-EventTarget.prototype = {
+class EventTarget {
+  
+  constructor(){ this._listeners = {} }
 
-  addListener: function (type, listener) {
+  addListener(type, listener) {
     hdef(this._listeners, type, listener)
     return this
-  },
+  }
 
-  fire: function (evt) {
-    if (typeof evt === 'string') {
-      evt = { type: evt }
-    }
-    if (!evt.target) {
-      evt.target = this
-    }
-
-    if (!evt.type) { // falsy
-      throw new Error("Event object missing 'type' property.")
-    }
-
-    if (this._listeners[evt.type] instanceof Array) {
-      var listeners = this._listeners[evt.type]
-      for (var i = 0, len = listeners.length; i < len; i++) {
+  fire(evt) {
+    if (typeof evt === 'string')  evt = { type: evt }
+    if (!evt.target) evt.target = this
+    if (!evt.type) throw new Error("Event object missing 'type' property.")
+    let listeners = this._listeners[evt.type]
+    if (listeners instanceof Array) {
+      for (let i = 0, len = listeners.length; i < len; i++) {
         listeners[i].call(this, evt)
       }
     }
     return this
-  },
+  }
 
-  removeListener: function (type, listener) {
+  removeListener(type, listener) {
     if (this._listeners[type] instanceof Array) {
       var listeners = this._listeners[type]
       for (var i = 0, len = listeners.length; i < len; i++) {

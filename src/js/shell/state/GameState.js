@@ -30,7 +30,7 @@ GameState.prototype = {
     return this.actions[name]
   },
   apply: function (name, replay) {
-    console.log('apply ' + name)
+    // console.log('apply ' + name)
     this.params[name] = 1
     if (name in this.actions) { this.actions[name](replay || false) }
   },
@@ -54,7 +54,7 @@ GameState.prototype = {
       for (var k in params) {
         if (params.hasOwnProperty(k)) {
           if (k in this.actions) {
-            this.apply(k, params[k], )
+            this.apply(k, params[k])
           }
         }
       }

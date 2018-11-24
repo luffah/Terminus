@@ -2,10 +2,8 @@ Command.def('mkdir', [ARGT.dirnew], function (args, ctx, vt) { // event arg -> c
   if (args.length === 1) {
     var tr = ctx.traversee(args[0])
     if (tr.room.ismod('w', ctx)) {
-      if ('mkdir' in tr.room.cmd_hook) {
-        hret = tr.room.cmd_hook['grep'](args)
-        if (d(hret.ret, false)) return hret.ret
-      }
+      let hret = tr.room.tryhook('mkdir', args)
+      if (hret && hret.ret) return hret.ret
       if (!tr.item) {
         tr.room.addDoor(new Room(tr.item_name))
         ctx.h.r.fire_event(vt, 'mkdir', args, 0)

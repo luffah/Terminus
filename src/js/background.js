@@ -53,7 +53,6 @@ function hex2rgbrange (r) {
   }
   return c
 }
-dom.Id('term').style = 'background:rgba(0,0,0,0.9)'
 
 // var _bgl = new Background(window.innerWidth/2,window.innerHeight,0,0)
 // var _bg = new Background(window.innerWidth/2,window.innerHeight,'50%',0)

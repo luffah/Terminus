@@ -1,42 +1,46 @@
-function Context(h){
-  // h = {users:{name: {groups:[]}}, me:name, v:{PATH:[],HOME:room} }
-  h.v = h.v || {}
-  this.h=h
-  this.user=h.users[h.me]
-}
-Context.prototype = {
-  traversee(path, mod){
-    return this.h.r.traversee(path, this, mod)
-  },
-  getDir(p){
-    return this.h.r.getDir(p, this)
-  },
-  addGroup(grp){
-    this.user.groups.push(grp);
-  },
-  hasGroup(grp){
-    return this.user.groups.indexOf(grp)>-1;
-  },
-  setUserName(val){
-    if (val.length) {
-      this.users[val]=this.users[this.me];
-      delete this.users[this.me];
-      this.me=val;
-      this.user=this.users[val];
+class Context {
+  constructor(h){
+    // h = {users:{$name: {groups:[]}}, me:$name, r:$room,  v:{PATH:[],HOME:$room} }
+    h.users = h.users || {}
+    if (! h.users[h.me]){
+      h.users[h.me] = {groups:[]}
+    }
+    if (! h.r) h.r = h.v.HOME
+    this.h=h
+  }
+  get r(){ return this.h.r }
+  set r(r){ this.h.r = r }
+  get vars() { return this.h.v }
+  set me(u){
+    if (u.length) {
+      this.h.users[u]=this.h.users[this.h.me];
+      delete users[this.h.me];
+      this.h.me=val;
       File.prototype.user=val;
     }
-  },
-  setUserAddress(val){
-    if (val.length) this.user.address=val;
-  },
+  }
+  get me(){return this.h.me}
+  get user() { return this.h.users[this.h.me] }
+  traversee(path){
+    return this.h.r.traversee(path, this)
+  }
+  getDir(p){
+    return this.h.r.getDir(p, this)
+  }
+  addGroup(grp){
+    addUniq(this.user.groups,grp)
+  }
+  hasGroup(grp){
+    return this.user.groups.indexOf(grp)>-1;
+  }
   getCommand(cmdname){
     if (cmdname.match(/^(\.\/|\/)/)) { // find a local program
-      let tr = this.room.traversee(cmdname)
+      let tr = this.traversee(cmdname)
       if (tr.item && tr.item.ismod('x', ctx)) {
         return tr.item
       }
     }
-    cmd = Builtin.get(cmdname)
+    let cmd = Builtin.get(cmdname)
     if (cmd) return cmd
     if (this.h.v.PATH){
       let p=this.h.v.PATH
@@ -46,10 +50,10 @@ Context.prototype = {
         if (it && it.ismod('x', this)) return it
       }
     }
-  },
+  }
   hasRightForCommand(cmdname) {
     return this.getCommand(cmdname)
-  },
+  }
   getCommands () {
     let ret = []
     let i
@@ -68,12 +72,14 @@ Context.prototype = {
       }
     }
     return ret
-  },
+  }
   stringify(){
     return JSON.stringify(Vars.stringify(this.h))
   }
+  static parse(str) {
+    return str ? new Context(Vars.parse(JSON.parse(str))) : null
+  }
 }
-Context.parse = (str) => str ? new Context(Vars.parse(JSON.parse(str))) : null
 
 Vars={
   stringify(h){
@@ -95,10 +101,9 @@ Vars={
         Object.keys(h).forEach((i) => {
           tmph[i] = Vars.parse(h[i])
         })
-        tmph[i] = h[i]
         return tmph
       }
-      if (h.slice(O,2) = 'r.') return Room.parse(h.slice(2))
+      if (h.slice(0,2) == 'r.') return Room.parse(h.slice(2))
       return h
   }
 }

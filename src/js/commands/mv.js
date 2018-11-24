@@ -10,18 +10,17 @@ Command.def('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // ev
     var retfireables = []; var rename; var overwritten
     for (let i = 0; i < (args.length - 1); i++) {
       src = ctx.traversee(args[i])
-      if ('mv' in src.item.cmd_hook) {
-         hret = src.item.cmd_hook['mv']([args[i],args[args.length - 1]])
-        if (def(hret)){
-         if (d(hret.ret, false)) ret.push(hret.ret)
-         if (d(hret.pass, false)) continue
-        }
+      log('tryhook')
+      let hret = src.item.tryhook(['mv', args[i],args[args.length - 1]])
+      if (hret){
+        if (hret.ret) ret.push(hret.ret)
+        if (hret.pass) continue
       }
       if (src.room) {
         if (src.item && dest.room) {
           rename = (dest.item_name && (src.item_name !== dest.item_name))
           overwritten = (dest.item)
-         if (!dest.room.ismod('w', ctx)) {
+          if (!dest.room.ismod('w', ctx)) {
             ret.push(_stderr(_('permission_denied') + ' ' + _('cmd_mv_dest_fixed')))
             src.item.fire_event(vt, 'permission_denied', args, 0)
           } else if (src.item_idx > -1) {

@@ -1,14 +1,10 @@
 function Waiter(){
-  this.waiting_fus = []
-  this.busy = false
-}
-Waiter.prototype = {
   /// How to see some interface is busy to do things : i don't know
   /// so i add a busy state
-  wait_free: function (fu) {
-    this.waiting_fus.push(fu)
-  },
-  loop_waiting: function () {
+  this.waiting_fus = []
+  this.busy = false
+  this.wait_free = (fu) => { this.waiting_fus.push(fu) }
+  this.loop_waiting = () => {
     var wcnt = 0; var t = this
     if (!t.waiting_interval) {
       /// check every .5 second

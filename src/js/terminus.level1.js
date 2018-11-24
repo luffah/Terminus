@@ -32,13 +32,13 @@ function loadLevel1 () {
         }
       },
       peoples: {
-        shell: {
+        shell: { // TODO: shell is the program your are using ...
           v: 0,
           events: { exec_done: 'less_done' },
           states: {
-            less_done: (re, o) => {
-              if (o.v == 2) pwddecl.fire_event(vt, 'less')
-              o.setTextIdx(++o.v % 7)
+            less_done: (re, o, e) => {
+              log(re, o ,e)
+              o.textIdx = (++o.v % 7)
             }
           }
         }
@@ -50,12 +50,7 @@ function loadLevel1 () {
       music: 'forest',
       items: {
         western_forest_academy_direction: { img: 'item_sign.png' },
-        western_forest_back_direction: { var: 'pwddecl',
-          states: { less: (re) => {
-            $western_forest.unsetCmdEvent('less')
-            addGroup('pwd')
-            learn('pwd', re)
-          } } } },
+        western_forest_back_direction: { } },
       children: {
         spell_casting_academy: {
           img: 'loc_academy.gif',
@@ -63,15 +58,15 @@ function loadLevel1 () {
           children: {
             lessons: {
               img: 'loc_classroom.gif',
-              people: {
-                professor: {
+              peoples: {
+                prof: { v:0,
                   img: 'item_professor.png',
-                  var: 'prof',
-                  states: { less: (re) => {
-                    prof.unsetCmdEvent('less')
+                  states: { less: (re,o) => {
+                    o.unsetCmdEvent('less')
                     addGroup('mv')
                     learn('mv', re)
-                  } }
+                  } },
+                  hooks: {mv: (o) => _(o.poid+'_mv'+(o.v<2?o.v++:o.v))}
                 }
               }
             },
@@ -93,8 +88,8 @@ function loadLevel1 () {
                         ondone(function () {
                           setTimeout(() => { playSound('broken') }, 1000)
                           setTimeout(() => {
-                            prof.moveTo($academy_practice).setTextIdx('quit')
-                            $lessons.setLeaveCallback(() => { $academy_practice.destroy() }).setTextIdx('escape')
+                            prof.moveTo($academy_practice).textIdx = 'quit'
+                            $lessons.setLeaveCallback(() => { $academy_practice.destroy() }).textIdx='escape'
                             playMusic('warning', { loop: true })
                             mesg(_('leave_academy'), re)
                           }, 3000)
@@ -112,30 +107,27 @@ function loadLevel1 () {
     .addRoom('meadow', { img: 'loc_meadow.gif',
       peoples: {
         poney: { img: 'item_fatpony.png',
-          var: 0, v: 0,
+          v: 0,
           states: {
-            less: function (re) {
-              $meadow.addDoor($mountain)
+            less: (re, o, e) => {
+              o.room.addDoor($mountain)
               mesg(_('new_path', [$mountain]), re, { timeout: 600, ondone: true })
               unlock(vt, $mountain, re)
-              poney.unsetCmdEvent('less')
+              o.unsetCmdEvent(e)
             },
-            less_done: (re) => {
-              poney.setTextIdx(++poney.v)
-              if (poney.v == 5) {
-                poney.setCmdEvent('less_done', 'uptxthint')
-              }
+            less_done: (re, o, e) => {
+              o.textIdx = ++o.v
+              if (o.v == 5) o.setCmdEvent('less_done', 'uptxthint')
             },
-            uptxthint: (re) => {
-              poney.setCmdEvent('less_done', 'uptxthint')
+            uptxthint: (re, o, e) => {
               if (!vt.statkey.Tab || vt.statkey.Tab == 0) {
-                poney.setTextIdx('tab')
+                o.textIdx = 'tab'
               } else if (!vt.ctx.hasGroup('mv')) {
-                poney.setTextIdx('mv')
+                o.textIdx = 'mv'
               } else if (!state.applied('mvBoulder')) {
-                poney.setTextIdx('mountain')
+                o.textIdx = 'mountain'
               } else {
-                poney.setTextIdx('help')
+                o.textIdx = 'help'
               }
             }
           } }
@@ -148,14 +140,12 @@ function loadLevel1 () {
         states: {
           less: (re, o, e) => {
             o.unsetCmdEvent(e)
-            addGroup('exit')
-            learn(['exit'], re)
+            Builtin.unhide('exit')
             man = $mountain.newItem('man', { img: 'item_manuscript.png',
               states: {
-less: (re , it, e) => {
+                less: (re , it, e) => {
                   it.unsetCmdEvent(e)
-                  addGroup('help')
-                  learn(['man', 'help'], re)
+                  addGroup('man')
                 },
                 less_done: (re, it, e) => {
                   it.unsetCmdEvent(e)
@@ -183,16 +173,12 @@ less: (re , it, e) => {
                       mv: (re, o) => {
                         if (!$dank.hasChild($tunnel)) {
                           $dank.addDoor($tunnel)
-                          unlock(vt, $tunnel, re)
                           if (re) {
                             o.moveTo($small_hole)
                           } } }
                     },
                     children: {
-                      small_hole: { mod: 755,
-                        hooks: {
-                          cd: (args) => { return { ret: _stdout(_('room_small_hole_cd')) } }
-                        } }
+                      small_hole: { mod: 755, hooks: { cd: 0 } }
                     } }
                 } }
             } }
@@ -208,10 +194,10 @@ less: (re , it, e) => {
       states: {
         less_done: (re, o) => {
           o.setCmdEvent('less_done', 'ratDial')
-          o.setPoDelta('_identified')
+          o.poDelta = '_identified'
         },
         ratDial: (re, o) => {
-          o.setTextIdx(++o.v)
+          o.textIdx = ++o.v
         }
       } } 
     }, 

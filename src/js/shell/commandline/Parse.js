@@ -11,7 +11,7 @@ function _expandArgs (args, ctx) {
         let regexpArg = new RegExp(lastcomponent.replace(/\./g, '\\\.').replace(/\*/g, '.*'))
         let xargs = []
         room.items.map(objToStr).filter((a) => regexpArg.test(a)).forEach((it) => {
-          console.log(it)
+          // console.log(it)
           xargs.push(path + (path.length ? '/' : '') + it)
         })
         newargs = newargs.concat(xargs.sort())
@@ -66,11 +66,11 @@ function _completeArgs (args, argidx, tocomplete, ctx, compl) { // return comple
       substrMatches.push('..')
     }
     for (let i = 0; i < path.length; i++) {
-      roomNext = roomCurrent.getDir(path[i])
+      roomNext = roomCurrent.getDir(path[i], ctx)
       if (roomNext) {
         roomCurrent = roomNext
         if (i === path.length - 1) {
-          ret.push(roomNext.name + '/')
+          substrMatches.push(roomNext.name + '/')
         }
       } else if (i === path.length - 1) {
         // We've made it to the final room,
@@ -112,7 +112,7 @@ function _parse_command (vt, line) {
   let r = ctx.h.r
   let ret = ''
   arrs.push(arrs.pop().replace(/\/$/, ''))
-  console.log('parse and execute : ', arrs, ctx)
+  // console.log('parse and execute : ', arrs, ctx)
   let args = _expandArgs(arrs.slice(1), ctx)
   // find the program to launch
   let cmd = ctx.getCommand(cmdname)

@@ -1,7 +1,7 @@
 var pogencnt = 0
 function pogen (str) {
   pogencnt++
-  console.log('POgen new : ' + str)
+  // console.log('POgen new : ' + str)
   dialog[str] = str
 }
 
@@ -31,4 +31,4 @@ function pogen_content () {
 function pogen_dl () {
   return downloadAsFile( APP_NAME + '.' + LANG + '.po', pogen_content())
 }
-console.log('pogen loaded')
+// console.log('pogen loaded')

@@ -30,7 +30,7 @@ Music.prototype = {
     attrs=d(attrs,{});
     n=this.soundbank.get(ref);
     if (this.current!==ref ){
-      console.log('play ' +ref);
+      // console.log('play ' +ref);
       c=this.soundbank.get(this.current);
       if (c){
         c.pause();

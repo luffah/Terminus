@@ -5,8 +5,8 @@ Command.def('touch', [ARGT.filenew], function (args, ctx, vt) {
   } else {
     var createdItemsString = ''
     for (var i = args.length - 1; i >= 0; i--) {
-      if ('touch' in cwd.cmd_hook) {
-        hret = cwd.cmd_hook['touch']([args[i]])
+      let hret = cwd.tryhook('touch', [args[i]])
+      if (hret) {
         if (d(hret.ret, false)) ret.push(hret.ret)
         if (d(hret.pass, false)) continue
       }

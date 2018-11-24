@@ -10,7 +10,6 @@ function load_soundbank(vt){
   snd.set('choicemove', './snd/sfx_movement_ladder5a.', ['wav'])
   snd.set('choiceselect', './snd/sfx_movement_ladder2a.', ['wav'])
   snd.set('tag', './snd/sfx_movement_ladder2a.', ['wav'])
-  // snd.set('char','./snd/voicehigh.',['mp3']);
   snd.set('char', './snd/char.', ['wav'])
   snd.set('grl', './snd/grl.', ['wav'])
   snd.set('poney', './snd/sfx_menu_move3.', ['wav'])

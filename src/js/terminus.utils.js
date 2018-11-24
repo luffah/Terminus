@@ -2,7 +2,6 @@ function getTime () {
   var d, h, m; d = new Date(); h = d.getHours(); m = d.getMinutes()
   return h + 'h' + (m < 10 ? '0' : '') + m
 }
-var log = console.log
 
 function learn (cmds, re) {
   if (typeof cmds === 'string') {
@@ -25,7 +24,7 @@ function unlock (vt, unlocked, re) {
     global_fireables.done.push(
       function () {
         vt.playSound('unlocked')
-        badge(_('you_unlock', [unlocked]))
+        // mesg(_('congrat', [unlocked]))
       }
     )
   }
@@ -77,7 +76,6 @@ function success (txt, re) {
       function () {
         vt.playSound('success')
         badge(_('you_success', [txt]))
-        mesg(_('congrat', [txt]))
       }
     )
   }

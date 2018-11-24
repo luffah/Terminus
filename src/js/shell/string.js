@@ -9,12 +9,8 @@ function no_accents (str) {
 }
 
 String.prototype.printf = function (vars) {
-  var i = -1
-  return this.replace(/\%[sd]/g,
-    function (a, b) {
-      i++
-      return vars[i]
-    })
+  let i = 0
+  return this.replace(/\%[sd]/g, () => { return vars[i++] || ''})
 }
 
 var CONSONANT = 'bcdfghjklmnpqrstvwxz'

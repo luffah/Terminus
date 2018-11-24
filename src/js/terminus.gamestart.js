@@ -10,29 +10,36 @@ function Game () {
 
   // TODO: set -o tofu --> mode tout le monde en cube
   let t = Game.prototype
-  t.version = 'beta~20181122'
+  t.version = 'beta~20181123'
   loadBackgroud('init')
   newRoom('fs', {group: 'root', owner: 'root',
     children: {
-      bin: {
+      bin: { nopo:['name'],
         items: {
           cat:{ nopo:['name'], cmd: 'less', mod:755},
           ls:{ nopo:['name'], cmd: 0, mod:755},
+          mv:{ nopo:['name'], cmd: 0, mod:750, group:0},
+          touch:{ nopo:['name'], cmd: 0, mod:750, group:0},
+          mkdir:{ nopo:['name'], cmd: 0, mod:750, group:0},
+          rm:{ nopo:['name'], cmd: 0, mod:750, group:0},
+          man:{ nopo:['name'], cmd: 0, mod:750, group:0},
+          groups:{ nopo:['name'], cmd: 0, mod:750, group:'user'},
+          whoami:{ nopo:['name'], cmd: 0, mod:750, group:'user'},
         }
       },
-      boot: {},
-      etc: {},
-      home: { var:'$homedir',
+      boot: {nopo:['name'],},
+      etc: {nopo:['name'],},
+      home: { nopo:['name'], poid:'homedir',
         children: {
-          sure: {var:'$home', group: 'user', owner: 'user'}
+          sure: {var:'$home', poid:'home', group: 'user', owner: 'user'}
         }
       },
-      lib: {},
-      mnt: {},
-      root: {},
-      run: {},
-      sbin: {},
-      var: {}
+      lib: {nopo:['name'],},
+      mnt: {nopo:['name'],},
+      root: {nopo:['name'],},
+      run: {nopo:['name'],},
+      sbin: {nopo:['name'],},
+      var: {nopo:['name'],}
     }
   })
   if (typeof doTest === 'function') {
@@ -41,7 +48,10 @@ function Game () {
   }
   loadLevel1()
   loadLevel2()
-  t.menu()
+
+  t.hasSave = state.startCookie('terminus' + t.version)
+  t.start(vt, 0)
+  // t.menu()
   // new Seq([t.demo_note, t.menu]).next()
 }
 var visualchar = { 'ArrowUp': '↑', 'ArrowLeft': '←', 'ArrowRight': '→', 'ArrowDown': '↓', 'Tab': '↹' }
@@ -52,26 +62,24 @@ Game.prototype = {
     )
   },
   menu (next) {
+    flash(0,550)
+    let g = Game.prototype
     vt.clear()
     // prepare game loading
-    let g = Game.prototype
-    let hasSave = state.startCookie('terminus' + g.version)
-    let choices = [_('cookie_yes_load'), _('cookie_yes'), _('cookie_no')]
-    flash(0,550)
     // TODO : add checkbox for snd and textspeed
     // TODO : opt object for setting vt option
-    if (d(state._get_pre('snd'), true)) {
-      load_soundbank(vt)
-    }
-    vt.muteSound()
+    if (d(state._get_pre('snd'), true)) load_soundbank(vt)
+    vt.mute = 1
     setTimeout(() => {
       epic_img_enter(vt, 'titlescreen.gif', 'epic', 1500,
         () => {
-          vt.unmuteSound()
+          vt.mute = 0
           //        vt.playMusic('title',{loop:true});
-          vt.ask_choose(_('cookie'), choices, g.start, {
+          vt.ask_choose(_('cookie'), 
+            [_('cookie_yes_load'), _('cookie_yes'), _('cookie_no')],
+            g.start, {
             direct: true,
-            disabled_choices: hasSave ? [] : [0]
+            disabled_choices: g.hasSave ? [] : [0]
           })
         })
       showBackground()
@@ -92,49 +100,33 @@ Game.prototype = {
 
     if (vt.ctx) {
       state.loadActions()
-      vt.unmuteSound()
+      vt.mute = 0
       notification(_('game_loaded'))
-      vt.show_msg(vt.ctx.h.r.getStarterMsg(_('welcome_msg', vt.ctx.h.me) + '\n'))
+      vt.show_msg(_('welcome_msg', vt.ctx.me) + '\n' + vt.ctx.r.starterMsg)
       vt.enable_input()
     } else {
-      vt.ctx = new Context({
-        users:{ 'sure': { groups: ['user'] } },
-        me: 'sure',
-        r:$home,
-        v:{PATH:[$bin],HOME:$home}
-      })
-      vt.unmuteSound()
+      vt.ctx = new Context({ me: 'sure', v:{PATH:[$bin], HOME:$home} })
+      vt.mute = 0
       vt.playMusic('preload')
-      let loadel
-      let loader = (title, id, val, duration, next) => {
-        vt.show_msg(title, { cb: () => {
-          loadel = dom.Id(id)
-          vt.show_loading_element_in_msg(['/\'', '\'-', ' ,', '- '], {
-            el: loadel,
-            finalvalue: val,
-            duration: duration,
-            cb: next })
-        } })
-      }
       new Seq([
-        (next) => {
-        // vt.unmuteSound();
-          vt.ask(_('prelude_text'), (val) => {
-            if (_match('re_hate', val)) {
-              vt.ctx.user.judged = _('user_judged_bad')
-            } else if (_match('re_love', val)) {
-              vt.ctx.user.judged = _('user_judged_lovely')
-            } else {
-              vt.ctx.user.judged = _('user_judged' + Math.min(5, Math.round(val.length / 20)))
-            }
-          },
-          { cls: 'mystory', disappear: next}
-          )
-        }, (next) => {
-          vt.ask(vt.ctx.user.judged + '\n' + _('username_prompt'),
-            (val) => { vt.ctx.setUserName(val)},
-            { placeholder: vt.ctx.h.me, cls: 'megaprompt', disappear: next, wait: 500 })
-        },
+        // (next) => {
+        //   vt.ask(_('prelude_text'), (val) => {
+        //     if (_match('re_hate', val)) {
+        //       vt.ctx.user.judged = _('user_judged_bad')
+        //     } else if (_match('re_love', val)) {
+        //       vt.ctx.user.judged = _('user_judged_lovely')
+        //     } else {
+        //       vt.ctx.user.judged = _('user_judged' + Math.min(5, Math.round(val.length / 20)))
+        //     }
+        //   },
+        //   { cls: 'mystory', disappear: next}
+        //   )
+        // },
+        // (next) => {
+        //   vt.ask(vt.ctx.user.judged + '\n' + _('username_prompt'),
+        //     (val) => { vt.ctx.me = val},
+        //     { placeholder: vt.ctx.me, cls: 'megaprompt', disappear: next, wait: 500 })
+        // },
         // (next) => {
         //   vt.ask(_('gameintro_setup_ok'), (val) => {
         //   },
@@ -158,30 +150,23 @@ Game.prototype = {
         //   )
         // },
         (next) => {
-          vt.muteSound()
+          vt.mute = 1
           vt.show_loading_element_in_msg(['_', ' '], { duration: 800, finalvalue: ' ', cb: next })
         },
         (next) => {
-          loader(_('gameintro_text_initrd'), 'initload',
-            "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
-            800, next)
+          loader(_('gameintro_text_initrd'), 'initload', _('gameintro_ok'), 800, next)
         },
         (next) => {
-          loader(_('gameintro_text_domainname'), 'domainsetup',
-            "<span class='color-ok'>" + _('gameintro_ok') + '</span>',
-            800, next)
+          loader(_('gameintro_text_domainname'), 'domainsetup', _('gameintro_ok'), 800, next)
         },
         (next) => {
-          loader(_('gameintro_text_fsck'), 'initfsck',
-            "<span class='color-ko'>" + _('gameintro_failure') + '</span>',
+          loader(_('gameintro_text_fsck'), 'initfsck', _('gameintro_failure'),
             800, next)
         },
-        (next) => {
-          vt.show_msg(_('gameintro_text_terminus'), { cb: next })
-        },
+        (next) => { vt.show_msg(_('gameintro_text_terminus'), { cb: next }) },
         (next) => {
           vt.show_msg(_('gamestart_text'))
-          vt.unmuteSound()
+          vt.mute = 0
           vt.playMusic('story')
           vt.enable_input()
           auto_shuffle_line(vt, _('press_enter'), 0.9, 0.1, 8, 20, null, 50)

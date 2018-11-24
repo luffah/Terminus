@@ -13,7 +13,13 @@ function rmIdxOf (l, str) {
   index = l.indexOf(str)
   return ((index === -1) ? null : l.splice(index, 1))
 }
-
+function addUniq(a, v) {
+    if (a.indexOf(v) == -1) a.push(v)
+}
+// // use with filter 
+function onlyUnique(value, index, self) {
+    return self.indexOf(value) === index;
+}
 function commonprefix (arr) {
   // https://stackoverflow.com/questions/1916218/find-the-longest-common-starting-substring-in-a-set-of-strings/1917041#1917041
   var A = arr.concat().sort()

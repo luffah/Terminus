@@ -4,7 +4,6 @@ function SoundBank(callback){
   this.ldr=0;
   this.dict={};
   this.callback=d(callback,null);
-
 }
 
 SoundBank.prototype={
@@ -23,6 +22,7 @@ SoundBank.prototype={
   },
   play: function(key){
    if (this.dict.hasOwnProperty(key)){
+      this.dict[key].stop();
       this.dict[key].currenttime=0;
       this.dict[key].volume=1;
       this.dict[key].play();

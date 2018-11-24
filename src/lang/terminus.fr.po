@@ -118,24 +118,31 @@ msgid "cmd_exit"
 msgstr "Au revoir !"
 
 msgid "gameintro_text_initrd"
-msgstr "Chargement de initrd.img [<div class='inmsg' id='initload'></div>]"
+msgstr "Chargement de initrd.img [{{loader,initload,  }}]"
 
 msgid "gameintro_text_domainname"
-msgstr "Configuration du nom de domaine [<div class='inmsg' id='domainsetup'></div>]\n"
-" "
+msgstr "Configuration du nom de domaine [{{loader,domainsetup,  }}]"
 
 msgid "gameintro_text_fsck"
-msgstr "Vérification du système de fichiers [<div class='inmsg' id='initfsck'></div>]\n"
-" "
+msgstr "Vérification du système de fichiers [{{loader,initfsck,  }}]"
 
-msgid "gameintro_ok"
+msgid "loader"
+msgstr "<span id='%s'>%s</span>"
+
+msgid "ok"
 msgstr "OK"
 
-msgid "gameintro_failure"
+msgid "ko"
 msgstr "Échec"
 
+msgid "gameintro_ok"
+msgstr "{{ok}}"
+
+msgid "gameintro_failure"
+msgstr "{{ko}}"
+
 msgid "gameintro_text_terminus"
-msgstr "   Bienvenue dans {{room.Terminus}}\n"
+msgstr "   Bienvenue dans {{room,Terminus}}\n"
 "\n"
 ""
 
@@ -195,9 +202,9 @@ msgid "people_shell"
 msgstr "Palourde"
 
 msgid "people_shell_text"
-msgstr "<voice grl/>Pour te déplacer, écris '{{cmd.cd}}' suivi d'un chemin et pour voir aux alentours, écris '{{cmd.ls}}'.\n"
+msgstr "<voice grl/>Pour te déplacer, écris '{{cmd,cd}}' suivi d'un chemin et pour voir aux alentours, écris '{{cmd,ls}}'.\n"
 "Se déplacer dans un chemin n'est possible que si tu connais le chemin.\n"
-"Il te faudra sûrement écrire '{{cmd.ls}}' partout où tu passes."
+"Il te faudra sûrement écrire '{{cmd,ls}}' partout où tu passes."
 
 msgid "people_shell_text1"
 msgstr "<voice grl/>Savais-tu que lorsque tu appuies sur Tab ↹ , des suggestions apparaissent sous ta ligne de commande ?\n"
@@ -205,7 +212,7 @@ msgstr "<voice grl/>Savais-tu que lorsque tu appuies sur Tab ↹ , des suggestio
 "Pour constater cela, il suffit de commencer à écrire un mot et de taper sur Tab ↹."
 
 msgid "people_shell_text2"
-msgstr "<voice grl/>Connais-tu la commande '{{cmd.pwd}}' ?\n"
+msgstr "<voice grl/>Connais-tu la commande '{{cmd,pwd}}' ?\n"
 "Si tu écris cette commande (et que tu valides en appuyant sur la touche Entrée ↵), tu auras des informations sur l'endroit où tu te trouves."
 
 msgid "people_shell_text3"
@@ -223,9 +230,9 @@ msgstr "<voice grl/>Sais-tu ce qu'est une expression régulière ? Non ? Par exe
 
 msgid "people_shell_text0"
 msgstr "<voice grl/>Je n'ai ni yeux ni jambes.\n"
-"Je me déplace avec '{{cmd.cd}}'.\n"
-"Je vois les routes et obstacles avec '{{cmd.ls}}'.\n"
-"J'examine le contenu avec '{{cmd.cat}}' ou parfois avec un éditeur.\n"
+"Je me déplace avec '{{cmd,cd}}'.\n"
+"Je vois les routes et obstacles avec '{{cmd,ls}}'.\n"
+"J'examine le contenu avec '{{cmd,cat}}' ou parfois avec un éditeur.\n"
 "Et parfois, j'exécute…"
 
 msgid "msg_from"
@@ -241,9 +248,9 @@ msgstr ". . .\n"
 " Tu ne sais pas ?\n"
 "\n"
 "Rappelle-toi ces bases si tu ne veux pas tomber dans l'oubli :\n"
-"1. En écrivant '{{cmd.cat}}' ( ? ), tu pourras examiner en détail ;\n"
-"2. En écrivant '{{cmd.ls}}' (LiSter), tu pourras voir ce qui croise ton chemin ;\n"
-"3. En écrivant '{{cmd.cd}}' (Changer de Destination), tu pourras aller ailleurs."
+"1. En écrivant '{{cmd,cat}}' ( ? ), tu pourras examiner en détail ;\n"
+"2. En écrivant '{{cmd,ls}}' (LiSter), tu pourras voir ce qui croise ton chemin ;\n"
+"3. En écrivant '{{cmd,cd}}' (Changer de Destination), tu pourras aller ailleurs."
 
 msgid "a_wish_to_understand_you"
 msgstr "what do you want to do ?"
@@ -252,12 +259,12 @@ msgid "cmd_cat_aliases"
 msgstr "detrui\w*|remov\*|del\w*|suppr\w*"
 
 msgid "cmd_cat_first_try"
-msgstr "J'ai oublié de te dire que {{cmd.cat}} doit être suivi du nom d'une personne ou d'un objet."
+msgstr "J'ai oublié de te dire que {{cmd,cat}} doit être suivi du nom d'une personne ou d'un objet."
 
 msgid "cmd_cat_second_try"
 msgstr "Tiens ! Là ! Il y a une {{people_shell}}, on pourrait lui demander comment elle a fait pour venir jusqu'ici.\n"
 "Vous vous connaissez peut-être.\n"
-" Tu n'as qu'à écrire '{{cmd.cat}} {{people_shell}}' pour engager cette passionnante discussion."
+" Tu n'as qu'à écrire '{{cmd,cat}} {{people_shell}}' pour engager cette passionnante discussion."
 
 msgid "cmd_exit_html"
 msgstr "<p>Terminus a été arrêté.</p><p>Au revoir !</p>"
@@ -269,7 +276,7 @@ msgid "cmd_cd_failed"
 msgstr "Il n'existe aucun chemin appelé %s. Retourne te coucher."
 
 msgid "cmd_cd_no_args"
-msgstr "'{{cmd.cd}} ~' pour retourner au point de départ."
+msgstr "'{{cmd,cd}} ~' pour retourner au point de départ."
 
 msgid "cmd_cd_no_args_pwd"
 msgstr "'{{cmd.pwd}}' pour savoir où tu es."
@@ -284,7 +291,7 @@ msgid "cmd_cd_no_parent"
 msgstr "Tu ne peux plus rebrousser chemin."
 
 msgid "cmd_cd_parent"
-msgstr "Tu es de retour dans %s. %s"
+msgstr "Tu te trouves dans %s. %s"
 
 msgid "cmd_cp_copied"
 msgstr "Les données de %s ont été dupliquées dans %s."
@@ -305,7 +312,7 @@ msgid "cmd_help_begin"
 msgstr "Tu peux utiliser les commandes suivantes :"
 
 msgid "cmd_less_no_arg"
-msgstr "(Pour que ça fonctionne, {{cmd.cat}} doit être suivi d'un sujet à examiner : un objet ou une personne présente à l'endroit où tu te trouves)"
+msgstr "(Pour que ça fonctionne, {{cmd,cat}} doit être suivi d'un sujet à examiner : un objet ou une personne présente à l'endroit où tu te trouves)"
 
 msgid "cmd_less_missing"
 msgstr "'%s' est introuvable."
@@ -351,8 +358,8 @@ msgid "permission_denied"
 msgstr "(Permission non accordée)"
 
 msgid "welcome_msg"
-msgstr "Salut '%s' ! Ça va ? \n"
-" Tu étais tombé·e dans les pommes. J'étais inquiet."
+msgstr "Hey '%s' ! Ça va ? \n"
+"Tu as fait un malaise. Ça m'a fichu la frousse."
 
 msgid "cmd_pwd_aliases"
 msgstr "perd\w*|los\w*|où\w*je|lieu"
@@ -585,20 +592,29 @@ msgstr "L'atmosphère de la pièce devient poussièreuse.\n"
 "Des débris tombent du plafond.\n"
 "Plus personne dans les parages."
 
-msgid "people_professor"
+msgid "people_prof"
 msgstr "Professeur"
+
+msgid "people_prof_mv0"
+msgstr "Bien essayé ! Mais c'est interdit... Question de libre arbitre."
+
+msgid "people_prof_mv1"
+msgstr "Ça devient agaçant."
+
+msgid "people_prof_mv2"
+msgstr "{{face.regard méchant}}"
 
 msgid "cmd_syntax_lesson"
 msgstr "Syntaxe générale des commandes : Les commandes élémentaires sont de la forme :> {{cmd.commande}} {{item.fichiers_ou_données}}La commande apparaissant en début de ligne est presque toujours le nom d'un programme. Ce programme peut être une commande du système d'exploitation, un logiciel écrit par un utilisateur (souvent en langage C) ou un shell. Quelques rares commandes comme la commande cd (changement de dossier / répertoire) ne peuvent pas être traitées correctement par un logiciel spécifique. Elles sont dans ce cas directement exécutées par l'interpréteur de commandes. Certaines de ces commandes peuvent s'exécuter en tapant au clavier seulement leur nom. Mais la plupart des commandes acceptent des options (un tiret suivi d'une ou plusieurs lettres) qui permettent d'utiliser la commande autrement que dans son mode de fonctionnement par défaut. Enfin, bon nombre de commandes sont suivies d'un ou plusieurs noms de fichier, répertoire ou autre, avec lesquels elles vont travailler. Toutes les informations séparées par des espaces à droite du nom de la commande sont appelées arguments de la ligne de commande."
 
-msgid "people_professor_text"
+msgid "people_prof_text"
 msgstr "Le prof dit un tas de choses qui pour toi ressemblent à du charabia,\n"
 "mais tu as réussi à comprendre trois choses :\n"
 "1. '{{cmd.mv}}' sert à déplacer des objets \n"
 "2. il faut indiquer le nom de l'objet et de la destination ({{cmd.mv}} OBJET CHEMIN) \n"
 "3. Ce sort ne marche pas sur tous les objets, mais tu n'as pas réussi à bien comprendre lesquels n'étaient pas déplaçables."
 
-msgid "people_professor_textquit"
+msgid "people_prof_textquit"
 msgstr "« Oh oh ! C'est pas bon, tu devrais partir. Tout de suite ! Tu peux écrire '{{cmd.cd}} ~'» "
 
 msgid "leave_academy"
@@ -747,7 +763,7 @@ msgstr "La villageoise pleure et tremble sans pouvoir s'arrêter. \n"
 "\"Ils ont enlevé mon bébé ! Je sais que le magicien en est le responsable.\""
 
 msgid "people_citizen3_text1"
-msgstr "\"Mon bébé… Je vais '{{cmd.pkill}} -9 {{people_darkwizard}}'.\""
+msgstr "\"Mon bébé… Je vais '{{cmd,pkill}} -9 {{people_darkwizard}}'.\""
 
 msgid "people_citizen3_text2"
 msgstr "(Tu ne sais pas quoi dire…)"
@@ -757,7 +773,7 @@ msgstr "(Tu as beau réfléchir.\n"
 "La seule chose qui soulagerait cette maman serait de retrouver son enfant.)"
 
 msgid "people_citizen3_text4"
-msgstr "\"Je vais {{cmd.rm}} ces trolls.\""
+msgstr "\"Je vais {{cmd,rm}} ces trolls.\""
 
 msgid "people_citizen3_text5"
 msgstr "\"Mais… qui a le pouvoir de faire ça ? Toi ?\""
@@ -914,9 +930,9 @@ msgid "item_chat"
 msgstr "Discussions"
 
 msgid "item_chat_text"
-msgstr "Si tu reçois des messages d'autres personnes. C'est probablement parce que l'instruction '{{cmd.mesg y}}' est présente dans ton profil.\n"
-"Tu peux vérifier cela avec '{{cmd.cat}} .profil'.\n"
-"Normalement, les personnes en question doivent avoir accès à la commande '{{cmd.talk}}' pour t'envoyer des messages."
+msgstr "Si tu reçois des messages d'autres personnes. C'est probablement parce que l'instruction '{{cmd,mesg y}}' est présente dans ton profil.\n"
+"Tu peux vérifier cela avec '{{cmd,cat}} .profil'.\n"
+"Normalement, les personnes en question doivent avoir accès à la commande '{{cmd,talk}}' pour t'envoyer des messages."
 
 msgid "item_lever"
 msgstr "IntrigantPanneau"
@@ -1023,7 +1039,7 @@ msgstr "L'Artisane lève ses lunettes et te regarde avec surprise.\n"
 "... \n"
 "Vous ne savez même pas comment fabriquer des rouages ?\n"
 "Hum. Et vous prétendez être un assistant.\n"
-"Dites simplement \"{{cmd.touch}}\" suivi du nom de la chose que vous voulez créer. Maintenant, faites-moi un {{item_gear}} ! Vous reviendrez me parler après.\""
+"Dites simplement \"{{cmd,touch}}\" suivi du nom de la chose que vous voulez créer. Maintenant, faites-moi un {{item_gear}} ! Vous reviendrez me parler après.\""
 
 msgid "item_gear"
 msgstr "rouage%s"
@@ -1039,10 +1055,10 @@ msgid "item_gear_touch"
 msgstr "Euh… à quoi tu t'attends avec seulement un {{item_gear}} ?\n"
 "Tu devrais être capable de le copier pourtant…\n"
 "*pfffff* T'as vraiment besoin d'entraînement.\n"
-" Écris seulement “{{cmd,[\"cp\"]}} [OBJET] [CLONE_DE_OBJET]”.\n"
+" Écris seulement “{{cmd,\"cp\"}} [OBJET] [CLONE_DE_OBJET]”.\n"
 "[OBJET] est le nom de ce que tu vas copier et [CLONE_DE_OBJET] est le nom de la nouvelle copie.\n"
 "Compris ? Alors prouve le moi ! Voici un {{item_gear}}. Il m'en faut 5 autres.\n"
-"Appelle-les {{item_gear,[1]}}, {{item_gear,[2]}}, {{item_gear,[3]}}, {{item_gear,[4]}}, et {{item_gear,[5]}}, s'il te plait."
+"Appelle-les {{item_gear,1}}, {{item_gear,2}}, {{item_gear,3}}, {{item_gear,4}}, et {{item_gear,5}}, s'il te plait."
 
 msgid "room_farm"
 msgstr "Ferme"
@@ -1165,7 +1181,7 @@ msgid "item_brambles_mv"
 msgstr "Tu ne peux pas toucher les ronces à cause de ces maudites épines."
 
 msgid "item_brambles_rm"
-msgstr "Lorsque tu invoques '{{cmd.rm}}' sur le tas de ronces,\n"
+msgstr "Lorsque tu invoques '{{cmd,rm}}' sur le tas de ronces,\n"
 "ces dernières émettent une lueur d'un bleu très profond.\n"
 "Au bout d'un moment, les ronces disparaissent dans un nuage de fumée."
 
@@ -1416,9 +1432,9 @@ msgstr "Quitter le jeu."
 
 msgid "man cp"
 msgstr "(CoPy)\n"
-"Utilise \"{{cmd.cp}}\" pour cloner un item. \n"
+"Utilise \"{{cmd,cp}}\" pour cloner un item. \n"
 "Il faut écrire :\n"
-"  {{cmd.cp}} ITEM NEWNAME "
+"  {{cmd,cp}} ITEM NEWNAME "
 
 msgid "help_cp"
 msgstr "Copier un objet."
@@ -1426,14 +1442,14 @@ msgstr "Copier un objet."
 msgid "man_pwd"
 msgstr "(Te montre là où tu es) \n"
 "Il faut écrire : \n"
-"  \"{{cmd.pwd}}\" "
+"  \"{{cmd,pwd}}\" "
 
 msgid "help_pwd"
 msgstr "Dire où tu es."
 
 msgid "man_grep"
 msgstr "(gReP : Récupère des parties) \n"
-"Utilise \"{{cmd.grep}}\" pour trouver les parties d'un texte qui contiennent le mot magique.\n"
+"Utilise \"{{cmd,grep}}\" pour trouver les parties d'un texte qui contiennent le mot magique.\n"
 "Il faut écrire : \n"
 "  grep MOT_MAGIQUE LÀ_OU_TU_CHERCHE "
 
@@ -1442,7 +1458,7 @@ msgstr "Chercher quelque chose dans un texte."
 
 msgid "man_touch"
 msgstr "(Touche) En touchant un objet (même imaginaire), tu le fais (re)naître comme neuf.\n"
-"Utilise \"{{cmd.touch}}\" pour créer de nouveaux objets.\n"
+"Utilise \"{{cmd,touch}}\" pour créer de nouveaux objets.\n"
 "Il faut écrire :\n"
 "  touch OBJET"
 

@@ -8,12 +8,10 @@ Command.def('rm', [ARGT.file], function (args, ctx, vt) { // event arg -> object
       var tgt = ctx.traversee(args[i])
       room = tgt.room
       item = tgt.item
-      if ('rm' in item.cmd_hook) {
-        hret = item.cmd_hook['rm']([args[i]])
-        if (def(hret)){
+      let hret = item.tryhook('rm',[args[i]])
+      if (def(hret)){
         if (d(hret.ret, false)) ret.push(hret.ret)
         if (d(hret.pass, false)) continue
-        }
       }
       idx = tgt.item_idx
       if (idx > -1) {

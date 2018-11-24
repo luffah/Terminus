@@ -26,8 +26,8 @@ function loadLevel2 () {
         events: { touch: (ct) => { return (ct.arg === _('item_plank')) ? 'touchPlank' : '' } },
         states: { touchPlank: (re, o) => {
           $clearing.unsetCmd('cd').setPerm(777)
-          o.setText(_('room_brokenbridge_text2'))
-          ((re) ? o.newItem('plank') : o.getItem('plank')).setPic('item_plank.png')
+          o.text = _('room_brokenbridge_text2')
+          ((re) ? o.newItem('plank') : o.getItem('plank')).img = 'item_plank.png'
         } } },
       // TOWN SQUARE / LIBRARY
       library: { img: 'loc_library.gif',
@@ -199,8 +199,9 @@ function loadLevel2 () {
         artisan.setHook('less', _('item_gear_touch'))
         vt.ctx.addGroup('cp')
         learn(vt, 'cp', re)
-        if (re) $artisanshop.newItem('gear', 'item_gear.png')
-        else $artisanshop.getItem('gear').setPic('item_gear.png')
+        (
+          re ? $artisanshop.newItem('gear') : $artisanshop.getItem('gear')
+        ).img = 'item_gear.png'
         state.saveCookie()
       },
       FiveGearsCopied: (re) => {
@@ -239,7 +240,7 @@ function loadLevel2 () {
           .setHook('cd', _('room_house_cd'))
           .setHook('ls', _('room_house_ls'))
         o.unsetHook('cd')
-        o.setText(_('room_clearing_text2'))
+        o.text = _('room_clearing_text2')
         cryingman.setHook('less', _('room_clearing_less2'))
       }
     }
