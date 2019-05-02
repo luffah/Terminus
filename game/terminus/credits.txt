@@ -1,0 +1,38 @@
+
+forked from:
+    title:         Terminus
+    author:        Michele Pratusevich & Shawn Conrad
+    artwork:       Emma Tolley
+    storyboarding: Michaela LaVan & David Zhou
+    context:       MIT class 11.127/CMS.590  2014
+
+game:
+    title: Terminus
+#   date:  2018
+    version: beta~20181212
+    author:  luffah
+
+
+[fr] translation:
+ luffah; manuh; axelsimon; daufinsyd; Sbgdin; etnx;
+ ludogre; SuperLutin
+
+[en] translation: luffah
+
+assets:< credits for assets are in ressources directory
+
+assets sources:
+ opengameart.org
+
+occasionnal bug report:
+ Daniel Le Berre; Benoit Sibaud
+
+occasionnal testing:
+ artur; celine; eric; lucile; manuh; remy; romain
+
+occasionnal help:
+ jaxom (NuitDuCodeCitoyen'18, Élaboratoire, Rennes, France)
+
+license: MIT, CC0, GPLv3
+
+# comment:

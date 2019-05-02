@@ -1,0 +1,9 @@
+artist: Deathsbreed
+artist realname: Nicolás Ortega
+license: cc by sa 4.0
+date: Sunday, August 28, 2016
+tags: 
+url: https://opengameart.org/content/8-bit-nightmare-00
+url artist: https://opengameart.org/users/Deathsbreed
+comment:
+ * artist note *

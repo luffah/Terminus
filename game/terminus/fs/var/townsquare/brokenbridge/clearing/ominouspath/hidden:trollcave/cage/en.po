@@ -1,0 +1,32 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "people_kidnapped_mv"
+msgstr ""
+"The kid looks around, dazed, surprised to find himself out of the cage. \n"
+"You smile at him and speak in a gentle voice. 'You should probably be getting home, \n"
+"little boy. Someone is there waiting for you.' \n"
+"'I'm a girl,' says the little girl smartly. Then she dashes past you, out of the cave, and \n"
+"runs up the ominous path towards home."
+
+msgid "people_kidnapped_text"
+msgstr ""
+"You know it's kind of mean,\n"
+"but you can't help but think that that is one funny-looking kid."
+
+msgid "room_cage"
+msgstr "Cage"
+
+msgid "room_cage_cd"
+msgstr ""
+"You can’t squeeze through the bars. Anyway, are you crazy? Why would you "
+"want to go into a cage?"
+
+msgid "room_cage_text"
+msgstr "There's a scared-looking kid in there."
+
+msgid "people_kidnapped"
+msgstr "KidnappedChild"

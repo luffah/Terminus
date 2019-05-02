@@ -1,0 +1,31 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_ominouspath"
+msgstr "CheminInquiétant"
+
+msgid "room_ominouspath_text"
+msgstr ""
+"Ce chemin mène vers une cave très sombre. \n"
+"C'est un chemin pavé tout à fait ordinaire, et pourtant, passer par ici te fiche la trouille."
+
+msgid "item_brambles"
+msgstr "RoncesTordues"
+
+msgid "item_brambles_text"
+msgstr ""
+"Ce tas de ronces est couvert d'épines qui ne t'inspirent vraiment pas confiance.\n"
+"Tu ne peux pas le contourner et tu n'essaieras sûrement pas de le traverser.\n"
+"Pourtant, quelque chose te dit que derrière ce tas de ronces se trouve quelque chose d'important."
+
+msgid "item_brambles_rm"
+msgstr ""
+"Lorsque tu invoques '{{cmd,rm}}' sur le tas de ronces,\n"
+"ces dernières émettent une lueur d'un bleu très profond.\n"
+"Au bout d'un moment, les ronces disparaissent dans un nuage de fumée."
+
+msgid "item_brambles_mv"
+msgstr "Tu ne peux pas toucher les ronces à cause de ces maudites épines."

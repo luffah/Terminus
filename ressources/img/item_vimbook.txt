@@ -1,0 +1,6 @@
+composer: luffah
+license: mit
+date: 2017
+sources: item_book from mprat terminus version, vim official logo
+comment:
+ * artist note *

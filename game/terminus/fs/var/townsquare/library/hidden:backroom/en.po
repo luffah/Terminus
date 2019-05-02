@@ -1,0 +1,38 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "people_grep_text"
+msgstr ""
+"The exceptionally ugly elf turns to you with a sour expression. \n"
+"\"Greeeeeep,\" he says sullenly."
+
+msgid "people_librarian"
+msgstr "Librarian"
+
+msgid "people_librarian_text"
+msgstr ""
+"\"Hm? Oh, hello. I apologize for the mess,\n"
+"but I'm very busy doing research on the dark wizard.\n"
+"Would you do me a favor? Go look up all references to DarkWizard in \n"
+"the History of Terminus. My assistant Grep can help you.\" \n"
+"Grep eyes you balefully. \"Greeepp.\"\n"
+"\"To search the contents of the book, just type \"grep PHRASE ITEM\",\n"
+"where PHRASE is the phrase you want to search for, \n"
+"and ITEM is the name of the book you want to search.\n"
+"Try it with the PracticeBook here \n"
+"  - see if you can find the line with the word 'peppers' in it.\""
+
+msgid "room_backroom"
+msgstr "BackRoom"
+
+msgid "room_backroom_text"
+msgstr ""
+"You find a mysterious back room.\n"
+"You find a librarian alone with a small elf.\n"
+"You hope you're not interrupting."
+
+msgid "people_grep"
+msgstr "Grep"

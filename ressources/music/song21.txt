@@ -1,0 +1,13 @@
+title: Mysterious Ambience (song21)
+artist: cynicmusic
+album: pixelsphere.org
+license: cc0, cc by 3.0, cc by-sa 3.0, gpl 3.0
+date: Friday, October 25, 2013
+tags: ambient mood crystal cave
+url: https://opengameart.org/content/mysterious-ambience-song21
+url artist: https://opengameart.org/users/cynicmusic
+comment:
+ * artist note *
+ Piano textures and arpeggios.
+ Suitable for a mysterious cave level or puzzle game.
+ Credit pixelsphere.org

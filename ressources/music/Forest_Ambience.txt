@@ -1,0 +1,11 @@
+title: Forest Ambience
+artist: TinyWorlds
+license: cc0
+date: Monday, May 5, 2014
+tags: nature forest peaceful woods
+url: https://opengameart.org/content/forest-ambience
+url artist: https://opengameart.org/users/tinyworlds
+comment:
+ * artist note *
+ Created for my entry to Ludum Dare 29 : The Woods.
+ It loops seamlessly and is ready to be used in your projects!

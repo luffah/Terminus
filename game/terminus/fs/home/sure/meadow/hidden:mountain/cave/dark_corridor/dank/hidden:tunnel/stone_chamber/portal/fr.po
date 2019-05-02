@@ -1,0 +1,17 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_portal"
+msgstr "Portail"
+
+msgid "room_portal_text"
+msgstr "Tu traverses le portail qui te transporte à travers les âges…"
+
+msgid "link_townsquare"
+msgstr "Terminus"
+
+msgid "link_townsquare_text"
+msgstr "Cette porte mène à un village."

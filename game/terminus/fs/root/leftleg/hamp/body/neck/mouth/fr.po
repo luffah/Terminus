@@ -1,0 +1,11 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_mouth"
+msgstr "AuDessus"
+
+msgid "room_mouth_text"
+msgstr "Te voila au milieu d'une tranchée."

@@ -1,0 +1,24 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "people_rat"
+msgstr "Rat"
+
+msgid "room_tunnel_text"
+msgstr ""
+"It's quite moist in here. \n"
+"You notice a small furry movement in the corner of your vision. \n"
+"It's most likely a rat. A very large rat. Perhaps a mongoose. \n"
+"At the end of the tunnel you find a stone chamber."
+
+msgid "people_rat_text"
+msgstr ""
+"Upon further inspection, you determine that the furry \n"
+"presence is in fact a rat...the size of a small dog. He or She bites you. \n"
+"You are very displeased."
+
+msgid "room_tunnel"
+msgstr "Tunnel"

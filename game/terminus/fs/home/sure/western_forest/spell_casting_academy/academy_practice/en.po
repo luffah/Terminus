@@ -1,0 +1,27 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "item_academy_practice_text"
+msgstr ""
+"Welcome to the Practice Room. Here you will find practice dummies \n"
+"try your new spells on. Go ahead, give it a go! "
+
+msgid "room_academy_practice"
+msgstr "PracticeRoom"
+
+msgid "item_academy_practice"
+msgstr "Instructions"
+
+msgid "room_academy_practice_text"
+msgstr ""
+"The room is filled with practice dummies for students to practice their new "
+"spells on."
+
+msgid "leave_academy"
+msgstr ""
+
+msgid "room_spell_casting_academy"
+msgstr "SpellCastingAcademy"

@@ -1,0 +1,53 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "people_supertroll_text"
+msgstr "You probably don't want to look at this guy. Oops, too late."
+
+msgid "room_trollcave"
+msgstr "CaveOfDisgruntledTrolls"
+
+msgid "people_troll1_text"
+msgstr "He looks mad, and really ugly."
+
+msgid "people_troll11_rm"
+msgstr ""
+
+msgid "people_supertroll_rm"
+msgstr ""
+"The troll belches spectacularly, and you could swear he actually smirks. You"
+" won't get rid of him that easily, not without the 'sudo password'. It's not"
+" 'pseudo', it's 'sudo'. You'll find that in KernelFiles. But first you have "
+"to get past the UglyTroll to the Slide."
+
+msgid "people_troll2_text"
+msgstr ""
+"He looks mad, and really, really ugly. \n"
+"But he wants to tell you something. Between his \n"
+"garbled grunts, you manage to understand the following: \n"
+"You can cast spells on items that you don't currently see. For example, if you want \n"
+"to copy an item from this room to the OminousLookingPath from which you came, you can \n"
+"cp [ITEM_TO_COPY] ../[NEW_ITEM_NAME]. You can do this for most spells and most rooms. \n"
+"Use this knowledge wisely. Remember.... you can't undo an 'rm' spell."
+
+msgid "people_troll2"
+msgstr "UglierTroll"
+
+msgid "people_supertroll_mv"
+msgstr ""
+"If you move him out of the cave, he'll terrorize the countryside.\n"
+"Also he will probably eat you."
+
+msgid "room_trollcave_text"
+msgstr ""
+"The cave is dark and smells like... feet? Oh, right, it's probably the trolls. \n"
+"There's a scared-looking kid in a cage by the far wall."
+
+msgid "people_troll1"
+msgstr "UglyTroll"
+
+msgid "people_supertroll"
+msgstr "AbsolutelyHideousTroll"

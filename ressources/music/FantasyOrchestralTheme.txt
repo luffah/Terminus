@@ -1,0 +1,9 @@
+artist: Joth
+license: cc0
+date: Tuesday, October 4, 2016
+tags: fantasy
+url: https://opengameart.org/content/fantasy-orchestral-theme
+url artist: https://opengameart.org/users/joth
+comment:
+ * artist note *
+

@@ -1,0 +1,8 @@
+artist: celestialghost8
+license: cc0
+date: Sunday, March 12, 2017
+tags: village cave
+url: https://opengameart.org/content/cc0-scraps
+url artist: https://opengameart.org/users/celestialghost8
+comment:
+ * artist note *

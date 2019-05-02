@@ -1,0 +1,106 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+# la ou tu trouve la coquille
+msgid "room_sure"
+msgstr "Départ"
+
+msgid "room_sure_text"
+msgstr "De retour au point de départ… "
+
+msgid "people_shell"
+msgstr "Coquille"
+
+msgid "people_shell_text"
+msgstr "Cette coquille est cassée. Les inscriptions suivantes sont lisibles: ''"
+
+msgid "people_shell_text"
+msgstr ""
+"<voice grl/>Pour te déplacer, écris '{{cmd,cd}}' suivi d'un chemin et pour voir aux alentours, écris '{{cmd,ls}}'.\n"
+"Se déplacer dans un chemin n'est possible que si tu connais le chemin.\n"
+"Il te faudra sûrement écrire '{{cmd,ls}}' partout où tu passes."
+
+msgid "people_shell_text1"
+msgstr ""
+"<voice grl/>Savais-tu que lorsque tu appuies sur Tab ↹ , des suggestions apparaissent sous ta ligne de commande ?\n"
+"Lorsque il n'y a plus qu'un mot qui peut être suggéré, ta ligne de commande (en bas) se remplit toute seule.\n"
+"Pour constater cela, il suffit de commencer à écrire un mot et de taper sur Tab ↹."
+
+msgid "people_shell_text2"
+msgstr ""
+"<voice grl/>Connais-tu la commande '{{cmd,pwd}}' ?\n"
+"Si tu écris cette commande (et que tu valides en appuyant sur la touche Entrée ↵), tu auras des informations sur l'endroit où tu te trouves."
+
+msgid "people_shell_text3"
+msgstr ""
+"<voice grl/>Savais-tu que lorsque tu appuies sur les flèches Haut et Bas, tu"
+" peux naviguer dans l'historique ? C'est-à-dire que tu peux réutiliser les "
+"commandes que tu viens d'entrer."
+
+msgid "people_shell_text4"
+msgstr ""
+"<voice grl/>Savais-tu que lorsque tu appuies sur les touches Ctrl et U, le "
+"texte avant le curseur dans la ligne de commande est effacé ? "
+
+msgid "people_shell_text5"
+msgstr ""
+"<voice grl/>Savais-tu que lorsque tu appuies sur les touches Ctrl et C, tu "
+"interromps l'action en cours ?"
+
+msgid "people_shell_text6"
+msgstr ""
+"<voice grl/>Sais-tu ce qu'est une expression régulière ? Non ? Par exemple \"Bo*\" est une expression régulière pour \"Bonbon\", mais aussi pour \"Bobine\" et tous les mots commençant par les lettres B o.\n"
+" Le caractère * (astérisque) signifie : n'importe quel caractère, autant de fois que possible."
+
+msgid "people_shell_text0"
+msgstr ""
+"<voice grl/>Je n'ai ni yeux ni jambes.\n"
+"Je me déplace avec '{{cmd,cd}}'.\n"
+"Je vois les routes et obstacles avec '{{cmd,ls}}'.\n"
+"J'examine le contenu avec '{{cmd,cat}}' ou parfois avec un éditeur.\n"
+"Et parfois, j'exécute…"
+
+msgid "room_home_text"
+msgstr "De retour au point de départ… "
+
+msgid "cmd_cat_first_try"
+msgstr ""
+"J'ai oublié de te dire que {{cmd,cat}} doit être suivi du nom d'une personne"
+" ou d'un objet."
+
+msgid "cmd_cat_second_try"
+msgstr ""
+"Tiens ! Là ! Il y a une {{people_shell}}, on pourrait lui demander comment elle a fait pour venir jusqu'ici.\n"
+"Vous vous connaissez peut-être.\n"
+" Tu n'as qu'à écrire '{{cmd,cat}} {{people_shell}}' pour engager cette passionnante discussion."
+
+msgid "cmd_poe_revealed"
+msgstr "cmd_poe_revealed"
+
+msgid "very_first_try"
+msgstr ""
+". . .\n"
+"\n"
+"Tu m'as l'air de ne pas y voir grand chose dans ce brouillard.\n"
+"\n"
+"As-tu un lieu où aller ? \n"
+"\n"
+"Tu ne sais pas ?\n"
+
+msgid "very_second_try"
+msgstr ""
+"Effectivement, tu as l'air démuni·e.\n"
+"Perdu·e ?\n"
+"\n"
+"Ah, tu veux une carte.\n"
+"Il n'y a pas de carte qui puisse décrire ce monde.\n"
+"\n"
+"Dis juste {{cmd,pwd}} pour savoir où tu es.\n"
+"\n"
+"1. En écrivant '{{cmd,cat}}' ( ? ), tu pourras examiner en détail ;\n"
+"2. En écrivant '{{cmd,ls}}' (LiSter), tu pourras voir ce qui croise ton chemin ;\n"
+"3. En écrivant '{{cmd,cd}}' (Changer de Destination), tu pourras aller ailleurs;\n"
+"4. En écrivant '{{cmd,help}}' (Aide), tu .\n"

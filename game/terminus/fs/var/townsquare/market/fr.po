@@ -1,0 +1,87 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_market"
+msgstr "PlaceDuMarché"
+
+msgid "room_market_text"
+msgstr "Les commerces sont alignés formant une longue ligne droite."
+
+msgid "people_vendor"
+msgstr "Vendeur"
+
+msgid "people_vendor_text"
+msgstr ""
+"\" Bonjour !\", le vendeur te sourit de manière déplaisante.\n"
+"\" Que souhaites-tu acheter ? \""
+
+msgid "item_rm_spell"
+msgstr "rm"
+
+msgid "item_rm_spell_text"
+msgstr ""
+"\"Ah, oui, le sort 'rm',\" le vendeur songe.\n"
+"\"Dis juste 'rm' suivi du nom de l'objet ou de la personne\n"
+"et cela causera sa disparition… pour toujours.\n"
+"As-tu les tripes pour l'utiliser ?\""
+
+msgid "item_backpack"
+msgstr "SacÀDos%s"
+
+msgid "item_backpack_text"
+msgstr ""
+"Il y a un sac à dos avec ouverture zippée super classe sur la table sans prix dessus. Sa toile est un peu effilochée mais il semble robuste.\n"
+"Tu jettes un coup d'œil sur le vendeur mais son attention est ailleurs.\n"
+"Une inscription apparaît près de la languette du sac : 'unzip'. "
+
+msgid "item_mkdir_spell"
+msgstr "mkdir"
+
+msgid "item_mkdir_spell_text"
+msgstr ""
+"\"'mkdir' transforme les rêves en réalité. Invoque ce sort suivi du nom qui "
+"te convient créera un nouveau chemin.\""
+
+msgid "item_backpack_stolen"
+msgstr ""
+"Tu viens de voler le sac à dos.\n"
+"Étant donné que tu es fauché, et que tu ne travailles pas pour une odieuse multinationale,\n"
+"Richard Stallman devrait être fier de toi."
+
+msgid "people_vendor_sell_mkdir"
+msgstr "le sort 'mkdir' qui coûte {{item_mkdir_cost}}"
+
+msgid "people_vendor_rm"
+msgstr ""
+"\"Hé ! Ce sort ne marche pas sur tout, tu sais.\n"
+"J'aurais dû le mentionner avant de te le vendre…\""
+
+msgid "people_vendor_sell_nothing"
+msgstr "(passer son chemin)"
+
+msgid "people_vendor_sell_rm"
+msgstr "le sort 'rm' qui coûte {{item_rm_cost}}"
+
+msgid "item_rm_cost"
+msgstr "10000"
+
+msgid "item_mkdir_cost"
+msgstr "5000"
+
+msgid "need_money"
+msgstr "Tu n'as pas de quoi acheter ce sort."
+
+msgid "you_buy"
+msgstr "Tu as acheté %s"
+
+msgid "item_mkdir_cost_text"
+msgstr ""
+
+msgid "unzipped"
+msgstr "Dans %s, tu as trouvé ces choses : %s"
+
+msgid "item_rm_cost_text"
+msgstr ""

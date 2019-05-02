@@ -1,0 +1,22 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_rockypath"
+msgstr "CheminEnPierres"
+
+msgid "room_rockypath_text"
+msgstr "Le chemin mène vers des champs."
+
+msgid "item_largeboulder"
+msgstr "ÉnormeRocher"
+
+msgid "item_largeboulder_text"
+msgstr ""
+"Un énorme rocher bloque le passage.\n"
+"Il est bien trop gros pour être déplacé."
+
+msgid "item_largeboulder_rm"
+msgstr "Le rocher disparait dans un pop."

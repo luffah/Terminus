@@ -1,0 +1,20 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "item_boulder_text"
+msgstr ""
+"You feel a slight breeze coming from behind the boulder. Maybe move it out "
+"of your way?"
+
+msgid "room_dank_text"
+msgstr ""
+"It's a musty dank room. A round boulder sits to the right side of the room."
+
+msgid "room_dank"
+msgstr "DankRoom"
+
+msgid "item_boulder"
+msgstr "Boulder"

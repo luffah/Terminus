@@ -1,0 +1,13 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_paradise"
+msgstr "Paradis"
+
+msgid "room_paradise_text"
+msgstr ""
+"Vous avez vraiment découvert le Paradis avec le mot de passe sudo. \n"
+"Félicitations !"

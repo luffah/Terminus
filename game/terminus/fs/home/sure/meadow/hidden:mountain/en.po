@@ -1,0 +1,29 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_mountain"
+msgstr "EasternMountains"
+
+msgid "room_mountain_text"
+msgstr ""
+"You travel through a mountain path, which eventually leads you to the entrance of a cave.\n"
+"Sitting right outside this cave is an old man."
+
+msgid "people_man_sage_text"
+msgstr ""
+"You speak with the old man. He greets you warmly as if you were old friends. You feel at ease with him. \n"
+"\"Hello adventurer! \n"
+"Top of the morning to you! You seem like a young and energetic explorer.\n"
+"If you're brave enough, your destiny awaits within this cave. That \n"
+"destiny will manifest itself as a portal.\n"
+"Enter this portal and begin the next chapter of your life.\"\n"
+"The old man sees the shock on your face and smiles a comforting smile, \n"
+"\"I am but a fragile old man, and cannot accompany you through this cave,\n"
+"but what I can provide are a few simple spells that will help you \n"
+"along your way. Just read my old manuscripts and tryout those spells.\""
+
+msgid "people_man_sage"
+msgstr "OldMan"

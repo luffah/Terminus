@@ -1,0 +1,49 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "item_man"
+msgstr "Manuscrit"
+
+msgid "item_man_text"
+msgstr ""
+"Si tu oublies des sorts,\n"
+"tape \"help\" et une liste des sorts utilisables apparaîtra .\n"
+"Si tu veux connaître les détails d'utilisation d'un sort,\n"
+"tape 'man' suivi de la commande.\n"
+"Par exemple, si tu veux savoir comment utiliser \"mv\", alors tape : \"man mv\""
+
+msgid "item_groups_text"
+msgstr "Humm bapp, bap bap humm bap. Hummm. Yeah eh yeah eh yeah."
+
+msgid "item_rm_text"
+msgstr ""
+"Un malaise te traverse.\n"
+"Tu penses que je détruit, mais non, ce serait trop fatiguant.\n"
+"Je me contente de mettre les choses hors de portée"
+
+msgid "item_whoami_text"
+msgstr "Qui suis-je ? J'aimerai le savoir."
+
+msgid "item_touch_text"
+msgstr ""
+"Une étrange vibration trouble l'atmosphère.\n"
+"Bas les pattes !"
+
+msgid "item_cat_text"
+msgstr ". . ."
+
+msgid "item_mv_text"
+msgstr ""
+"Une étrange vibration trouble l'atmosphère.\n"
+"L'anonymat ne peut exister sans instabilité."
+
+msgid "item_mkdir_text"
+msgstr "-p/-p/-p/-p/-p"
+
+msgid "item_ls_text"
+msgstr ""
+"Une étrange vibration trouble l'atmosphère.\n"
+"for i in *; do echo $i; done"

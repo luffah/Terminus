@@ -1,0 +1,65 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_clearing"
+msgstr "Clairière"
+
+msgid "room_clearing_text"
+msgstr ""
+"C'est une clairière couverte d'herbe avec un homme assis sur un rocher, soupirant…\n"
+"Derrière lui, les ruines d'une maison."
+
+msgid "people_cryingman"
+msgstr "HommeEnPleurs"
+
+msgid "people_cryingman_text"
+msgstr ""
+"<voice grl>\"Vous ! Vous faites partie des mercenaires du {{people_darkwizard}} ! Je peux la sentir cette capacité étrange que vous avez.\n"
+"T'es là pour finir le travail, n'est-ce pas ?\n"
+"Allez ! Qu'est-ce que vous attendez ? Faites votre sale boulot, il ne me reste plus rien à perdre.\n"
+"\n"
+"<voice char>« Mais enfin ! Que s'est-il passé ? »\n"
+"\n"
+"<voice grl>\"Qu'est-il arrivé ? Vous OSEZ nous le demander ? — Vous savez parfaitement ce qui est arrivé. \n"
+"Vos copains, ils sont venus, il y a deux jours. Ils ont détruit ma maison et enlevé mon pauvre enfant.\n"
+"Ma femme est partie en ville pour trouver de l'aide, mais depuis, elle a disparu.\n"
+"\n"
+"<voice char>« C'est affreux. Que puis-je faire pour vous venir en aide ? »\n"
+"\n"
+"<voice grl>\"Comment ? D'accord, j'imagine que vous n'avez rien à voir avec ceci. Vous ne ressemblez pas aux soldats du {{people_darkwizard}}.\n"
+"Ceci dit, je n'ai pas confiance en vous.\n"
+"Si vous êtes vraiment bien intentionné, alors prouvez-le en me construisant une nouvelle {{room_house}} !"
+
+msgid "room_clearing_text2"
+msgstr ""
+"C'est une clairière couverte d'herbe avec un homme assis sur un rocher, soupirant…\n"
+"Derrière lui, une belle {{room_house}} neuve."
+
+msgid "room_clearing_cd"
+msgstr ""
+"Tu ne peux pas traverser le pont tant que tu n'as pas remplacé la "
+"{{item_plank}} manquante."
+
+msgid "room_house"
+msgstr "Maison"
+
+msgid "room_house_cd"
+msgstr "Tu entres dans la {{room_house}} construite de tes mains."
+
+msgid "room_house_ls"
+msgstr ""
+"C'est toi qui l'as faite cette {{room_house}}. Prends quelques instants pour"
+" apprécier ton œuvre !"
+
+msgid "room_clearing_less2"
+msgstr ""
+"Merci du fond du cœur pour m'avoir construit cette {{room_house}} ! J'en pleure de joie.\n"
+"Y a t'il beaucoup d'autres personnes comme toi ?\n"
+"Es-tu capable de libérer mon enfant ?\n"
+"Désolé, je t'en demande beaucoup trop, mais tu es mon seul espoir pour retrouver ma famille."
+
+msgid "room_house_text"
+msgstr "Ça ! C'est une {{room_house}}."

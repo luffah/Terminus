@@ -1,0 +1,18 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_small_hole"
+msgstr "PetiteCrevasse"
+
+msgid "room_small_hole_text"
+msgstr ""
+"Il n'y a rien de très plaisant dans cette crevasse remplie de saletés.\n"
+"Cette crevasse est à peine plus volumineuse que le rocher."
+
+msgid "room_small_hole_cd"
+msgstr ""
+"Pas très agréable comme endroit. \n"
+"Je veux sortir."

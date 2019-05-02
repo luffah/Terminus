@@ -1,0 +1,13 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_cave"
+msgstr "Cave"
+
+msgid "room_cave_text"
+msgstr ""
+"Cet endroit est une cave typique : sombre et humide, avec une légère odeur "
+"de moisissure."

@@ -1,0 +1,29 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "cmd_cat_first_try"
+msgstr ""
+
+msgid "room_sure"
+msgstr ""
+
+msgid "cmd_cat_second_try"
+msgstr ""
+
+msgid "cmd_poe_revealed"
+msgstr ""
+
+msgid "people_shell_text"
+msgstr ""
+
+msgid "room_sure_text"
+msgstr ""
+
+msgid "very_first_try"
+msgstr ""
+
+msgid "people_shell"
+msgstr ""

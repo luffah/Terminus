@@ -1,0 +1,81 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_artisanshop"
+msgstr "BoutiqueArtisanale"
+
+msgid "room_artisanshop_text"
+msgstr ""
+"Les murs de la boutique sont couverts d'horloges dont les tic-tac sont légèrement désynchronisés.\n"
+"Devant le plan de travail, une femme avec une grosse paire de lunettes brandit un chalumeau avec un enthousiasme inquiétant."
+
+msgid "item_dragon"
+msgstr "Dragon"
+
+msgid "item_dragon_text"
+msgstr ""
+"Un dragon de la taille de 2 mètres de long parcours la pièce.\n"
+"Tu aurais cru qu'il s'agissait d'un vrai dragon s'il n'avait pas une clef servant à remonter son mécanisme sur le dos."
+
+msgid "people_artisan"
+msgstr "Artisane"
+
+msgid "people_artisan_text"
+msgstr ""
+"L'Artisane lève ses lunettes et te regarde avec surprise.\n"
+"\"Êtes-vous le nouvel assistant ? Vous êtes en retard !\" …\n"
+"\"Vous dites que vous n'êtes pas mon assistant ? \n"
+"Eh bien, cela ne signifie pas que vous ne pouvez pas vous rendre utile.\n"
+"J'ai besoin de rouages, vite ! \n"
+"... \n"
+"Vous ne savez même pas comment fabriquer des rouages ?\n"
+"Hum. Et vous prétendez être un assistant.\n"
+"Dites simplement \"{{cmd,touch}}\" suivi du nom de la chose que vous voulez créer. Maintenant, faites-moi un {{item_gear}} ! Vous reviendrez me parler après.\""
+
+msgid "item_strangetrinket"
+msgstr "BabiolleÉtrange"
+
+msgid "item_strangetrinket_text"
+msgstr "Ça ressemble à une roche de cristal."
+
+msgid "item_dragon_rm"
+msgstr "Où est-ce que tu te crois ? Dans « Donjon et Dragons » ?"
+
+msgid "item_strangetrinket_rm"
+msgstr ""
+"T'a-t-on déjà expliqué que certains objets ont une valeur plus grande pour une personne que pour une autre ?\n"
+"On appelle cela la valeur sentimentale."
+
+msgid "item_dragon_mv"
+msgstr ""
+"Cela a dû prendre de nombreuses semaines pour réaliser ce Dragon mécanique.\n"
+"N'as-tu donc pas de valeurs ?"
+
+msgid "item_gear"
+msgstr "rouage%s"
+
+msgid "item_gear_artisans_ok"
+msgstr ""
+"Ah ! Déjà fini ? J'ai l'impression que tu apprends vite. \n"
+"Merci pour ton aide."
+
+msgid "item_gear_text"
+msgstr "Ceci est un {{item_gear}}"
+
+msgid "item_gear_touch"
+msgstr ""
+"Euh… à quoi tu t'attends avec seulement un {{item_gear}} ?\n"
+"Tu devrais être capable de le copier pourtant…\n"
+"*pfffff* T'as vraiment besoin d'entraînement.\n"
+" Écris seulement “{{cmd,\"cp\"}} [OBJET] [CLONE_DE_OBJET]”.\n"
+"[OBJET] est le nom de ce que tu vas copier et [CLONE_DE_OBJET] est le nom de la nouvelle copie.\n"
+"Compris ? Alors prouve le moi ! Voici un {{item_gear}}. Il m'en faut 5 autres.\n"
+"Appelle-les {{item_gear,1}}, {{item_gear,2}}, {{item_gear,3}}, {{item_gear,4}}, et {{item_gear,5}}, s'il te plait."
+
+msgid "item_strangetrinket_mv"
+msgstr ""
+"Cette babiole a sûrement une grande valeur pour cette femme ! En a-t-elle "
+"pour toi ?"

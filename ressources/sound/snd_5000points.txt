@@ -1,0 +1,8 @@
+title: snd_5000points
+artist: Spring
+album: "Typhoon Girls - Untold Stories" - Full OST+SFX
+license: cc0, cc by 3.0, cc by-sa 3.0, gpl 3.0
+date: Friday, September 30, 2016
+tags: 8-bit retro sfx
+url: https://opengameart.org/content/typhoon-girls-untold-stories-full-ostsfx
+url artist: https://opengameart.org/users/spring

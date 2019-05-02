@@ -1,0 +1,34 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_cage"
+msgstr "Cage"
+
+msgid "room_cage_text"
+msgstr "Il y a un enfant terrifié dans cette cage."
+
+msgid "people_kidnapped"
+msgstr "EnfantKidnapé"
+
+msgid "people_kidnapped_text"
+msgstr ""
+"Tu sais que ce n'est pas le moment de penser à cela,\n"
+"mais cet enfant tire vraiment une drôle de tête."
+
+msgid "room_cage_cd"
+msgstr ""
+"Tu ne peux pas te faufiler entre les barreaux de la cage. Et puis, ça va pas la tête ?\n"
+"Pourquoi voudrais-tu aller dans cette cage ? Tu envies le sort des animaux à fourrure ?\n"
+"Ce {{people_supertroll}} pourrait te dépecer comme une clémentine."
+
+msgid "people_kidnapped_mv"
+msgstr ""
+"L'enfant regarde autour de lui, confus, surpris de se trouver hors de la cage.\n"
+"Tu lui souris et lui dis avec une voix douce : \n"
+"<voice char> « Tu devrais rentrer chez toi p'tit gars. » \n"
+"<voice girl>\"Je suis une fille avec des cheveux courts. Pas un garçon manqué. Une fille ! Pourquoi il faut toujours être un garçon par défaut ? \", <voice char> dit la petite fille.\n"
+"Avant de se précipiter vers la sortie, elle en profite pour donner un coup de pied dans le genou du {{people_supertroll}}.<voice girl>\"Je t'avais dit de me lâcher !\"\n"
+"<voice char>Le {{people_supertroll}} se met alors à pleurer tandis que la petite s'échappe."

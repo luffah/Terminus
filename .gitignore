@@ -4,6 +4,9 @@
 *.war
 *.ear
 
+# Python bytes
+*.pyc
+
 # other vcs
 *.svn
 
@@ -25,6 +28,8 @@ _trash
 # build
 node_modules
 _build
+_lint
+_concatenated_*
 webroot
 .npm
 package-lock.json
@@ -34,4 +39,20 @@ package-lock.json
 
 # audio projects
 *.aup
-snd/*_data
+snd/*_data/
+*.mmpz
+
+# audio / shall be explicit
+*.mp3
+*.wav
+*.ogg
+
+# pictures / shall be explicit
+*.png
+*.xcf
+*.gif
+
+# others packages
+*.tgz
+*.tar.gz
+*.zip

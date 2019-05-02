@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+"""
+Create entries for msgids in the corresponding po files.
+"""
+import re
+import sys
+import argparse
+from os.path import realpath, isfile, join, dirname
+from polib import pofile, POEntry
+sys.path.append(
+    join(dirname(dirname(realpath(__file__))),'lib','python3')
+)
+from _terminal_game_common import write, onlydirs
+from _terminal_game_common.po import \
+    find_po_references, fetch_langs, gen_po_header, get_po_content
+from _terminal_game_common.build_params import po_perimeter
+
+def _touch_po(d, msgids, langs):
+    for lang in langs:
+        f = join(d, '%s.po' % lang)
+        write(f, gen_po_header(lang) + ["\n"] + get_po_content(f))
+        try:
+            entries = pofile(f)
+            for msgid in [i for i in msgids if not entries.find(i)]:
+                entries.append(POEntry(msgid=msgid))
+            print('write in %s' % f)
+            print(msgids)
+            entries.save()
+        except:
+            print('%s is not a valid po file' % f)
+            continue
+
+
+def touch_po(d, msgids, langs, opts):
+    d = realpath(d)
+    if opts.force:
+        _touch_po(d, set(msgids) + set(find_po_references(d)), langs)
+    else:
+        msgids_done = []
+        for r in [d] + onlydirs(d, rec=po_perimeter):
+            refs = set(find_po_references(r)) - set(msgids_done)
+            msgids_found = []
+            if opts.auto:
+                msgids_found = refs
+            else:
+                if not msgids:
+                    break
+                for ref in refs:
+                    for msgid in msgids:
+                        if msgid == ref or (
+                                ref.endswith('_text') and
+                                re.match(ref + "(\d+)?", msgid)
+                        ):
+                            msgids.remove(msgid)
+                            msgids_found.append(msgid)
+            if msgids_found:
+                msgids_done += msgids_found
+                _touch_po(r, msgids_found, langs)
+        for msgid in list(set(msgids) - set(msgids_done)):
+            print("%s not added, try with -f" % msgid)
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('gamedir', help="the project directory")
+    parser.add_argument('msgid', nargs='*', help="a msgid to add")
+    parser.add_argument('-auto', action='store_true', default=False,
+                        help="to create all entries with a static reference")
+    parser.add_argument('-f', dest='force', action='store_true', default=False,
+                        help="to force creation of the entries in gamedir")
+    args=parser.parse_args()
+    langs = fetch_langs(args.gamedir)
+    touch_po(args.gamedir, args.msgid, langs, args)

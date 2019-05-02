@@ -1,0 +1,10 @@
+artist: celestialghost8
+title: beatdown
+license: cc0
+date: Sunday, March 12, 2017
+tags: 
+url: https://opengameart.org/content/cc0-scraps
+url file: https://opengameart.org/sites/default/files/slowdrum%20-%20Track%2002%20%28New%20song%29.wav
+url artist: https://opengameart.org/users/celestialghost8
+comment:
+ * artist note *

@@ -1,0 +1,12 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_dark_corridor"
+msgstr "SombreCorridor"
+
+msgid "room_dark_corridor_text"
+msgstr ""
+"Tu traverses le sombre corridor et trouves au bout une petite pièce humide."

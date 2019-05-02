@@ -1,0 +1,11 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_box"
+msgstr "Boîte"
+
+msgid "room_box_text"
+msgstr "Cette boîte est trop petite pour pouvoir entrer dedans."

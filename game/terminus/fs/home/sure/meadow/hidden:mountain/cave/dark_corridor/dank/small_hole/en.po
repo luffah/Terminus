@@ -1,0 +1,13 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_small_hole_text"
+msgstr ""
+"There's nothing exciting in the small hole, and it's pretty dirty. \n"
+"There's no real reason to go into the hole."
+
+msgid "room_small_hole"
+msgstr "SmallHole"

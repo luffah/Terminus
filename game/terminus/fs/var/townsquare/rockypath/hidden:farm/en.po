@@ -1,0 +1,41 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "corn_farmer_ok"
+msgstr "It’s a miracle! Thank you, friend. May the Admin bless you."
+
+msgid "item_another_earofcorn"
+msgstr "AnotherEarOfCorn"
+
+msgid "room_farm_text"
+msgstr ""
+"There was once a farm of some sort here,\n"
+"but now the fields are scorched and brown."
+
+msgid "people_farmer"
+msgstr "Farmer"
+
+msgid "item_another_earofcorn_text"
+msgstr "This is AnotherEarOfCorn"
+
+msgid "item_earofcorn"
+msgstr "EarOfCorn"
+
+msgid "room_farm"
+msgstr "Farm"
+
+msgid "item_earofcorn_rm"
+msgstr "Why would you destroy a starving man's only food?"
+
+msgid "people_farmer_text"
+msgstr ""
+"\"Ruined! I'm ruined! Look at these crops... almost nothing left!\n"
+"The wizard's minions were here last week... they destroyed everything.\n"
+"How will I feed my 3 children with just one ear of corn?\n"
+"I could really use {{item_another_earofcorn}}! \""
+
+msgid "item_earofcorn_text"
+msgstr "The corn is sad and withered-looking."

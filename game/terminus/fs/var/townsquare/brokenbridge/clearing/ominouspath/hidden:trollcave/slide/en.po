@@ -1,0 +1,14 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_slide_text"
+msgstr "The slides is long. At the end, you see the KernelFiles."
+
+msgid "room_slide"
+msgstr "Slide"
+
+msgid "room_slide_cd"
+msgstr "You have to get past the UglyTroll first."

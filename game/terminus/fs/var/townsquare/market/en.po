@@ -1,0 +1,89 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "item_rm_spell_text"
+msgstr ""
+"\"Ah, yes, the rm spell,\" the Vendor muses. \n"
+"\"Simply say \"rm\" followed by the name of an item or person, \n"
+"and they will disappear from this plane... forever. \n"
+"D'you have the guts to use it, I wonder?\""
+
+msgid "item_backpack"
+msgstr "Backpack"
+
+msgid "you_buy"
+msgstr ""
+
+msgid "people_vendor"
+msgstr "Vendor"
+
+msgid "item_rm_cost"
+msgstr ""
+
+msgid "item_mkdir_cost"
+msgstr ""
+
+msgid "item_mkdir_cost_text"
+msgstr ""
+
+msgid "room_market_text"
+msgstr "Vendors and their goods line the streets."
+
+msgid "item_backpack_stolen"
+msgstr ""
+"You just stole the backpack. \n"
+"Given you have no job in a big coorporation, \n"
+"Richard Stallman shall be proud of you."
+
+msgid "people_vendor_sell_rm"
+msgstr ""
+
+msgid "people_vendor_text"
+msgstr ""
+"\" 'Ello there.\" The vendor smiles at you unpleasantly, \n"
+"revealing a mouth full of gold teeth. \"Well? Wot are you looking for?\""
+
+msgid "item_mkdir_spell"
+msgstr "mkdirSpell"
+
+msgid "unzipped"
+msgstr ""
+
+msgid "people_vendor_sell_nothing"
+msgstr ""
+
+msgid "item_rm_spell"
+msgstr "rmSpell"
+
+msgid "people_vendor_sell_mkdir"
+msgstr ""
+
+msgid "need_money"
+msgstr ""
+
+msgid "item_backpack_text"
+msgstr ""
+"There's a beat-up looking backpack on the \n"
+"table with no price tag.  Its cloth looks frayed, but sturdy.\n"
+"You glance quickly at the vendor, but his attention is elsewhere. \n"
+"Maybe you can move it in your home ..."
+
+msgid "people_vendor_rm"
+msgstr ""
+"\"Ha! That spell doesn't work on everything, you know.\n"
+"I may have forgotten to mention that before I sold it to you...\""
+
+msgid "room_market"
+msgstr "Marketplace"
+
+msgid "item_rm_cost_text"
+msgstr ""
+
+msgid "item_mkdir_spell_text"
+msgstr ""
+"\"Make dreams into reality. Just say \"mkdir\" followed by any name that\n"
+"pleases you, and you can create a new place that never existed there before.\n"
+"A little finicky, though...\" the Vendor mumbles."

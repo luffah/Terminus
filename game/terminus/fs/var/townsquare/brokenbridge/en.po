@@ -1,0 +1,22 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_brokenbridge_text2"
+msgstr "A creaky rope bridges stretches across a chasm."
+
+msgid "room_brokenbridge"
+msgstr "BrokenBridge"
+
+msgid "room_brokenbridge_text"
+msgstr ""
+"A creaky wooden bridges stretches across a chasm.\n"
+"But it's missing a {{item_plank}}, and the gap is too far to jump."
+
+msgid "item_plank_text"
+msgstr "This is a Plank."
+
+msgid "item_plank"
+msgstr "Plank"

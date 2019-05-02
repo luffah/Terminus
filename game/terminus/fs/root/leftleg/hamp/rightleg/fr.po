@@ -1,0 +1,11 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_rightleg_text"
+msgstr "Ce chemin est très long. Le sol est rugueux. On dirait du tissu."
+
+msgid "room_rightleg"
+msgstr "CheminEnTissu"

@@ -1,0 +1,30 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_ominouspath_text"
+msgstr ""
+"The path leads toward a dark cave. It's an ordinary cobblestone path, but for \n"
+"some reason it fills you with a sense of dread."
+
+msgid "item_brambles_rm"
+msgstr ""
+"You speak the words of the Remove spell and the brambles glimmer a \n"
+"deep blue. After fizzling for a minute, they disappear with a puff of smoke."
+
+msgid "item_brambles_text"
+msgstr ""
+"This thicket of brambles is covered with wicked-looking thorns. You can't go"
+" around it, and you definitely aren't about to go through it. And yet "
+"something tells you that you really want to."
+
+msgid "item_brambles"
+msgstr "ThornyBrambles"
+
+msgid "item_brambles_mv"
+msgstr "You can't touch them because they are covered with thorns. Ouch!"
+
+msgid "room_ominouspath"
+msgstr "OminousLookingPath"

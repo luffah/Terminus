@@ -1,0 +1,11 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_left"
+msgstr ""
+
+msgid "room_left_text"
+msgstr ""

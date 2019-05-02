@@ -1,0 +1,73 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_meadow"
+msgstr "Prairie"
+
+msgid "room_meadow_text"
+msgstr ""
+"C'est une grande et belle prairie verte. Un majestueux {{people_poney}} s'y "
+"trouve. Il a l'air triste et solitaire."
+
+msgid "people_poney"
+msgstr "Poney"
+
+msgid "people_poney_text"
+msgstr ""
+"Pour ne pas lui faire peur, tu restes à distance du poney.\n"
+"Après quelques instants, vous arrivez à communiquer avec quelques hochements de tête.\n"
+"Finalement, le poney bascule sa tête vers les {{room_mountain}} à l'est comme s'il te suggérait d'aller dans cette direction."
+
+msgid "people_poney_text1"
+msgstr ". . ."
+
+msgid "people_poney_text2"
+msgstr ""
+"Pour ne pas lui faire peur, tu restes à distance du poney.\n"
+"Tu hoches la tête vers les nuages.\n"
+"Le poney te répond par le même signe."
+
+msgid "people_poney_text3"
+msgstr ""
+"Tu restes à distance du poney.\n"
+"Tu hoches la tête vers le sol.\n"
+"Le poney fronce son gros visage."
+
+msgid "people_poney_text4"
+msgstr ""
+"Tu restes à distance du poney.\n"
+"Tu hoches la tête encore une fois, en dessinant des cercles avec ton nez.\n"
+"Le poney s'approche."
+
+msgid "people_poney_text5"
+msgstr ""
+"Tu hoches encore la tête. Le poney accourt vers toi.\n"
+"«<voice poney/> Eh ! » <voice char/>dit le poney.«<voice poney/> C'est très gentil de te soucier de moi et j'aimerais bien m'amuser avec toi,\n"
+"mais je suis persuadé que tu as mieux à faire »."
+
+msgid "people_poney_textmountain"
+msgstr ""
+"Tu hoches encore la tête. Le poney accourt vers toi.\n"
+"«<voice poney/> Eh ! » <voice char/>dit le poney.«<voice poney/> As-tu déjà visité les {{room_mountain}} ? »."
+
+msgid "people_poney_texttab"
+msgstr ""
+"«<voice poney/> Eh ! Savais-tu qu'en appuyant sur la touche 'tab', tu "
+"pouvais aller beaucoup plus vite ?»"
+
+msgid "people_poney_textmv"
+msgstr ""
+"«<voice poney/> J'ai compris ! Tu es bloqué » <voice char/>dit le "
+"poney.«<voice poney/> As-tu essayé de parler à un {{people_professor}} de "
+"l'{{room_spell_casting_academy}} ? » ."
+
+msgid "people_poney_texthelp"
+msgstr ""
+"«<voice poney/> J'ai compris ! Tu es bloqué » <voice char/>dit le poney.«<voice poney/> Désolé, je ne suis pas en mesure de t'aider.\n"
+"mais si tu as déjà lu le {{item_man}} tu dois pouvoir utiliser '{{cmd.help}}' » ."
+
+msgid "new_path"
+msgstr "Regarde avec 'ls', tu peux maintenant aller à cet endroit : '%s' !"

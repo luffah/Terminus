@@ -1,0 +1,13 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_spell_casting_academy"
+msgstr "AcadémieDesBots"
+
+msgid "room_spell_casting_academy_text"
+msgstr ""
+"Le hall d'entrée est bondé. \n"
+"L'académie a un plafond très haut, qui rend l'entrée très impressionnante."

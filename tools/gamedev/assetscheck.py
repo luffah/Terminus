@@ -1,0 +1,43 @@
+#!/usr/bin/env python3
+# pylint: disable=unexpected-keyword-arg
+"""
+   Show missing po entries for a directory
+"""
+import sys
+from os.path import isdir, realpath, relpath, dirname, join
+sys.path.append(
+    join(dirname(dirname(realpath(__file__))),'lib','python3')
+)
+from _terminal_game_common import onlyfiles, onlydirs
+from _terminal_game_common.assets import Assets
+from _terminal_game_common.jspart import get_assets_references
+from _terminal_game_common.build_params import po_perimeter
+
+USAGE = 'Usage: %s <dir>' % sys.argv[0]
+
+
+def _get_assets_missing(curdir, lvl=0):
+    assets = Assets()
+    assets.detect(curdir)
+    refs = [ref for ref in get_assets_references(curdir)
+            if not onlyfiles(curdir, prefix=ref)]
+    ret = [
+        '%s : ' % relpath(curdir) +
+        ' '.join(['missing'] + refs)
+    ] if refs else []
+
+    for room in [r
+                 for r in onlydirs(curdir)
+                 if po_perimeter(r)]:
+        ret += _get_assets_missing(room, lvl+1)
+
+    return ret
+
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2 or not isdir(sys.argv[1]):
+        print(USAGE)
+        exit(1)
+
+    for msg in _get_assets_missing(realpath(sys.argv[1])):
+        print(msg)

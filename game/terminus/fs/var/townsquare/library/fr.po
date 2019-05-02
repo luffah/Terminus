@@ -1,0 +1,75 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_library"
+msgstr "Bibliothèque"
+
+msgid "room_library_text"
+msgstr ""
+"La bibliothèque est mal éclairée et sent la moisissure. \n"
+"Pourtant, il y fait bon et la douceur de la moquette verte te met à l'aise."
+
+msgid "item_radspellbook"
+msgstr "SuperLivreDesSortilèges"
+
+msgid "item_radspellbook_text"
+msgstr ""
+"La légende parle d'un mot portant un grand pouvoir qui permet de faire toute"
+" action."
+
+msgid "item_romancebook"
+msgstr "RomanceDePoche"
+
+msgid "item_romancebook_text"
+msgstr ""
+"Tu retournes le livre de poche et ouvres une page au hasard. \n"
+"\"Oh, Horace !\" s'écria Antonia, qui bombait sa poitrine tandis qu'Horace arrachait avec doigté son corset de son armature souple. Horace fit un grognement bestial et saisit avec ses mains puissantes les doigts de sa conquête…\n"
+"— tu fermes ce livre sans intérêt et tu le reposes sur l'étagère."
+
+msgid "item_historybook"
+msgstr "HistoireDeTerminus"
+
+msgid "item_historybook_text"
+msgstr ""
+"Ce livre semble intéressant, mais il y a trop de pages et l'écriture est vraiment petite. Voici un extrait :\n"
+" \n"
+"{{people_darkwizard}} … une vieille légende parle d'un magicien qui divisera le pays…\n"
+"…seule une personne bâtisseuse de ce monde peut arrêter le virus répandu par le {{people_darkwizard}}…\n"
+"…le pouvoir du \"sudo\" pourrait être la seule faiblesse du {{people_darkwizard}}…"
+
+msgid "item_nostalgicbook"
+msgstr "NostalgieDuPays"
+
+msgid "item_nostalgicbook_text"
+msgstr ""
+"Le livre dit : \"Si tu es nostalgique de ton petit nid douillet,\n"
+"invoque juste 'cd ~' et tu y retourneras instantanément. \n"
+"Mais rappelle-toi que ce sera plus compliqué de revenir.\"\n"
+"\n"
+" Plus loin, une histoire intitulée \"Solitude\" raconte qu'une magicienne avec un pull arc-en-ciel et des lunettes roses, pouvait revenir en un instant à son lieu d'origine, quel que soit l'endroit où elle se trouvait.\n"
+"Aussi, elle pouvait téléporter des objets.\n"
+"La page suivante semble expliquer comment, mais elle a été déchirée."
+
+msgid "item_vimbook"
+msgstr "VIMproved"
+
+msgid "item_vimbook_text"
+msgstr ""
+"Tu ouvres ce livre et découvres une écriture étrange.\n"
+"Une intense lumière en jaillit et t'aveugle.\n"
+"C'est alors que le livre disparaît."
+
+msgid "item_lever"
+msgstr "IntrigantPanneau"
+
+msgid "item_lever_text"
+msgstr "Un panneau derrière l'étagère semble recouvrir une source de lumière."
+
+msgid "item_chat"
+msgstr "Discussions"
+
+msgid "item_lever_exec"
+msgstr "Par curiosité, tu le pousses, révélant ainsi une pièce secrète."

@@ -1,0 +1,6 @@
+artist: Emma Tolley & Shawn Conrad
+original design: Emma Tolley & Shawn Conrad
+license: mit
+date: 2012
+comment:
+ * artist note *

@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "dependencies": {},
+  "devDependencies": {
+    "postcss": "^7.*",
+    "autoprefixer": "*",
+    "cssnano": "^3.*",
+    "uglify-js": "*",
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "*"
+  }
+}

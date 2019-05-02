@@ -1,0 +1,31 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_academy_practice"
+msgstr "SalleDEntrainement"
+
+msgid "room_academy_practice_text"
+msgstr ""
+"La pièce est remplie de noobs comme toi et d'élèves pratiquant leurs "
+"nouvelles commandes."
+
+msgid "item_practice"
+msgstr "Pilier%d"
+
+msgid "item_practice_text"
+msgstr "Il s'agit d'un objet conçu pour l'entrainement"
+
+msgid "item_academy_practice"
+msgstr "Note"
+
+msgid "item_academy_practice_text"
+msgstr "Attention : ne pas déplacer les Piliers."
+
+msgid "leave_academy"
+msgstr "La salle d’entraînement va s'écrouler : fuis !"
+
+msgid "room_spell_casting_academy"
+msgstr "AcadémieDesBots"

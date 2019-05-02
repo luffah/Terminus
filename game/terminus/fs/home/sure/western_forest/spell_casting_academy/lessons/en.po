@@ -1,0 +1,21 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_lessons"
+msgstr "Lessons"
+
+msgid "people_prof"
+msgstr ""
+
+msgid "people_prof_text"
+msgstr ""
+
+msgid "room_lessons_text"
+msgstr ""
+"You enter the Lessons hall ready and eager. \n"
+"It's much quieter here, as many of the lessons have already started. \n"
+"You quickly ushered into the Introductory Lesson, which already begun. \n"
+"You enter the class on the \"Move Spell.\""

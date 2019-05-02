@@ -1,0 +1,45 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_farm"
+msgstr "Ferme"
+
+msgid "room_farm_text"
+msgstr ""
+"Il y avait une ferme ici,\n"
+"mais les cultures ont été ravagées."
+
+msgid "item_earofcorn"
+msgstr "EpisDeMais"
+
+msgid "item_earofcorn_text"
+msgstr "Ce maïs a l'air fané et bien piteux."
+
+msgid "people_farmer"
+msgstr "Fermier"
+
+msgid "people_farmer_text"
+msgstr ""
+"\"Ruiné ! Je suis ruiné ! Regarde ce champs de maïs… il n'en reste presque plus rien !\n"
+"Les soldats du {{people_darkwizard}} sont passés ici la semaine dernière… Ils ont tout détruit.\n"
+"Comment vais-je nourrir mes enfants avec seulement un épi de maïs ?\n"
+"Avec au moins un {{item_another_earofcorn}}, je pourrais peut être en garder quelques graines.\""
+
+msgid "item_another_ear_of_corn_text"
+msgstr ""
+
+msgid "item_earofcorn_rm"
+msgstr ""
+"Pourquoi voudrais-tu détruire la seule nourriture d'une personne affamée ?"
+
+msgid "corn_farmer_ok"
+msgstr "C'est un miracle ! Merci mon ami. Que l'Admin te bénisse."
+
+msgid "item_another_earofcorn"
+msgstr "AutreEpisDeMais"
+
+msgid "item_another_earofcorn_text"
+msgstr "Ceci est un autre épi de maïs."

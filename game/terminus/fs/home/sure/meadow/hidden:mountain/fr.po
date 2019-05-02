@@ -1,0 +1,30 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_mountain"
+msgstr "Montagnes"
+
+msgid "room_mountain_text"
+msgstr ""
+"Tu parcours un sentier de montagne qui mène à une cave.\n"
+"Sur ce sentier, tu croises un vieil homme."
+
+msgid "people_man_sage"
+msgstr "VieilHomme"
+
+msgid "people_man_sage_text"
+msgstr ""
+"Tu parles avec le vieil homme.\n"
+"Il te salue chaleureusement comme si vous vous connaissiez déjà. \n"
+"« Salut toi ! \n"
+"Tu as l'air jeune et intrépide.\n"
+"Si tu as le cœur assez brave, alors ton destin t'attend dans cette cave.\n"
+"Tu y trouveras un portail qui te mènera au chapitre suivant. »\n"
+"Le vieil homme devine l'inquiétude qui trouble tes pensées\n"
+"et te dit en souriant\n"
+"« Tiens, prends ce manuscrit qui t'enseignera comment utiliser tes pouvoirs.»\n"
+"Le vieil homme pose le {{item_man}} par terre et s'en va.\n"
+"« Au revoir ! Au fait si tu ne te sens pas de taille tape '{{cmd,exit}}'. »"

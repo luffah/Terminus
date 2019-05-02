@@ -1,0 +1,80 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_library_text"
+msgstr ""
+"The Library is dimly lit and smells like mildew. \n"
+"Still, it's warm in here and the soft green carpet makes it seem kind of cozy."
+
+msgid "item_radspellbook_text"
+msgstr ""
+"Legends speak of a great word of power that allows the speaker to perform \n"
+"any action on any item. \"Sudo\", as the ancients called it, \n"
+"conveys complete mastery over the elements. \n"
+"Unfortunately, or perhaps fortunately, the mystical password has been lost \n"
+"to the sands of time."
+
+msgid "item_romancebook"
+msgstr "PaperbackRomance"
+
+msgid "item_nostalgicbook"
+msgstr "NostalgiaForHome"
+
+msgid "item_radspellbook"
+msgstr "TotallyRadSpellbook"
+
+msgid "item_vimbook_text"
+msgstr ""
+"While you open this book, a glow illuminates your eyes. \n"
+"You've been blind for some seconds and the book disappear."
+
+msgid "item_historybook_text"
+msgstr ""
+"It looks like an interesting book, but it's way too long and \n"
+"the print is too tiny. Here is an excerpt:\n"
+" \n"
+"DarkWizard ...old tales tell of a DarkWizard who will fragment the land...\n"
+"...only the world-maker can stop the DarkWizard's virus from...\n"
+"...that the power of \"sudo\" may be the DarkWizard's only weakness..."
+
+msgid "item_lever_exec"
+msgstr ""
+
+msgid "item_vimbook"
+msgstr "VIMproved"
+
+msgid "item_romancebook_text"
+msgstr ""
+"You flip the paperback open to a random page. \n"
+"\"Oh, Horatio!\" Antonia exclaimed, her bosom heaving as Horatio deftly ripped \n"
+" the bodice from her lithe frame. Horatio gave an animalistic growl and\n"
+"he clasped her fingers in his strong hands and brought them to rest upon ...\n"
+"— You close the book, disinterested, and place it back on the shelf."
+
+msgid "item_lever_text"
+msgstr ""
+"You spot an inconspicuous lever behind the shelves.\n"
+"Curious, you pull it, and a panel slides open to reveal a secret back room."
+
+msgid "room_library"
+msgstr "Library"
+
+msgid "item_historybook"
+msgstr "HistoryOfTerminus"
+
+msgid "item_nostalgicbook_text"
+msgstr ""
+"The book says : \"If you ever get lonely for Home,\n"
+"just 'cd ~' and you'll go back there. \n"
+"But just remember that it will be harder to come back.\"\n"
+"\n"
+" Later in the book, a story about loneliness says that \n"
+"a Wizard with a rainbow pullover pink glasses,\n"
+"was known to do instant movement from home to distant places.\n"
+"The next page seems to explain how to, but it is torn apart."
+
+msgid "item_lever"
+msgstr "InconspicuousLever"

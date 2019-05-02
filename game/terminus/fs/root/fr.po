@@ -1,0 +1,18 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "item_potatoe"
+msgstr "Patate"
+
+msgid "item_potatoe_text"
+msgstr "C'est une simple pomme de terre. Pas de quoi s'affoler."
+
+msgid "item_potatoe_text_evolve"
+msgstr "C'était une simple pomme de terre. \nCette pomme de terre commence à germer...\n Ses racines ressemblent à des pinces et c'est assez inquiétant."
+
+msgid "item_potatoe_text_final_form"
+msgstr "Il est difficile à croire que ce monstre est une pomme de terre.\nSon corps est tout frippé et ses dix bras assérés s'étendent dans la pièce.
+"

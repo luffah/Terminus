@@ -1,0 +1,37 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_kernel"
+msgstr "FichiersNoyau"
+
+msgid "room_kernel_text"
+msgstr ""
+"Les FichiersNoyau détiennent le sudo secret (non, ce n'est pas un pseudo). "
+"Vous avez intérêt à lire le fichier d'instructions."
+
+msgid "item_certificate"
+msgstr "Certificat"
+
+msgid "item_certificate_text"
+msgstr "Vous devez lire le Certificat avec le mot de passe sudo."
+
+msgid "item_instructions"
+msgstr "Instructions"
+
+msgid "item_instructions_text"
+msgstr ""
+"Bravo ! Si vous lisez ceci, c'est que vous avez fait bien du chemin....\n"
+"Malheureusement, il va vous falloir faire une pause car le jeu ne va pas plus loin.\n"
+"Prochaine version du jeu : mi-2019.\n"
+"Merci d'avoir joué à Terminus et à bientôt.\n"
+
+msgid "item_instructions_text_bak"
+msgstr ""
+"Vous avez probablement appris à utiliser votre ami Grep. Si ce n'est pas encore le cas, il serait sage que vous vous rendiez dans la bibliothèque afin d'y remédier. Parce qu'ici vous aurez besoin de l'utiliser pour parvenir à vos fins. Voici votre tâche : \n"
+"Il y a de nombreux objets entreposés dans la salle PlusDeFichiersNoyau et l'un d'entre eux contient le mot de passe sudo. Ce mot de passe est très puissant : il vous permet de faire absolument tout ce que vous voulez dans l'univers. Il vous permet de lancer n'importe quel sort sur n'importe quel objet, même protégé. Vous savez que le mot de passe est caché dans une de ces fichiers .txt. Vous savez qu'il se trouve dans la ligne qui contient le mot : « password= ». Vous devriez réussir à le trouver avec l'aide de votre ami grep. Ensuite, vous devrez utiliser le sort sudo pour atteindre le Paradis. Pour cela, tapez simplement « sudo » avant la commande que vous voulez appliquer, de la façon suivante : 'sudo cp OBJET_A OBJET_B'. Il vous sera alors demandé le mot de passe sudo. Saisissez-le, et le sort à la suite de sudo sera alors appliqué. Si vous ouvrez le Certificat au Paradis avec sudo, vous découvrirez vraiment le Paradis."
+
+msgid "room_kernel_sudo"
+msgstr "room_kernel_sudo"

@@ -1,0 +1,155 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: luffah <contact@luffah.xyz>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7.1\n"
+
+msgid "people_darkwizard"
+msgstr "Magus"
+
+msgid "people_darkwizard_text"
+msgstr "MageFuneste"
+
+msgid "room_wrong_syntax"
+msgstr "La syntaxe n'est pas valide. Relisez les instructions."
+
+msgid "room_forbidden"
+msgstr "Cet endroit est inaccessible."
+
+msgid "items"
+msgstr ""
+"Ici, tu peux interagir avec (objets):\n"
+"%s"
+
+msgid "lock_added"
+msgstr "Tu viens d'ajouter le verrou %s"
+
+msgid "directions"
+msgstr ""
+"Là où tu peux aller (chemins) :\n"
+"%s "
+
+msgid "room_empty"
+msgstr "Cette pièce est vide. Il n'y a rien."
+
+msgid "room_new_created"
+msgstr "Tu viens de créer un nouveau chemin : %s"
+
+msgid "item_cmd_unknown"
+msgstr "Cela ne marche pas."
+
+msgid "a_wish_to_understand_you"
+msgstr "what do you want to do ?"
+
+msgid "room_unreadable"
+msgstr "Un brouillard dans la pièce empêche de voir son contenu."
+
+msgid "ask_password"
+msgstr "Mot de passe :"
+
+msgid "room_unreachable"
+msgstr "La pièce %s n'est pas atteignable."
+
+msgid "cmd_cat_aliases"
+msgstr "detrui\\w*|remov\\*|del\\w*|suppr\\w*"
+
+msgid "Suggestions"
+msgstr "Suggestions"
+
+msgid "peoples"
+msgstr ""
+"Ici, tu peux parler avec :\n"
+"%s"
+
+msgid "room_wrong_password"
+msgstr ""
+"Le mot de passe est erroné. As-tu oublié ton mot de passe ? Non, je blague. "
+"Déguerpissez !"
+
+msgid "you_buy"
+msgstr "Tu as acheté %s"
+
+msgid "room_none"
+msgstr "LieuBanal"
+
+msgid "room_none_text"
+msgstr "C'est un endroit très banal."
+
+msgid "credit_img"
+msgstr "Images"
+
+msgid "credit_sound"
+msgstr "Effets sonores"
+
+msgid "credit_music"
+msgstr "Musiques"
+
+msgid "credit_img_incomplete"
+msgstr "???"
+
+msgid "credit_sound_incomplete"
+msgstr "???"
+
+msgid "credit_music_incomplete"
+msgstr "???"
+
+msgid "credit_author"
+msgstr "Un jeu de"
+
+
+msgid "credit_occasionnal bug report"
+msgstr "Certains bugs ont été remontés par"
+
+msgid "credit_occasionnal testing"
+msgstr "Sporadiquement testé par"
+
+msgid "credit_translation"
+msgstr "Traduction par"
+
+msgid "credit_assets sources"
+msgstr "La plupart des sons et musiques se trouvent sur"
+
+msgid "credit_occasionnal help"
+msgstr "Aides ponctuelles"
+
+msgid "credit_occasionnal test"
+msgstr "Tests ponctuels"
+
+msgid "credit_storyboard"
+msgstr "Storyboard"
+
+msgid "credit_context"
+msgstr "Contexte"
+
+msgid "by_author"
+msgstr "%s"
+
+msgid "and_designed_by"
+msgstr "et %s"
+
+msgid "credit_forked from"
+msgstr "Ce jeu est dérivé du jeu {{title:}}\n"
+" développé par\n{{author:}},\n"
+" {{storyboarding:}} (storyboard),\n"
+" et {{artwork:}} (dessins).\n"
+" ({{context:}})"
+
+msgid "title"
+msgstr "{{title:}} {{versioninfo}}"
+
+msgid "versioninfo"
+msgstr "(version {{version:}})"
+
+msgid "credit_game"
+msgstr "{{title}}\npar {{author:}}\n"
+
+msgid "credit_license"
+msgstr "Le code de ce jeu est libre."

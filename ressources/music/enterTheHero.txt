@@ -1,0 +1,9 @@
+artist: ShwiggityShwag
+license: cc0
+date: Monday, August 4, 2014
+tags: village cave
+url: https://opengameart.org/content/8-bit-the-hero
+url artist: https://opengameart.org/users/shwiggityshwag
+comment:
+ * artist note *
+

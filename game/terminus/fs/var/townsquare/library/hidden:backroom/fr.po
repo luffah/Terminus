@@ -1,0 +1,33 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_backroom"
+msgstr "PièceSecrete"
+
+msgid "room_backroom_text"
+msgstr ""
+"Derrière le panneau, tu trouves un bibliothécaire seul avec un petit elfe.\n"
+"Tu espères ne pas les déranger."
+
+msgid "people_librarian"
+msgstr "Bibliothécaire"
+
+msgid "people_librarian_text"
+msgstr ""
+"\"? Oh, bonjour. Désolé pour le désordre,\n"
+" mais je suis très occupé par mes recherches sur {{people_darkwizard_pre}} {{people_darkwizard}}.\n"
+"Peux-tu me faire une faveur ? Pourrais-tu me donner toutes les références à {{people_darkwizard}} dans le livre relatant \"{{item_historybook}}\". Mon assistant Grep peux t'aider.\" \n"
+"Grep te regarde avec un air mécontent. \"Greeepp.\"\n"
+"\"Pour chercher les occurrences d'un terme dans un livre, écris simplement \"grep\" suivi du terme et de l'objet en question.\n"
+" Va trouver le livre et tape \"grep {{people_darkwizard}} {{item_historybook}}\"."
+
+msgid "people_grep"
+msgstr "Grep"
+
+msgid "people_grep_text"
+msgstr ""
+"L'elfe se tourne vers toi avec un regard aigri.\n"
+"\"Greeeeeep,\" dit-il solennellement."

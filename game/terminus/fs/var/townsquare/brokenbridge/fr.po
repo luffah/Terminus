@@ -1,0 +1,22 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_brokenbridge"
+msgstr "PontCassé"
+
+msgid "room_brokenbridge_text"
+msgstr ""
+"Un pont de bois grinçant s'étend au dessus d'un abîme.\n"
+"Mais une {{item_plank}} manque, et le trou est trop grand pour être enjambé."
+
+msgid "room_brokenbridge_text2"
+msgstr "Devant toi, un pont tenu par des cordes s'étend vers l'abîme."
+
+msgid "item_plank"
+msgstr "Planche"
+
+msgid "item_plank_text"
+msgstr "C'est une {{item_plank}}."

@@ -1,0 +1,17 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_dank"
+msgstr "PièceHumide"
+
+msgid "room_dank_text"
+msgstr "Cette pièce est encore plus sombre."
+
+msgid "item_boulder"
+msgstr "Rocher"
+
+msgid "item_boulder_text"
+msgstr "Tu sens un léger courant d'air passer derrière le rocher."

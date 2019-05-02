@@ -1,0 +1,16 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_slide"
+msgstr "Toboggan"
+
+msgid "room_slide_text"
+msgstr "Au bout du long toboggan, tu aperçois une autre pièce."
+
+msgid "room_slide_cd"
+msgstr ""
+"C'est juste un toboggan. Tu ne sais pas si tu pourras remonter mais tu sais "
+"que tu dois y aller.Cependant {{people_troll1}} te bloque le passage."

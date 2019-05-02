@@ -1,0 +1,80 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_townsquare"
+msgstr "PlaceDuVillage"
+
+msgid "room_townsquare_text"
+msgstr ""
+"Tu te trouves sur une place du village, grande et ensoleillée.\n"
+"Au centre, il y a un piédestal sur lequel ne se trouve aucune statue.\n"
+"L'architecture est très jolie, mais tout le monde semble nerveux."
+
+msgid "people_citizen3"
+msgstr "VillageoiseEnPleurs"
+
+msgid "people_citizen3_text"
+msgstr ""
+"La villageoise pleure et tremble sans pouvoir s'arrêter. \n"
+"\"Mon bébé !\" pleure t'elle, \n"
+"\"Ils ont enlevé mon bébé ! Je sais que le magicien en est le responsable.\""
+
+msgid "people_citizen1"
+msgstr "Canard"
+
+msgid "people_citizen1_text"
+msgstr ""
+"Tu t'adresses à un des villageois : \"Excusez-moi,\". Il se retourne, surpris.\n"
+"\"Quoi ?!… Euh, bonjour ! Bienvenue à Terminus.\""
+
+msgid "people_citizen2"
+msgstr "VieilHomme"
+
+msgid "people_citizen2_text"
+msgstr ""
+"Ce villageois lit le journal quand il remarque que tu le regardes. \n"
+"\"As-tu lu ça ?\" s'esclaffe-t-il, secouant la dernière édition du \"Dernier Mot\" devant ton visage.\n"
+"\"Ça dit que {{people_darkwizard_pre}} {{people_darkwizard}} a répandu la corruption de Oseton jusqu'au sud et Konsole est déjà atteint !\n"
+"Les temps sont dangereux.\" \n"
+"marmonne-t-il, secouant sa tête et retournant à sa lecture."
+
+msgid "people_citizen1__text1"
+msgstr ""
+"Hmmm. Si tu as besoin d'équipements, je te conseille la {{room_market}} et "
+"la {{room_artisanshop}}."
+
+msgid "people_citizen1_"
+msgstr "Jasper"
+
+msgid "people_citizen3_text4"
+msgstr "\"Je vais {{cmd,rm}} ces trolls.\""
+
+msgid "people_citizen3_text2"
+msgstr "(Tu ne sais pas quoi dire…)"
+
+msgid "people_citizen3_text3"
+msgstr ""
+"(Tu as beau réfléchir.\n"
+"La seule chose qui soulagerait cette maman serait de retrouver son enfant.)"
+
+msgid "people_citizen1__text2"
+msgstr ""
+"Hmmm. Si tu as besoin d'informations, je te conseille la {{room_library}}.\\"
+
+msgid "people_citizen3_text5"
+msgstr "\"Mais… qui a le pouvoir de faire ça ? Toi ?\""
+
+msgid "people_citizen3_text1"
+msgstr "\"Mon bébé… Je vais '{{cmd,pkill}} -9 {{people_darkwizard}}'.\""
+
+msgid "people_citizen1__text"
+msgstr "Hmmm. Des questions ? Vas-y."
+
+msgid "room_link:townsquare"
+msgstr ""
+
+msgid "room_link:townsquare_text"
+msgstr ""

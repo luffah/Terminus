@@ -1,0 +1,74 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "item_strangetrinket_text"
+msgstr "It looks like a crystal of some sort. It's very beautiful."
+
+msgid "item_dragon_text"
+msgstr ""
+"A dragon the size of a small dog is frolicking about the room. \n"
+"You'd think it was real if it weren't for the wind-up key sticking out of its back."
+
+msgid "room_artisanshop_text"
+msgstr ""
+"The walls of the shop are covered in clocks, all slightly out of sync.\n"
+"At the workbench, a woman in an enormous pair of goggles \n"
+"is wielding a blowtorch with frightening enthusiasm."
+
+msgid "item_dragon_rm"
+msgstr ""
+"Didn't your mother ever teach you that it's rude to erase other people's \n"
+"things from their plane of existence?"
+
+msgid "item_gear_artisans_ok"
+msgstr ""
+"Ha, finished already? I guess you learn fast.\n"
+"Well, thanks for your assistance."
+
+msgid "item_strangetrinket_rm"
+msgstr ""
+"Didn't your mother ever teach you that it's rude to rease other people's \n"
+"things from their plane of existence?"
+
+msgid "item_gear"
+msgstr "gear%s"
+
+msgid "room_artisanshop"
+msgstr "ArtisanShop"
+
+msgid "item_gear_touch"
+msgstr ""
+"Well that’s lovely, thank you, but you can’t expect me to make\n"
+"anything with just one gear! Can’t you copy it?\n"
+"...\n"
+"*sigh* I can see you are going to need a lot of training. Just say “cp [ITEM] [NEWITEM]”.\n"
+"[ITEM]’s the name of the item that you want copy, and [NEWITEM]’s the new name of the\n"
+"copy, got it? Then poof! You’ll have shiny new item. I need five more gears so you’d better\n"
+"get started! Just call them gear1, gear2, gear3, gear4, and gear5, please."
+
+msgid "people_artisan"
+msgstr "Artisan"
+
+msgid "item_strangetrinket"
+msgstr "StrangeTrinket"
+
+msgid "people_artisan_text"
+msgstr ""
+"The Artisan lifts up her goggles and peers at you in surprise. \n"
+"\"Are you the new assistant? You're late! ...  \n"
+"You say you aren't my assistant? \n"
+"Well, that doesn't mean you can't make yourself useful.\n"
+"I need some gears, quickly! \n"
+"... \n"
+"You don't even know how to make things? Hmph. Some assistant you are.\n"
+"Just say \"touch ITEM\" alright?\n"
+"Where ITEM is the name of the thing you want to create. Now make me a Gear! Then come back.\""
+
+msgid "item_dragon"
+msgstr "ClockworkDragon"
+
+msgid "item_gear_text"
+msgstr "This is a Gear"

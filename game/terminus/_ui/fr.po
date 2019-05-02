@@ -1,0 +1,101 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "gameintro_ok"
+msgstr "{{ok}}"
+
+msgid "cookie"
+msgstr "Manger un cookie ?"
+
+msgid "gameintro_text_initrd"
+msgstr "Chargement de initrd.img [{{progress}}]"
+
+msgid "cookie_yes"
+msgstr "oui (utiliser une nouvelle sauvegarde)"
+
+# Pas de visuel de la touche TAB ici ?
+msgid "gameintro_setup_ok"
+msgstr ""
+"Maintenant je vais m'amuser... mais toi, tu vas souffrir. 😄\n"
+"Le principe est simple : pour réaliser chaque action, il te faut taper une commande.\n"
+"Ton outil est une zone de texte, tu peux déplacer le curseur à gauche, à droite, en haut et en bas.\n"
+"Si tu appuies sur la touche Tab, tu actives une aide interactive.\n"
+"Bon, ça commence à m'ennuyer de tout t'expliquer."
+
+msgid "gamestart_text"
+msgstr ". . . . . .\n"
+
+msgid "demo_note"
+msgstr ""
+"Bienvenue dans la version de démonstration du jeu Terminus.\n"
+"Pourquoi une version de démonstration ? Parce que le jeu n'est pas fini.\n"
+"Il reste des tas de fonctionnalités à coder, des heures de rédaction \n"
+"de scénario, des visuels à faire ou à revoir.\n"
+
+msgid "gameintro_failure"
+msgstr "{{ko}}"
+
+msgid "prelude_text"
+msgstr ""
+"<img src='img/kid2face.png'/>\n"
+"La dernière chose dont je me souviens,\n"
+"c'est que j'étais dans la salle informatique.\n"
+"\n"
+"Il y avait ce fichier qu'il fallait que j'efface à tout prix.\n"
+"Mais où le trouver ? il y avait des dossiers dans tous les sens.\n"
+"\n"
+"Au bout d'un moment, j'étais hors de moi.\n"
+"\n"
+"Et puis, brusquement tous les machines se sont éteintes.\n"
+"Impossible d'utiliser les ordinateurs."
+
+msgid "user_judged_lovely"
+msgstr ""
+
+msgid "gameintro_text"
+msgstr ""
+"   Bienvenue dans {{game_title}}\n"
+"\n"
+
+msgid "gameintro_text_domainname"
+msgstr "Configuration du nom de domaine [{{progress}}]"
+
+msgid "you_learn"
+msgstr "Tu as appris à utiliser '%s' !"
+
+msgid "game_loaded"
+msgstr "Partie restaurée"
+
+msgid "press_enter"
+msgstr "Appuie sur la touche Entrée ↵"
+
+msgid "congrat"
+msgstr "Félicitations ! Tu as résolu toutes les énigmes de %s !"
+
+msgid "user_judged_bad"
+msgstr ""
+
+msgid "demo_note_continue"
+msgstr "Continuer"
+
+msgid "cookie_yes_load"
+msgstr "oui (reprendre la partie en cours%s)"
+
+msgid "username_prompt"
+msgstr "Donnez-moi votre nom :"
+
+msgid "you_success"
+msgstr "Fini '%s' !"
+
+msgid "gameintro_text_fsck"
+msgstr "Vérification du système de fichiers [{{progress}}]"
+
+msgid "msg_from"
+msgstr "Message de %s sur %s à %s :"
+
+msgid "cookie_no"
+msgstr "non (ne pas utiliser de sauvegarde)"
+

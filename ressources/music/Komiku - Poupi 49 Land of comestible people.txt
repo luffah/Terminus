@@ -1,0 +1,12 @@
+Title: Land of comestible peopble
+Album: Poupi's incredible adventures
+artist: Monplaisir Loyalty Freak Music
+license: cc0
+date: Monday, March 12, 2018
+tags: fantasy
+url: https://opengameart.org/content/poupis-incredible-adventures-full-album
+url artist: https://opengameart.org/users/monplaisir-loyalty-freak-music
+comment:
+ * artist note *
+
+

@@ -1,0 +1,11 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_rightturn_text"
+msgstr "VirageAGauche"
+
+msgid "room_rightturn"
+msgstr "Le chemin forme un quart de cercle vers la gauche."

@@ -1,0 +1,63 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "item_ls_text"
+msgstr ""
+
+msgid "item_mkdir_text"
+msgstr ""
+
+msgid "item_whoami"
+msgstr ""
+
+msgid "item_man_text"
+msgstr ""
+"If you ever forget a spell just use \"help\"\n"
+"and a list of available spells will appear. If you need details on how \n"
+"to use a specific spell, use 'man' followed by spell command. For example, \n"
+"if you were interested in details on how to use the \"mv\" spell you would use : man mv"
+
+msgid "item_rm_text"
+msgstr ""
+
+msgid "item_man"
+msgstr "OldManuscripts"
+
+msgid "item_rm"
+msgstr ""
+
+msgid "item_groups_text"
+msgstr ""
+
+msgid "item_whoami_text"
+msgstr ""
+
+msgid "item_mv"
+msgstr ""
+
+msgid "item_groups"
+msgstr ""
+
+msgid "item_mv_text"
+msgstr ""
+
+msgid "item_cat_text"
+msgstr ""
+
+msgid "item_mkdir"
+msgstr ""
+
+msgid "item_touch_text"
+msgstr ""
+
+msgid "item_ls"
+msgstr ""
+
+msgid "item_cat"
+msgstr ""
+
+msgid "item_touch"
+msgstr ""

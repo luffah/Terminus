@@ -1,0 +1,149 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "man_help"
+msgstr "Tape \"help\" pour avoir une liste des sorts utilisables."
+
+msgid "help_grep"
+msgstr "Chercher quelque chose dans un texte."
+
+msgid "man_ls"
+msgstr ""
+"(Regarde autour de toi). \n"
+"Utilise \"ls\" pour voir ce qui se trouve dans un chemin donné. \n"
+"Soit tu observes là où tu es, soit tu observes un autre chemin.\n"
+"Il faut écrire : \n"
+"  ls              (pour voir autour de toi) \n"
+"-OU- \n"
+"  ls CHEMIN     (pour voir là où tu ne peux pas choisir ta destination \"cd\" )"
+
+msgid "man_cd"
+msgstr ""
+"(Choisis ta destination) Utilise \"cd\" pour explorer le monde. \n"
+"Il faut écrire : cd CHEMIN"
+
+msgid "man_less"
+msgstr ""
+"(Lire, Examiner ou parler).\n"
+"Utilise \"less\" pour connaître les secrets liés à un objet.\n"
+"Il faut écrire :\n"
+"  less ITEM"
+
+msgid "man_pwd"
+msgstr ""
+"(Te montre là où tu es) \n"
+"Il faut écrire : \n"
+"  \"{{cmd,pwd}}\" "
+
+msgid "help_help"
+msgstr "Lister les sorts utilisables."
+
+msgid "help_cat"
+msgstr "{{help_less}}"
+
+msgid "help_rm"
+msgstr "Faire disparaître définitivement un objet ou une personne."
+
+msgid "man_unzip"
+msgstr ""
+"Ouvrir un sac zippé et sortir ce qu'il contient.\n"
+"Il faut écrire :\n"
+"unzip SAC.zip"
+
+msgid "help_man"
+msgstr "En savoir plus sur un sort."
+
+msgid "help_touch"
+msgstr "Toucher un objet."
+
+msgid "help_unzip"
+msgstr "Récupérer le contenu d'un sac zippé."
+
+msgid "help_less"
+msgstr "Utiliser ou lire un objet, ou bien parler à quelqu'un."
+
+msgid "help_mkdir"
+msgstr "Créer un nouveau chemin."
+
+msgid "help_cd"
+msgstr "Se déplacer dans un autre chemin."
+
+msgid "help_pwd"
+msgstr "Dire où tu es."
+
+msgid "help_cp"
+msgstr "Copier un objet."
+
+msgid "man_rm"
+msgstr ""
+"Utilise \"rm\" pour supprimer définitivement un objet.\n"
+"Il faut écrire :\n"
+"rm OBJET"
+
+msgid "help_ls"
+msgstr "Décrire un chemin."
+
+msgid "help_exit"
+msgstr "Quitter le jeu."
+
+msgid "man_mkdir"
+msgstr ""
+"Créer un nouveau chemin.\n"
+"Utilise \"mkdir\" pour créer un nouveau chemin à partir du chemin où tu te trouves.\n"
+"Il faut écrire :\n"
+"mkdir CHEMIN"
+
+msgid "help_more"
+msgstr "{{help_less}}"
+
+msgid "man_touch"
+msgstr ""
+"(Touche) En touchant un objet (même imaginaire), tu le fais (re)naître comme neuf.\n"
+"Utilise \"{{cmd,touch}}\" pour créer de nouveaux objets.\n"
+"Il faut écrire :\n"
+"  touch OBJET"
+
+msgid "help_mv"
+msgstr "Déplacer un objet dans un autre chemin."
+
+msgid "man_cat"
+msgstr "{{help_less}}"
+
+msgid "man_exit"
+msgstr ""
+"(quitter) \n"
+"Utilise \"exit\" pour quitter le jeu."
+
+msgid "man_grep"
+msgstr ""
+"(gReP : Récupère des parties) \n"
+"Utilise \"{{cmd,grep}}\" pour trouver les parties d'un texte qui contiennent le mot magique.\n"
+"Il faut écrire : \n"
+"  grep MOT_MAGIQUE LÀ_OU_TU_CHERCHE "
+
+msgid "man_man"
+msgstr ""
+"Le Grand Manuscrit contient le savoir indispensable au peuple de la source.\n"
+"Voici les sorts que je pourrai t'enseigner : cd, ls, rm, mv, exit, help, man, touch, grep, pwd."
+
+msgid "man_mv"
+msgstr ""
+"(MouVement). \n"
+"Utilise \"mv\" pour déplacer un objet. \n"
+"Il faut écrire : mv OBJET LIEU_DE_DESTINATION"
+
+msgid "man_cp"
+msgstr ""
+"(CoPy)\n"
+"Utilise \"{{cmd,cp}}\" pour cloner un item. \n"
+"Il faut écrire :\n"
+"  {{cmd,cp}} ITEM NEWNAME "
+
+msgid "room_doc_text"
+msgstr ""
+
+msgid "room_doc"
+msgstr ""

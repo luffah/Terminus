@@ -1,0 +1,30 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_kernel"
+msgstr "KernelFiles"
+
+msgid "item_instructions"
+msgstr "Instructions"
+
+msgid "room_kernel_sudo"
+msgstr ""
+
+msgid "item_certificate_text"
+msgstr "You must read the Certificate with the sudo password."
+
+msgid "item_instructions_text"
+msgstr ""
+"You've learned how to make use of your friend grep I see. If you haven't it might be wise for you to go back to the Library again to do some reading. Because here, you'll need to use him to help you. Here is your task: \n"
+"There are a lot of items in the MoreKernelFiles room and one of them contains the sudo password. This password is very powerful password that lets you do absolutely anything in the world. It lets you cast a spell on any item that is protected in any way. You know the password is contained in one of these .txt items. You know that it appears on a line that says the word: 'password='. You should find it with grep's help. Then you'll need to use the sudo spell to find Paradise. To do this, just Type 'sudo' before the command you want to run, like so: 'sudo cp ITEM_A ITEM_B'. You will then be prompted for the sudo password. Type the password, and the spell that comes after sudo will be cast. If you open the Certificate in Paradise with sudo, you will have truly found Paradise."
+
+msgid "item_certificate"
+msgstr "Certificate"
+
+msgid "room_kernel_text"
+msgstr ""
+"The KernelFiles hold the sudo-secret (no, not pseudo). You'd better read the"
+" Instructions."

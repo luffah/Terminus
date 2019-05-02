@@ -1,0 +1,26 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "new_path"
+msgstr ""
+
+msgid "people_poney_text"
+msgstr ""
+"You go up to the pony and attempt to ride it.\n"
+"It compiles and you ride the pony around in circles for a bit.\n"
+"He then grows tired of having you as a burden and knocks you off.\n"
+"He then looks towards the east as if suggesting that you head in that direction."
+
+msgid "people_poney"
+msgstr "Pony"
+
+msgid "room_meadow_text"
+msgstr ""
+"This is a beautiful green meadow. A plump but majestic pony prances happily "
+"about."
+
+msgid "room_meadow"
+msgstr "NorthernMeadow"

@@ -1,38 +1,36 @@
-# Use `gulp` after installing gulp-concat gulp-cli gulp-autoprefixer gulp-html-replace.
 NODEJS=nodejs
 PYTHON=python3
+BUILD_TOOLS=./tools/build
+NODEBIN=${TOOLS}/node_modules/.bin
 
 LANG_REGEX=\(.*\.dialog\.\).*\(\.js\)
 LANGS=fr en
+SRC=./engine
 
 default: help
 
 # COMPILE #
-all: ## Generate all html files in all languages
-	for _LANG in ${LANGS};do \
-		_LANG=$${_LANG} make html; \
+clean_dist:
+	rm -r _build
+
+all: build ## Generate all html files in all languages
+
+build:
+	for _GAME in $$(ls -d game/*);do \
+		${BUILD_TOOLS}/build.py $${_GAME} _build/$$(basename $${_GAME}) -html; \
 	done
 
-clean_dist:
-	rm -r _build;
+_js_transpile: _ensure_dir_js_build
+	${NODEJS} ${NODEBIN}/babel \
+		-o ./_build/js/all.${_LANG}.js --presets env \
+		`grep '<script ' ./engine/index.html | grep 'src=' |  egrep -v 'tests/|<!--|-->' | sed 's/.*src="\([^"]*.js\)".*/.\/src\/\1/;s/${LANG_REGEX}/\1${_LANG}\2/'`
 
-.npm:
-	npm install && touch .npm
+_js: _ensure_build_dir _js_transpile
+	${NODEJS} ${NODEBIN}/uglifyjs \
+		./_build/js/all.${_LANG}.js \
+		-o ./_build/js/min.${_LANG}.js -c -m;
 
-_ensure_dir_build:
-	mkdir -p _build
-
-_js_transpile: _ensure_dir_build
-	${NODEJS} ./node_modules/.bin/babel \
-		-o _build/all.${_LANG}.js --presets env \
-		`grep '<script ' ./src/index.html | grep 'src=' |  egrep -v 'tests/|<!--|-->' | sed 's/.*src="\([^"]*.js\)".*/.\/src\/\1/;s/${LANG_REGEX}/\1${_LANG}\2/'`
-
-_js: _js_transpile
-	${NODEJS} ./node_modules/.bin/uglifyjs \
-		_build/all.${_LANG}.js \
-		-o _build/min.${_LANG}.js -c -m;
-
-js: .npm po  ## Compress javascript files
+js: ${TOOLS}/.npm po  ## Compress javascript files
 	for _LANG in ${LANGS};do \
 		_LANG=$${_LANG} make _js; \
 	done
@@ -40,41 +38,33 @@ js: .npm po  ## Compress javascript files
 _check_polib:
 	${PYTHON}  -c "import polib" || pip install polib
 
-_ensure_js_build_dir:
-	mkdir -p ./src/js/_build
-
-po: _ensure_js_build_dir _check_polib ## Generate javascript files from pofiles
-	find ./src/lang -name '*.po' | sed 's/^.*\.\([A-Za-z-]\+\)\.po/\1/' \
-		| while read i; do ${PYTHON} ./buildsystem/po2json.py $${i}; done;
+_ensure_build_dir:
+	mkdir -p ./_build
 
 css:
-	 ${NODEJS} ./buildsystem/postcss.js
+	 ${NODEJS} ${TOOLS}/postcss.js
 
-html: css _js ## Generate minimal html [usage: _LANG=xx make html]
-	 ${PYTHON} ./buildsystem/inject.py ./src/index.html \
+html: css js ## Generate minimal html [usage: _LANG=xx make html]
+	 ${PYTHON} ${TOOLS}/inject.py ./src/index.html \
 		 ./_build/min.css ./_build/min.${_LANG}.js \
 		./webroot/terminus.${_LANG}.html
 
-assets: ## Place images and sounds in webroot dir
-	cp src/img/* webroot/img/;
-	cp src/snd/*.wav webroot/snd/;
-
 # EXTRA #
-pot: _ensure_js_build_dir _check_polib ## Generate a pot file from a pofile [usage: _LANG=xx make pot]
-	${PYTHON} ./buildsystem/potgenfromlang.py $(or  ${_LANG}, fr)
+# pot: _ensure_build_dir _check_polib ## Generate a pot file from a pofile [usage: _LANG=xx make pot]
+# 	${PYTHON} ${TOOLS}/potgenfromlang.py $(or  ${_LANG}, fr)
 
-translatorguide:  ## A little guide for new translators
-	less src/lang/README
+# translatorguide:  ## A little guide for new translators
+# 	less src/lang/README
 
-to_dokuwiki: ## Convert markdown files in wiki_md to wiki_dokuwiki
-	find ./wiki_md -name '*.md' | \
-	    while read i; do \
-	    TGTDIR="`dirname $${i} | sed 's/_md/_dokuwiki/'`"; \
-			mkdir -p $${TGTDIR}; \
-	    TGT="`basename $${i%\.md}`.txt"; \
-			pandoc --from=markdown_github --to=dokuwiki $${i} \
-			             --output="$${TGTDIR}/$${TGT}";\
-			done
+# to_dokuwiki: ## Convert markdown files in wiki_md to wiki_dokuwiki
+# 	find ./wiki_md -name '*.md' | \
+# 	    while read i; do \
+# 	    TGTDIR="`dirname $${i} | sed 's/_md/_dokuwiki/'`"; \
+# 			mkdir -p $${TGTDIR}; \
+# 	    TGT="`basename $${i%\.md}`.txt"; \
+# 			pandoc --from=markdown_github --to=dokuwiki $${i} \
+# 			             --output="$${TGTDIR}/$${TGT}";\
+# 			done
 
 testfs:
 	firefox --jsconsole --safe-mode src/testing.html?filesystem

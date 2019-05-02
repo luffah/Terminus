@@ -1,0 +1,29 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "item_western_forest_back_direction"
+msgstr "BackSign"
+
+msgid "room_western_forest"
+msgstr "WesternForest"
+
+msgid "room_western_forest_text"
+msgstr ""
+"You enter and travel deep into the forest. Eventually, the path leads to a clearing with a large impressive building.\n"
+"A sign on it reads: Spell Casting Academy: The Elite School of Magic."
+
+msgid "item_western_forest_academy_direction"
+msgstr "Sign"
+
+msgid "item_western_forest_back_direction_text"
+msgstr ""
+"If you ever want to go directly Home, just type 'cd ~' or just plain old `cd' and you'll come back Home.\n"
+"Getting back might be more difficult though."
+
+msgid "item_western_forest_academy_direction_text"
+msgstr ""
+"Spell Casting Academy: The Elite School of Magic\n"
+"Today Only: Free Introductory Lessons! Novices welcome!"

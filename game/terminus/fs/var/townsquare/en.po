@@ -1,0 +1,52 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "people_citizen3"
+msgstr "DistraughtLady"
+
+msgid "people_citizen1_text"
+msgstr ""
+"\"Excuse me,\" you begin. The man turns, startled. \n"
+"\"Oh, hello! Welcome to Terminus. You'll have to forgive me, but we're all \n"
+"a little on edge lately, what with the Dark Wizard spreading corruption \n"
+"all along the coast.  You should be careful!\""
+
+msgid "people_citizen2_text"
+msgstr ""
+"The man looks up from his newspaper when he notices you staring. \n"
+"\"Have you read this?\" he exclaims, shaking the latest edition \n"
+"of \"The Last Word\" in your face.\n"
+"\"It says here the wizard's corruption has spread as far \n"
+"as Oston to the south, and New Console is completely unrecoverable!\n"
+"These are dangerous times,\" he mutters, shaking his head and \n"
+"turning back to his reading."
+
+msgid "people_citizen2"
+msgstr "RandomCitizen2"
+
+msgid "people_citizen1"
+msgstr "RandomCitizen1"
+
+msgid "room_townsquare"
+msgstr "TownSquare"
+
+msgid "people_citizen3_text"
+msgstr ""
+"The woman is sobbing uncontrollably, her face in her hands. \n"
+"\"My baby,\" she cries, \"They kidnapped my baby! I just \n"
+"know that wizard had something to do with it.\""
+
+msgid "room_townsquare_text"
+msgstr ""
+"You are in a sunny and spacious town square. \n"
+"There is a pedestal at the center of the cobblestone turnabout, but no statue on it. \n"
+"The architecture is charming, but everyone here seems nervous for some reason."
+
+msgid "room_link:townsquare"
+msgstr ""
+
+msgid "room_link:townsquare_text"
+msgstr ""

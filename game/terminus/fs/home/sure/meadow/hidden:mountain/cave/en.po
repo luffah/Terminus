@@ -1,0 +1,11 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_cave_text"
+msgstr "It's your typical cave: dark and dank."
+
+msgid "room_cave"
+msgstr "Cave"

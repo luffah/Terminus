@@ -1,0 +1,68 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "people_darkwizard"
+msgstr ""
+
+msgid "people_darkwizard_text"
+msgstr ""
+
+msgid "room_wrong_syntax"
+msgstr ""
+
+msgid "room_forbidden"
+msgstr ""
+
+msgid "items"
+msgstr ""
+
+msgid "lock_added"
+msgstr ""
+
+msgid "directions"
+msgstr ""
+
+msgid "room_empty"
+msgstr ""
+
+msgid "room_new_created"
+msgstr ""
+
+msgid "item_cmd_unknown"
+msgstr ""
+
+msgid "a_wish_to_understand_you"
+msgstr ""
+
+msgid "room_unreadable"
+msgstr ""
+
+msgid "ask_password"
+msgstr ""
+
+msgid "room_unreachable"
+msgstr ""
+
+msgid "cmd_cat_aliases"
+msgstr ""
+
+msgid "Suggestions"
+msgstr ""
+
+msgid "peoples"
+msgstr ""
+
+msgid "room_wrong_password"
+msgstr ""
+
+msgid "you_buy"
+msgstr ""
+
+msgid "room_none"
+msgstr ""
+
+msgid "room_none_text"
+msgstr ""

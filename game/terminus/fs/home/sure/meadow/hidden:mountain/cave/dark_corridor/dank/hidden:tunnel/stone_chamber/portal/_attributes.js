@@ -1,0 +1,5 @@
+({
+  enterCallback: () => {
+    playSound('portal')
+  }
+})

@@ -1,0 +1,14 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_spell_casting_academy"
+msgstr "SpellCastingAcademy"
+
+msgid "room_spell_casting_academy_text"
+msgstr ""
+"The halls are filled the hustle and bustle of academy students scurrying to and from classes.\n"
+"The inside of the  academy is as impressive as it is on the outside with a high ceiling and gothic \n"
+"arches, it seems even larger on the inside."

@@ -1,0 +1,89 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "gameintro_ok"
+msgstr ""
+
+msgid "cookie"
+msgstr ""
+"In order to save/restore the game, you need eat cookies.\n"
+"Do you want to activate cookies ?"
+
+msgid "gameintro_text_initrd"
+msgstr ""
+
+msgid "cookie_yes"
+msgstr ""
+
+msgid "gameintro_setup_ok"
+msgstr ""
+
+msgid "gamestart_text"
+msgstr ""
+"Welcome! If you are new to the game, here are some tips: \n"
+"\n"
+"Look at your surroundings with the command \"ls\". \n"
+"Move to a new location with the command \"cd LOCATION\" \n"
+"You can backtrack with the command \"cd ..\". \n"
+"Interact with things in the world with the command \"less ITEM\" \n"
+"\n"
+"If you forget where you are, type \"pwd\" \n"
+"\n"
+"Go ahead, explore. We hope you enjoy what you find. Do ls as your first command."
+
+msgid "demo_note"
+msgstr ""
+
+msgid "gameintro_failure"
+msgstr ""
+
+msgid "prelude_text"
+msgstr ""
+
+msgid "user_judged_lovely"
+msgstr ""
+
+msgid "gameintro_text"
+msgstr ""
+
+msgid "gameintro_text_domainname"
+msgstr ""
+
+msgid "you_learn"
+msgstr ""
+
+msgid "game_loaded"
+msgstr ""
+
+msgid "press_enter"
+msgstr ""
+
+msgid "congrat"
+msgstr ""
+
+msgid "user_judged_bad"
+msgstr ""
+
+msgid "demo_note_continue"
+msgstr ""
+
+msgid "cookie_yes_load"
+msgstr ""
+
+msgid "username_prompt"
+msgstr ""
+
+msgid "you_success"
+msgstr ""
+
+msgid "gameintro_text_fsck"
+msgstr ""
+
+msgid "msg_from"
+msgstr ""
+
+msgid "cookie_no"
+msgstr ""

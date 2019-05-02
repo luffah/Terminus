@@ -1,0 +1,7 @@
+title: Path to Lake Land
+artist: Alexandr Zhelanov
+url artist: https://opengameart.org/users/alexandr-zhelanov
+url file: https://opengameart.org/sites/default/files/Path%20to%20Lake%20Land.ogg
+url: https://opengameart.org/content/path-to-lake-land
+date: Wednesday, March 28, 2012 - 12:24
+license: CC-BY 3.0

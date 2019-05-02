@@ -1,0 +1,14 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_stone_chamber"
+msgstr "ChambreDePierre"
+
+msgid "room_stone_chamber_text"
+msgstr ""
+"La pièce entière rayonne d'une lueur verte.\n"
+"La source de cette lumière est un portail magique placé en plein milieu de la pièce.\n"
+"C'est sûrement le portail dont parlait le vieil homme."

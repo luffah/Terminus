@@ -1,0 +1,17 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "link_townsquare"
+msgstr ""
+
+msgid "link_townsquare_text"
+msgstr ""
+
+msgid "room_portal_text"
+msgstr "You have been transported through time..."
+
+msgid "room_portal"
+msgstr "Portal"

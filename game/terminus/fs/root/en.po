@@ -1,0 +1,17 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_root"
+msgstr ""
+
+msgid "room_root_text"
+msgstr ""
+
+msgid "item_potatoe"
+msgstr ""
+
+msgid "item_potatoe_text"
+msgstr ""

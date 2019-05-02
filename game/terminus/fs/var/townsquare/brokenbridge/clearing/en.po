@@ -1,0 +1,58 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "people_cryingman"
+msgstr "CryingMan"
+
+msgid "room_clearing"
+msgstr "Clearing"
+
+msgid "room_house_ls"
+msgstr "You made this house for the man. How thoughtful of you!"
+
+msgid "room_house_cd"
+msgstr "You are entering the {{room_house}} that you made."
+
+msgid "room_house"
+msgstr "House"
+
+msgid "room_clearing_cd"
+msgstr " You can’t cross the bridge until you’ve replaced the missing Plank. "
+
+msgid "room_clearing_text"
+msgstr ""
+"There's a small grassy clearing here, with a man sitting on a stone, weeping.\n"
+"Behind him is a pile of rubble."
+
+msgid "people_cryingman_text"
+msgstr ""
+"\"You! You're a magic-user! I can tell, you've got that look. \n"
+"Come to finish the job, have you?\n"
+"Well, go ahead, do your worst there's nothing else you can take from me.\n"
+"Not since the rest of you were here a few days ago.\" \n"
+"\n"
+"\"What happened? You DARE to ask-- you know perfectly well what happened. \n"
+"Your friends, the wizard's minions, destroyed my house and kidnapped my \n"
+"poor daughter, that's what! My wife even went into town to look for help, \n"
+"and I haven't heard from her since!\" \n"
+"\n"
+"\"Hm? Well, I guess it's true that you don't look like one of the wizard's minions.\n"
+"Still, I don't trust you magicfolk. \n"
+"If you really are who you say you are, then prove your good intentions \n"
+"by making me a new {{room_house}}!\""
+
+msgid "room_clearing_text2"
+msgstr ""
+"There's a small grassy clearing here, with a man sitting on a \n"
+" stone, weeping. Behind him is a pile of rubble and a small white house."
+
+msgid "room_clearing_less2"
+msgstr ""
+"Thank you for making me the {{room_house}}!  Why am I still crying?  These "
+"are tears of joy.  Can't a man openly express his emotions?"
+
+msgid "room_house_text"
+msgstr "This is a {{room_house}}"

@@ -1,0 +1,14 @@
+#
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_stone_chamber"
+msgstr "StoneChamber"
+
+msgid "room_stone_chamber_text"
+msgstr ""
+"The whole rooms glows a dim green light. \n"
+"The source of this light is a portal standing in the middle of the room. \n"
+"This is obviously the portal of which the old man spoke."

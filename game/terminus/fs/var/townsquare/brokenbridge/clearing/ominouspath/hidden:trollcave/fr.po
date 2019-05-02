@@ -1,0 +1,64 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_trollcave"
+msgstr "CaveDesTrolls"
+
+msgid "room_trollcave_text"
+msgstr ""
+"La cave est sombre et elle sent… les pieds ?! Ah, d'accord, ce sont probablement les trolls. \n"
+"Sur la mur du fond, il y a un enfant enfermé dans une cage qui à l'air effrayé."
+
+msgid "people_troll2"
+msgstr "TrollPlusMoche"
+
+msgid "people_troll2_text"
+msgstr ""
+"Il a l'air fou et vraiment vraiment moche. \n"
+"Mais il veut te dire quelque chose. Entre deux \n"
+"grognements incompréhensibles, tu parviens à discerner les mots suivants : \n"
+"Tu peux jeter des sorts sur les objets que tu ne vois actuellement. Par exemple, si tu veux \n"
+"dupliquer un objet de cette salle vers le CheminInquiétant d'où tu es venu, tu faire \n"
+"cp [OBJET_À_COPIER] ../[NOUVEAU_NOM_OBJET]. Tu peux faire cela pour la plupart des sorts et la plupart des salles. \n"
+"Utilise cette connaissance avec prudence. Souviens-toi… tu ne peux pas annuler un sort « rm »."
+
+msgid "people_supertroll"
+msgstr "TrollAbsolumentHideux"
+
+msgid "people_supertroll_text"
+msgstr "Tu ne veux sûrement pas regarder cet individu. Oups, trop tard."
+
+msgid "people_troll1"
+msgstr "TrollMoche"
+
+msgid "people_troll1_text"
+msgstr "Il a l'air fou, et vraiment très moche."
+
+msgid "people_supertroll_rm"
+msgstr ""
+"Le troll émet un rot spectaculaire, puis un sourire narquois.Tu ne pourras "
+"pas te débarrasser de lui facilement, pas sans le « mot de passe sudo ».Ce "
+"n'est pas « pseudo », c'est « sudo » ! Tu peux le trouver dans les "
+"FichiersNoyau.Mais d'abord tu dois te débarrasser du TrollMoche."
+
+msgid "people_troll1_rm"
+msgstr ""
+"Le troll semble avoir été surpris, puis il disparaît \n"
+"dans un bruit désagréable."
+
+msgid "people_troll1_cp"
+msgstr "Ils se multiplient !"
+
+msgid "people_troll11_rm"
+msgstr "people_troll11_rm"
+
+msgid "people_supertroll_mv"
+msgstr ""
+"Si tu le fais sortir de la grotte, il ira semer la terreur dans le pays.\n"
+"Il voudra aussi probablement te manger."
+
+msgid "people_troll_mv"
+msgstr ""

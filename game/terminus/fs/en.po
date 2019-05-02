@@ -1,0 +1,9 @@
+#
+msgid ""
+msgstr ""
+
+msgid "room_fs"
+msgstr "Racine"
+
+msgid "room_fs_text"
+msgstr "Tout les chemins convergent ici."
