@@ -12,3 +12,4 @@ Note for game dev
 =================
 - `make` can be used to build the game(s) in `./game`
 - `./game/terminus/devenv.sh` set up a bash shell for dev...
+- to work on develop branch : `git fetch origin; git checkout --track origin/develop`
