@@ -183,25 +183,25 @@ class Context {
     }
     return substrMatches
   }
-  _strip_comment (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
+  stripComment (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
     let comment = (line.match(/((('[^']*')|("[^"]*")))|#.*/g) || []).pop()
     return (comment && comment.startsWith('#')) ? line.replace(comment, '') : line
   }
-  _is_empty (line) {
+  isEmpty (line) {
     line = line.replace(/\s*/, '')
     if (line.length === 0 || line.startsWith('#')) return true
   }
-  _split_commands (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
-    return this._is_empty(line) ? [] : this._strip_comment(line).match(/([^;'"]*(('[^']*')|("[^"]*"))[^;'"]*)+|[^;'"]+/g).filter(s => s.length)
+  splitCommands (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
+    return this.isEmpty(line) ? [] : this.stripComment(line).match(/([^;'"]*(('[^']*')|("[^"]*"))[^;'"]*)+|[^;'"]+/g).filter(s => s.length)
   }
-  _split_args (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
+  splitArgs (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
     return line.replace(/\s+$/, '').match(/(('[^']*')|("[^"]*"))|[^'" ]*/g).filter(s => s.length)
   }
   isValidInput (line) {
-    let commands = this._split_commands(line)
+    let commands = this.splitCommands(line)
     // console.log(commands)
     for (let i = 0; i < commands.length; i++) {
-      let args = this._split_args(commands[i])
+      let args = this.splitArgs(commands[i])
       if (!args.length) return false
       let cmd = this.getCommand(args.shift())
       if (!cmd) return false
@@ -213,10 +213,10 @@ class Context {
   }
   parseExec (vt, line) {
     let ret = new Seq()
-    if (this._is_empty(line)) return ret
-    let commands = this._split_commands(line)
+    if (this.isEmpty(line)) return ret
+    let commands = this.splitCommands(line)
     for (let i = 0; i < commands.length; i++) {
-      let res = this._parseCmdLine(vt, commands[i])
+      let res = this.parseCmdLine(vt, commands[i])
       ret.append(res)
     }
     return ret
@@ -231,9 +231,9 @@ class Context {
     s = s || this.similar_score_min
     return this.getCommands().filter(i => similarity(cmd, i) >= s)
   }
-  _parseCmdLine (vt, line) {
+  parseCmdLine (vt, line) {
     let c = this
-    let arrs = c._split_args(line)
+    let arrs = c.splitArgs(line)
     let cmdname = arrs[0]
     if (c.guessCmd) cmdname = c.guessCmd(cmdname, vt)
     let r = c.r

@@ -51,6 +51,7 @@ class GameState {
   }
 
   getopt (name, fallback)  {
+    let val
     if (this.active) val = this.params.opts[name]
     else val = this._params_cache.opts[name]
     return (def(val)?val:fallback)

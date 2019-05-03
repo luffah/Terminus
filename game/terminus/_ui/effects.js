@@ -24,7 +24,7 @@ function flash (timeout, timeoutdisappear) {
 //       cb: next })
 //   } })
 // }
-
+/*
 function animElContent (el, list, opt) {
   opt = opt || {}
   let i = 0
@@ -48,6 +48,7 @@ function animElContent (el, list, opt) {
     }, opt.duration)
   }
 }
+*/
 function badge (title, text) {
   let badge = addEl(EFFECTS.notifications, 'div', 'badge')
   let now = Date.now()

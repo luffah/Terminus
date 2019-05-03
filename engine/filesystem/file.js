@@ -96,7 +96,7 @@ class File extends FileModel {
     if (f) {
       let ret = f(this, args)
       if (def(ret.ret)) return ret
-      return { ret: ret, pass: (ret.pass != 0) }
+      return { ret: ret, pass: (ret.pass != 0) } // eslint-disable-line
     }
   }
 

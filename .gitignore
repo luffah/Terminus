@@ -6,7 +6,7 @@
 
 # Python bytes
 *.pyc
-
+G
 # other vcs
 *.svn
 
@@ -30,6 +30,7 @@ node_modules
 _build
 _lint
 _concatenated_*
+.lint_errors
 webroot
 .npm
 package-lock.json
@@ -39,7 +40,7 @@ package-lock.json
 
 # audio projects
 *.aup
-snd/*_data/
+*_data
 *.mmpz
 
 # audio / shall be explicit

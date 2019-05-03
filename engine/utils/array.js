@@ -3,12 +3,12 @@ function inc (h, k) {
   if (h[k]) { h[k]++ } else { h[k] = 1 }
   return h[k]
 }
-function add (h, k, v) {
-  if (!def(h[k])) {
-    h[k] = []
-  }
-  h[k].push(v)
-}
+// function add (h, k, v) {
+//   if (!def(h[k])) {
+//     h[k] = []
+//   }
+//   h[k].push(v)
+// }
 
 function pop (l, idx) {
   return (idx === -1) ? null : l.splice(idx, 1)[0]
