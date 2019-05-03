@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-   Show missing po entries for a directory
+Show missing po entries for a directory
 """
 import sys
 from os.path import isfile, join, realpath, relpath, basename
 from polib import pofile
+import argparse
 sys.path.append(
     join(dirname(dirname(realpath(__file__))),'lib','python3')
 )
@@ -12,8 +13,6 @@ from _terminal_game_common import onlydirs, onlyfiles
 from _terminal_game_common.po import \
     find_po_references, lang_from_fname, fetch_langs, _get_po_comment
 from _terminal_game_common.colors import YELLOW, RYELLOW
-
-USAGE = 'Usage: %s dir [lang|po_source] -g' % sys.argv[0]
 
 def _po_check(d, langs, rec=False, po_source=False):
     po_refs = find_po_references(d)
@@ -139,35 +138,24 @@ def _global_check(d, langs, po_source=False):
                 ))
 
 
-def main(d, opts):
+def main(d=None, g=None, po_source=None, rec=None, lang=None):
     d = realpath(d)
-    langs = opts['lang'].split(',') if 'lang' in opts else fetch_langs(d)
-    po_source = pofile(opts['po_source']) if 'po_source' in opts else False
+    langs = lang and lang.split(',') or fetch_langs(d)
+    po = po_source and pofile(po_source) or False
 
-    if '-g' in opts:
-        _global_check(d, langs, po_source)
+    if g:
+        _global_check(d, langs, po)
     else:
-        _po_check(d, langs,
-                  po_source=po_source,
-                  rec=('-rec' in opts))
+        _po_check(d, langs, po_source=po, rec=rec)
 
 
 if __name__ == '__main__':
-    opts = {}
-
-    if len(sys.argv) < 2:
-        print(USAGE)
-        exit(1)
-
-    for i in sys.argv[2:]:
-        if i in ['-g', '-rec']:
-            opts[i] = i
-        elif i.endswith('.po'):
-            if isfile(i):
-                opts['po_source'] = i
-                opts['lang'] = lang_from_fname(i)
-            else:
-                print("%s not exists" % i)
-        elif 'lang' not in opts:
-            opts['lang'] = i
-    main(sys.argv[1], opts)
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('dir', dest='d')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('lang')
+    group.add_argument('lang.po', dest="po_source")
+    parser.add_argument('-rec', help="recursive", action='store_true')
+    parser.add_argument('-g', help="global", action='store_true')
+    args=parser.parse_args()
+    main(args)

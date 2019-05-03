@@ -8,5 +8,7 @@
 | :---                 | - | :---    |
 | Dans un univers où la magie a été remplacée par le mystérieux pouvoir de la ligne de commande, vous incarnez un personnage démuni qui n'aura d'autre choix que d'en servir pour reprendre le contrôle de sa vie. [>> wiki](https://github.com/luffah/Terminus/wiki) [>> install](./readme.fr.md)|| In a mysterious land, both physical and magical powers had been surpassed by a new power : the command line. Lost somewhere in this land, you discover that you could use this power without knowing how. [>> wiki (not available)](https://github.com/luffah/Terminus/wiki/Home.en) [>> install](./readme.en.md) |
 
-## Note for translator and developer
-Use `make`.
+Note for game dev
+=================
+- `make` can be used to build the game(s) in `./game`
+- `./game/terminus/devenv.sh` set up a bash shell for dev...

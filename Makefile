@@ -17,7 +17,7 @@ all: build ## Generate all html files in all languages
 
 build:
 	for _GAME in $$(ls -d game/*);do \
-		${BUILD_TOOLS}/build.py $${_GAME} _build/$$(basename $${_GAME}) -html; \
+		${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}) -html; \
 	done
 
 _js_transpile: _ensure_dir_js_build
@@ -45,13 +45,13 @@ css:
 	 ${NODEJS} ${TOOLS}/postcss.js
 
 html: css js ## Generate minimal html [usage: _LANG=xx make html]
-	 ${PYTHON} ${TOOLS}/inject.py ./src/index.html \
+	 ${PYTHON} ${TOOLS}/inject ./src/index.html \
 		 ./_build/min.css ./_build/min.${_LANG}.js \
 		./webroot/terminus.${_LANG}.html
 
 # EXTRA #
 # pot: _ensure_build_dir _check_polib ## Generate a pot file from a pofile [usage: _LANG=xx make pot]
-# 	${PYTHON} ${TOOLS}/potgenfromlang.py $(or  ${_LANG}, fr)
+# 	${PYTHON} ${TOOLS}/potgenfromlang $(or  ${_LANG}, fr)
 
 # translatorguide:  ## A little guide for new translators
 # 	less src/lang/README

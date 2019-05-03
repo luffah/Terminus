@@ -29,7 +29,7 @@ from _terminal_game_common import onlyfiles
 
 
 JSLINTVAR = " --global '%s'"
-JSLINTDEFAULTVARS = "Blob,Audio,Node,Howl,doTest,dialog,LANG,APP_NAME"
+JSLINTDEFAULTVARS = "Blob,Audio,Node,Howl,doTest,dialog,LANG,LANG_CREDITS,APP_NAME"
 JSLINT = "standard {file} {vars} 2> /dev/null"
 JSFIX = "standard --fix {file} 2> /dev/null > /dev/null"
 AVOID_TO_LINT = r".*/(js|outsiders)/.*"
