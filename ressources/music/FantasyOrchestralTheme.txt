@@ -1,9 +1,9 @@
+title: Fantasy Orchestral Theme
 artist: Joth
-license: cc0
-date: Tuesday, October 4, 2016
-tags: fantasy
+date: Tuesday, October 4, 2016 - 21:31
+license: CC0
 url: https://opengameart.org/content/fantasy-orchestral-theme
 url artist: https://opengameart.org/users/joth
-comment:
- * artist note *
-
+url file: https://opengameart.org/sites/default/files/FantasyOrchestralTheme_1.mp3
+tags: fantasy
+comment: * artist note *

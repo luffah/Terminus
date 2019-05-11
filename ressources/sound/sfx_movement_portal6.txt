@@ -1,19 +1,15 @@
-titles: sfx_movement_portal6
-artist: Juhani Junkala
-album: The Essential Retro Video Game Sound Effects Collection [512 sounds]
-license: cc0
-date: Thursday, April 7, 2016
-tags: 8-bit retro sfx
+title: sfx movement portal6
+collection: 512 Sound Effects (8-bit style)
+artist: SubspaceAudio
+date: Thursday, April 7, 2016 - 13:14
+license: CC0
 url: https://opengameart.org/content/512-sound-effects-8-bit-style
 url artist: https://opengameart.org/users/subspaceaudio
+url file: https://opengameart.org/sites/default/files/The%20Essential%20Retro%20Video%20Game%20Sound%20Effects%20Collection%20%5B512%20sounds%5D.zip
+media file: The Essential Retro Video Game Sound Effects Collection [512 sounds] By Juhani Junkala/Movement/Portals and Transitions/sfx_movement_portal6.wav
+album: The Essential Retro Video Game Sound Effects Collection [512 sounds]
+tags: 8-bit retro sfx
 comment:
  * artist note *
-  Hi, I'm Juhani Junkala, the author of this collection.
-  I'm a classically trained composer, producer and a sound designer with over 20 years of experience.
-
- These sound effects have been released under CC0 creative commons license.
- You can do anything you want with these sounds.
-
- All the sounds are at 44100hz 16bit mono .wav format and at -6db volume level.
- Change the individual volume of the sounds manually if necessary.
-
+ Hi, I'm Juhani Junkala, the author of this collection.
+ I'm a classically trained composer, producer and a sound designer with over 20 years of experience.

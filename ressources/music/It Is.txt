@@ -1,8 +1,9 @@
+title: It is
 artist: HorrorPen
-license: cc0-by 3.0
-date: Friday, May 11, 2012
-tags: village cave
+date: Friday, May 11, 2012 - 14:26
+license: CC-BY 3.0
 url: https://opengameart.org/content/it-is
 url artist: https://opengameart.org/users/horrorpen
-comment:
- * artist note *
+url file: https://opengameart.org/sites/default/files/It%20Is_0.ogg
+tags: village cave
+comment: * artist note *

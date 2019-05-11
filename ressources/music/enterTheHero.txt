@@ -1,9 +1,9 @@
+title: 8 Bit The Hero 
 artist: ShwiggityShwag
-license: cc0
-date: Monday, August 4, 2014
-tags: village cave
+date: Monday, August 4, 2014 - 07:58
+license: CC0
 url: https://opengameart.org/content/8-bit-the-hero
 url artist: https://opengameart.org/users/shwiggityshwag
-comment:
- * artist note *
-
+url file: https://opengameart.org/sites/default/files/The%20Hero_0.ogg
+tags: village cave
+comment: * artist note *

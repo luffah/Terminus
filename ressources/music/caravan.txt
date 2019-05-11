@@ -1,10 +1,9 @@
-title: Desert Theme
+title: Desert theme
 artist: yd
-license: cc0
-date: Saturday, December 31, 2011
-tags: academy
+date: Saturday, December 31, 2011 - 22:54
+license: CC0
 url: https://opengameart.org/content/desert-theme
 url artist: https://opengameart.org/users/yd
-comment:
- * artist note *
- 
+url file: https://opengameart.org/sites/default/files/caravan.ogg.ogg
+tags: academy
+comment: * artist note *

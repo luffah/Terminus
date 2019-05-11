@@ -1,12 +1,10 @@
-Title: Land of comestible peopble
-Album: Poupi's incredible adventures
+title: Komiku - Poupi's incredible adventures ! - 49 Land of comestible people 0
+collection: Poupi's incredible adventures (full album)
 artist: Monplaisir Loyalty Freak Music
-license: cc0
-date: Monday, March 12, 2018
-tags: fantasy
+date: Monday, March 12, 2018 - 10:53
+license: CC0
 url: https://opengameart.org/content/poupis-incredible-adventures-full-album
 url artist: https://opengameart.org/users/monplaisir-loyalty-freak-music
-comment:
- * artist note *
-
-
+url file: https://opengameart.org/sites/default/files/Komiku%20-%20Poupi%27s%20incredible%20adventures%20%21%20-%2049%20Land%20of%20comestible%20people_0.mp3
+tags: fantasy
+comment: * artist note *

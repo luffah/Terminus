@@ -1,10 +1,11 @@
 title: Searching
 artist: yd
-license: cc0
-date: Saturday, May 5, 2012
-tags: background loop dark drone
+date: Saturday, May 5, 2012 - 00:21
+license: CC0
 url: https://opengameart.org/content/searching
 url artist: https://opengameart.org/users/yd
+url file: https://opengameart.org/sites/default/files/Searching.ogg
+tags: background loop dark drone
 comment:
  * artist note *
  A short piece can be used as a background.

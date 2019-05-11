@@ -1,6 +1,7 @@
 NODEJS=nodejs
 PYTHON=python3
-BUILD_TOOLS=./tools/build
+BUILD_TOOLS=$(realpath ./tools/build)
+GAMEDEV_TOOLS=$(realpath ./tools/gamedev)
 NODEBIN=${TOOLS}/node_modules/.bin
 
 LANG_REGEX=\(.*\.dialog\.\).*\(\.js\)
@@ -20,6 +21,14 @@ build:
 		${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}) -html; \
 	done
 
+fetch_ressources:
+	${GAMEDEV_TOOLS}/ogaget ./ressources -dl --recursive
+
+js: ${TOOLS}/.npm po  ## Compress javascript files
+	for _LANG in ${LANGS};do \
+		_LANG=$${_LANG} make _js; \
+	done
+
 _js_transpile: _ensure_dir_js_build
 	${NODEJS} ${NODEBIN}/babel \
 		-o ./_build/js/all.${_LANG}.js --presets env \
@@ -30,13 +39,8 @@ _js: _ensure_build_dir _js_transpile
 		./_build/js/all.${_LANG}.js \
 		-o ./_build/js/min.${_LANG}.js -c -m;
 
-js: ${TOOLS}/.npm po  ## Compress javascript files
-	for _LANG in ${LANGS};do \
-		_LANG=$${_LANG} make _js; \
-	done
-
-_check_polib:
-	${PYTHON}  -c "import polib" || pip install polib
+# _check_polib:
+	# ${PYTHON}  -c "import polib" || pip install polib
 
 _ensure_build_dir:
 	mkdir -p ./_build
