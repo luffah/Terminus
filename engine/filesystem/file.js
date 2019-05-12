@@ -116,7 +116,7 @@ class Item extends File {
 
   set (prop) {
     super.set(prop)
-    if (prop.cmd) this.emPower(prop.cmd || prop.id)
+    if (def(prop.cmd)) this.emPower(prop.cmd || prop.id)
     else {
       this.exec = prop.exec || this.defaultExec
       this.syntax = prop.syntax || []

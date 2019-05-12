@@ -18,14 +18,12 @@ function keyGet (e) {
 }
 
 function cmpKey (ed, e) {
-  /* eslint-disable */
   return (!(
-    (ed.shift != e.shift) ||
-    (ed.ctrl != e.ctrl) ||
-    (ed.alt != e.alt) ||
+    (Boolean(ed.shift) !== e.shift) ||
+    (Boolean(ed.ctrl) !== e.ctrl) ||
+    (Boolean(ed.alt) !== e.alt) ||
     (ed.key !== e.key)
   ))
-  /* eslint-enable */
 }
 
 function Waiter () {
