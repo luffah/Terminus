@@ -1,23 +1,5 @@
-var state = new GameState()
-var vt = new VTerm(dom.Id('term'))
-vt.imgbank = new Images(RES.img)
-window.addEventListener('load', Game)
-function Game () {
-  // TODO: set -o tofu --> mode tout le monde en cube
-  let t = Game.prototype
-  t.version = 'beta~20181212'
-  loadBackgroud('init')
-  if (typeof doTest === 'function') {
-    doTest(vt)
-    return
-  }
-  t.hasSave = state.startCookie('terminus' + t.version)
-  loadSoundBank()
-  t.start(vt, 0)
-  // t.menu()
-  // new Seq([t.demo_note, t.menu]).next()
-}
 function loadSoundBank () {
+  if (vt.soundbank) return
   vt.soundbank = new SoundBank(RES.sound)
   vt.musicbank = new Music(vt.soundbank, RES.music)
 }
@@ -58,6 +40,7 @@ Game.prototype = {
     vt.clear()
     console.log('Start game')
     loadBackgroud('game')
+    if (state.getopt('snd', true)) loadSoundBank(vt)
     if (pogencnt > 0) vt.echo(_('pogen_alert', pogencnt), { direct: 1, cls: 'logging' })
     if (useCookies < 2) { // yes new game or load
       state.setCookieDuration(7 * 24 * 60) // in minutes

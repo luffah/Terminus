@@ -9,7 +9,7 @@ forked from:
 game:
     title: Terminus
 #   date:  2018
-    version: beta~20181212
+    version: beta~20190512
     author:  luffah
 
 

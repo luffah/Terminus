@@ -124,7 +124,7 @@ def get_content(fpath, ext=''):
             with open(fpath, "r") as buf:
                 ret = [(fpath, buf.readlines())]
     elif isdir(fpath):
-        for fname in listdir(fpath):
+        for fname in sorted(listdir(fpath)):
             ret += get_content(join(fpath, fname), ext=ext)
     return ret
 
