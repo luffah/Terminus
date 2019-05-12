@@ -175,4 +175,4 @@ def jsonize(val):
 
 
 def jsdeclare_var(vname, val):
-    return ['var %s = %s' % (vname, jsonize(val))]
+    return ['var %s = %s' % (vname, jsonize(val))] + ["\n"]

@@ -13,6 +13,7 @@ from .build_params import BUILD_TOOLS
 from .logging import print_info
 
 NODEJS = which("nodejs") or which("node")
+NODEJS_INIT_OK = False
 if NODEJS:
     NODEJS_VERSION = subprocess.getoutput(NODEJS + ' --version')
     print('using %s %s' % (NODEJS, NODEJS_VERSION))
@@ -20,13 +21,20 @@ if NODEJS:
     NODEBIN = join(NODEMODULES, ".bin")
 
 def _install_deps(force=False):
+    global NODEJS_INIT_OK
     d = getcwd()
     chdir(BUILD_TOOLS)
     if force or not isfile('package-lock.json'):
-        system('npm install')
+        err = subprocess.call('npm install'.split())
+        NODEJS_INIT_OK = (err == 0)
+    else:
+        NODEJS_INIT_OK = True
     chdir(d)
 
-def _nodebin(cmd, args):
+def _nodebin(cmd, *args):
+    if not NODEJS_INIT_OK:
+        print('npm install incomplete : abort')
+        return
     return system("%s %s %s" % (NODEJS, join(NODEBIN, cmd), " ".join(args)))
 
 
@@ -39,18 +47,17 @@ def transpile(files, target):
         symlink(NODEMODULES, nodemodules_local)
     #
     print_info("%14s > %s", 'Transpile JS', target)
-    return _nodebin('babel', ['--presets env', '-o %s' % target, complete])
+    return _nodebin('babel', '--presets env', '-o', target, complete)
 
 
 def minify(src, target):
     """ Minify """
     print_info("%14s > %s", 'Minify JS', target)
-    return _nodebin('uglifyjs', ['-o %s' % target, src, '-c', '-m'])
+    return _nodebin('uglifyjs', '-o',  target, src, '-c', '-m')
 
 
 def postcss(files, target):
     """ Autoprefix """
     print_info("%14s > %s", 'Autoprefix & Minify CSS', target)
     complete = concatenated(files)
-    return system("%s %s %s %s" % (
-        NODEJS, join(BUILD_TOOLS, 'postcss.js'), complete, target))
+    return _nodebin(join(BUILD_TOOLS, 'postcss.js'), complete, target)

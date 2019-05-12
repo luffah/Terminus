@@ -237,15 +237,13 @@ def default_credits_builder(dicparam):
     return follow_as(
         'default_credits_builder',
         jsdeclare_var('CREDITS', credits_) +
-        ['\n'] +
         jsdeclare_var('CREDITS_ORD', keys_) +
         (
-            ['\n'] +
             jsdeclare_var('CREDITS_EXTRA',  _get_extra_credits(EXTRA_CREDITS))
             if EXTRA_CREDITS.keys() else []
         ) +
         (
-            ['\n'] + jsdeclare_var('CREDITS_DATA', CREDITS_DATA)
+            jsdeclare_var('CREDITS_DATA', CREDITS_DATA)
             # TODO append here code block to refill RES and CREDITS dict
             if CREDITS_DATA else []
         )
@@ -273,7 +271,7 @@ def default_assets_builder(params, assets):
 
 def build(params):
     """ make an usable js script from project_dir """
-    print(CONTAMINATION_NOTE)
+    # print(CONTAMINATION_NOTE)
     ensure_dir(params['target_dir'])
     copy_dir('css_dir', 'target_dir', 'target_css_subdir', params=params)
     copy_dir('engine_dir', 'target_dir', 'target_engine_subdir', params=params)
