@@ -1,0 +1,4 @@
+({
+  img: 'academy',
+  music: 'academy'
+})

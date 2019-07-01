@@ -6,6 +6,7 @@ NODEBIN=${TOOLS}/node_modules/.bin
 
 LANG_REGEX=\(.*\.dialog\.\).*\(\.js\)
 LANGS=fr en
+CURR_GAME=terminus
 SRC=./engine
 
 default: help
@@ -16,9 +17,20 @@ clean_dist:
 
 all: build ## Generate all html files in all languages
 
-build:
+devenv: ## Source .bash_profile in order to use dev tools
+	bash --init-file .bash_profile
+
+server:
+	cd game/${CURR_GAME}/webroot && php -S localhost:7341
+
+build: ## Fully build
 	for _GAME in $$(ls -d game/*);do \
 		${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}) -html; \
+	done
+
+assemble: ## Transform game file into an usable script
+	for _GAME in $$(ls -d game/*);do \
+		${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}); \
 	done
 
 fetch_ressources:

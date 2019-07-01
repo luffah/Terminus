@@ -5,7 +5,7 @@
    License : GPL
 """
 from os import system, symlink, chdir, getcwd
-from os.path import join, realpath, dirname, islink, isdir, isfile
+from os.path import join, realpath, dirname, islink, isdir, isfile, relpath
 from shutil import which
 import subprocess
 from . import concatenated
@@ -46,18 +46,18 @@ def transpile(files, target):
     if not (islink(nodemodules_local) or isdir(nodemodules_local)):
         symlink(NODEMODULES, nodemodules_local)
     #
-    print_info("%14s > %s", 'Transpile JS', target)
+    print_info("%14s > %s", 'Transpile JS', relpath(target))
     return _nodebin('babel', '--presets env', '-o', target, complete)
 
 
 def minify(src, target):
     """ Minify """
-    print_info("%14s > %s", 'Minify JS', target)
+    print_info("%14s > %s", 'Minify JS', relpath(target))
     return _nodebin('uglifyjs', '-o',  target, src, '-c', '-m')
 
 
 def postcss(files, target):
     """ Autoprefix """
-    print_info("%14s > %s", 'Autoprefix & Minify CSS', target)
+    print_info("%14s > %s", 'Autoprefix CSS', target)
     complete = concatenated(files)
     return _nodebin(join(BUILD_TOOLS, 'postcss.js'), complete, target)

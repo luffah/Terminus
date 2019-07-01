@@ -30,7 +30,7 @@ function resolveVar (a) {
 }
 
 function __ (a, b) {
-  return span(_(a, b), overclass(a))
+  return _span(_(a, b), overclass(a))
 }
 
 function _ (str, vars, fallback) {

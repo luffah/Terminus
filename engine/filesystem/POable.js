@@ -1,18 +1,17 @@
-class POable {
-  constructor () {
-    this.init()
-  }
-
-  init () {
-    this.nopo = []
+class POable extends Statable {
+  constructor (prop) {
+    prop.nopo = prop.nopo || []
+    super(prop)
   }
 
   set (prop) {
-    if (prop.nopo) this.nopo = prop.nopo
-    if (prop.poprefix) this.poprefix = prop.poprefix
-    if (prop.textIdx) this.textIdx = prop.textIdx
+    // if (prop.nopo) this.nopo = prop.nopo
+    // if (prop.poprefix) this.poprefix = prop.poprefix
+    // if (prop.textIdx) this.textIdx = prop.textIdx
+    let p = consume(prop, ['poid', 'povars'])
+    super.set(prop)
     if (!this.name && this.nopo.includes('name')) this.name = prop.id
-    if (prop.poid) this.setPo(prop.poid, prop.povars)
+    if (p.poid) this.setPo(p.poid, p.povars)
   }
 
   setPo (name, vars) {

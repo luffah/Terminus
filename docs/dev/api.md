@@ -71,7 +71,7 @@ $room.setCmd({cmd_name},{cmd_result})
 item.setCmd({cmd_name},{cmd_result})
 ```
 
-# Syntaxic sugar
+# Syntaxic sugar in Javascript Code
 
 A room is also accessible with a variable nammed from its own id '$'+id at creation.
 Autonamming of room variables allow to structure the code.
@@ -90,7 +90,7 @@ We try to reproduce this file structure:
  '- waiting_room/
 ```
 
-Using, the API, the code is basically :
+Using the API, the code is basically :
 ```javascript
     newRoom('forest', 'forest.png'
     ).addDoor(
@@ -109,7 +109,8 @@ Using, the API, the code is basically :
     $exit.newItem('pen')
 ```
 
-If you want to have more readable code, you can use `concatNew` method and alter the prototype to use syntaxic sugar.
+## More syntaxic sugar
+If you want to have your own dialect, you can additionnally use `concatNew` method and alter the prototype to use syntaxic sugar.
 
 ```javascript
     var into=(id, img, prop) => window.hasOwnProperty('$'+id) ? window['$'+id] : newRoom(id,img,prop)
@@ -118,10 +119,7 @@ If you want to have more readable code, you can use `concatNew` method and alter
     Room.prototype.go=Room.prototype.addDoor
     Room.prototype.find=Room.prototype.newItem
     Room.prototype.meet=Room.prototype.newPeople
-```
 
-Therefore, our code example become :
-```javascript
     into('forest', 'forest.png'
     ).go(
       into('clearing', 'clearing.png')
@@ -135,7 +133,6 @@ Therefore, our code example become :
       .and()    .find('pen')
 ```
 
-Feel free to adapt this to your own language.
+Warning : You shall check the file object prototype to ensure it doesn't overwrite another method or property.
 
-You shall check `filesystem/file.js` and `filesystem/directory.js` to ensure it doesn't overwrite another method.
 // All bash shortcuts : https://ss64.com/bash/syntax-keyboard.html

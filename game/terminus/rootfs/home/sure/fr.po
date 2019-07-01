@@ -1,0 +1,69 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+# la ou tu trouve la coquille
+msgid "room_sure"
+msgstr "Départ"
+
+msgid "room_sure_text"
+msgstr "De retour au point de départ… "
+
+msgid "item_nutshell"
+msgstr "Noisette"
+
+msgid "item_nutshell_text"
+msgstr "Une noisette.\nLa coquille est cassée. Les inscriptions suivantes sont lisibles:\n"
+"{{cmd,cd}} Tab Tab te mènera aux voies que te donne {{cmd,ls}}."
+
+# msgid "item_nut"
+# msgstr "Noix"
+#
+# msgid "item_nut_text"
+# msgstr "Une noix de caroube.\nLes inscriptions suivantes sont lisibles:\n"
+# "Ce clavier.... Formidable. J'aurai aimer pouvoir en utiliser un."
+
+msgid "item_dust"
+msgstr "Poussière"
+
+msgid "item_dust_text"
+msgstr "Une nappe de poussière.\nIl s'agit d'un rassemblement des particules comme celles qui flottent dans les airs.\nÇa a l'air doux et moelleux..."
+
+msgid "room_home_text"
+msgstr "De retour au point de départ… "
+
+msgid "cmd_poe_revealed"
+msgstr "poe revealed"
+
+msgid "cmd_cat_second_try"
+msgstr ""
+"??? mmm"
+
+msgid "cmd_cat_third_try"
+msgstr ""
+"Tu n'as qu'à écrire '{{cmd,cat}} {{item_nutshell}}'"
+
+msgid "very_first_try"
+msgstr ""
+". . .\n"
+"\n"
+"Tu m'as l'air de ne pas y voir grand chose dans ce brouillard.\n"
+"\n"
+"As-tu déjà utiliser tes {{cmd,cat}}, {{cmd,ls}} et {{cmd,cd}} ?\n"
+
+msgid "very_second_try"
+msgstr ""
+"Effectivement, tu as l'air démuni·e.\n"
+"Perdu·e ?\n"
+"\n"
+"Ah, tu veux une carte.\n"
+"Il n'y a pas de carte qui puisse décrire ce monde.\n"
+"\n"
+"Dis juste {{cmd,pwd}} pour savoir où tu es.\n"
+"\n"
+"1. En écrivant '{{cmd,cat}}' ( ? ), tu pourras examiner en détail ;\n"
+"2. En écrivant '{{cmd,ls}}' (LiSter), tu pourras voir ce qui croise ton chemin ;\n"
+"3. En écrivant '{{cmd,cd}}' (Changer de Destination), tu pourras aller ailleurs;\n"
+"4. En écrivant '{{cmd,help}}', une aide apparaitra.\n"

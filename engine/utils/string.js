@@ -65,6 +65,16 @@ function setChr (str, pos, chr) {
   return str.slice(0, pos) + chr + str.slice(pos + chr.length)
 }
 
+function rtrim(t){
+  return t.replace(/\s+$/, '')
+}
+function ltrim(t){
+  return t.replace(/^\s*/, '')
+}
+function trim(t){
+  return t.replace(/^\s*/, '').replace(/\s+$/, '')
+}
+
 var CONSONANT = 'bcdfghjklmnpqrstvwxz'
 
 function articulate (txt) {
@@ -153,4 +163,26 @@ function downloadAsFile (fname, text) {
     dl.click()
     window.URL.revokeObjectURL(textFile)
   }
+}
+
+function table_to_printf (tab) {
+  let column_size = new Array(tab[0].length +1).fill(0)
+  for (let row of tab) {
+    for (let i=0; i<row.length; i++) {
+      column_size[i] = Math.max(row[i].length, column_size[i])
+    }
+  }
+  let ret = ''
+  let val
+  for (let row of tab) {
+    for (let i=0; i<row.length; i++) {
+      val = row[i]
+      for (let j=val.length; j<=column_size[i]+1; j++){
+        val += ' '
+      }
+      ret += val
+    }
+    ret += "\n"
+  }
+  return ret
 }

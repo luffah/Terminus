@@ -1,12 +1,12 @@
 var ARGT = {
-  _test: function (ctx, val, syn) {
-    console.log(ctx, val, syn)
+  _test: function (env, val, syn) {
+    console.log(env, val, syn)
     let f = ARGT._typedef[syn[0]]
-    return f ? f(ctx, val, syn) : false
+    return f ? f(env, val, syn) : false
   },
   _typedef: { // TODO
-    dir: (ctx, val) => !val.startsWith('-'),
-    file: (ctx, val) => !val.startsWith('-'),
+    dir: (env, val) => !val.startsWith('-'),
+    file: (env, val) => !val.startsWith('-'),
     alias: () => true,
     opt: () => true,
     instr: () => true,
@@ -43,7 +43,7 @@ function _getOpts (opts) {
 
 function Command (syntax, fu) {
   // syntax example : cmd dir [-d|-e] (undo|redo) -> [ARGT.dir,ARGT.opt.concat(['-d','e']),ARGT.instr.concat['undo','redo']],
-  // fu example : (args, ctx, vt) => console.log(args,ctx,vt)
+  // fu example : (args, env, sys) => sys.stdout.write(env.HOME)
   this.exec = fu
   this.syntax = syntax
 }
@@ -55,6 +55,15 @@ inject(Command, {
   prototype: {
     getSyntax: function (idx) {
       return !this.syntax.length ? null : idx > this.syntax.length ? this.syntax[-1][0] : this.syntax[idx][0]
+    }
+  },
+  tools: {
+    parseArgs : function (args){
+      let indexed = args.map((s, i) => [s, i])
+      return [
+        indexed.filter((s) => s[0][0] !== '-'),  //arguments
+        _getOpts(indexed.filter((s) => s[0][0] === '-')) // options
+      ]
     }
   }
 })

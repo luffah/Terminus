@@ -1,9 +1,12 @@
+// var STATE = 
 class Statable extends Eventable {
   set (prop) {
+    let states = prop.states
+    delete prop.states
     super.set(prop)
-    if (prop.states) {
-      Object.keys(prop.states).forEach((i) => {
-        this.addState(i, prop.states[i])
+    if (states) {
+      Object.keys(states).forEach((i) => {
+        this.addState(i, states[i])
       })
     }
   }
@@ -28,12 +31,13 @@ class Statable extends Eventable {
       name = e.type
       target = e.target
     }
-    state.apply(target.uid + name)
+    this.STATE.apply(target.uid + name)
   }
 
   addState (name, fun) {
-    state.add(this.uid + name, fun, this, name)
+    this.STATE.add(this.uid + name, fun, this, name)
     this.cmd_event[name] = name
     return this
   }
 }
+Statable.prototype.STATE = new GameState()

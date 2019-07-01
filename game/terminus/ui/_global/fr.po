@@ -1,0 +1,72 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "pogen_alert"
+msgstr ""
+"%s traductions manquent, tape 'pogen' pour télécharger le fichier de "
+"traduction avec les nouvelles entrées."
+
+msgid "cmd_poe_revealed"
+msgstr "cmd_poe_revealed"
+
+msgid "po_symbol_edit"
+msgstr "(édition - taper Ctrl + Entrée pour valider) "
+
+msgid "po_symbol_unknown"
+msgstr "po_symbol_unknown"
+
+msgid "link"
+msgstr "link"
+
+msgid "cmd"
+msgstr "%s"
+
+msgid "room"
+msgstr "%s"
+
+msgid "item_none"
+msgstr "Objet"
+
+msgid "item_none_text"
+msgstr "Cet objet n'a rien de particulier."
+
+msgid "item_intro"
+msgstr "C'est un·e %s."
+
+msgid "people_none"
+msgstr "Personne"
+
+msgid "people_none_text"
+msgstr "Cette personne ressemble plutôt à un robot."
+
+msgid "cannot_cast"
+msgstr "Cette commande ne peut pas être utilisée ici."
+
+msgid "ls_title_directions"
+msgstr "Là où tu peux aller (chemins) : %s"
+
+msgid "incorrect_syntax"
+msgstr "La syntaxe est incorrecte. Pour en savoir plus : '{{cmd,man}} %s'"
+
+msgid "invalid_spell"
+msgstr "Cette commande n'existe pas"
+
+msgid "ls_title_items"
+msgstr "Ici, tu peux interagir avec (objets) : %s"
+
+msgid "ls_title_peoples"
+msgstr "Ici, tu peux parler avec : %s"
+
+msgid "welcome_msg"
+msgstr ""
+"Hey '%s' ! Ça va ? \n"
+"Tu as fait un malaise. Ça m'a fichu la frousse."
+
+msgid "room_global_text"
+msgstr ""
+
+msgid "room_global"
+msgstr ""

@@ -1,5 +1,7 @@
 A game script use the engines libs to create rooms, items and peoples.
 
+(update me)
+
 # Engine
 ## Design pattern ?
 The engine is not clearly designed in a MVC or MVVM structure.
@@ -17,7 +19,7 @@ The game script (out of the engine) is the controller.
 
 ## Code Structure
 ```
-      EventTarget
+       FileModel
           |            raise events
          File        --that act on-->    State
       /   |   \

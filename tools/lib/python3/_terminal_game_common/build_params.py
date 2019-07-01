@@ -23,9 +23,8 @@ def get_project_parameters(gamedir, tgt):
         'project_dir': gamedir,
         'root_dir_info': '(directory that represent file system content)',
         'game_info_file': 'credits.txt',
-        'root_subdir': 'fs',
-        'lib_subdir': '_lib',
-        'ui_subdir': '_ui',
+        'root_subdir': 'rootfs',
+        'ui_subdir': 'ui',
         'app_name': app_name,
         # target
         'target_dir': realpath(tgt),
@@ -43,7 +42,7 @@ def get_project_parameters(gamedir, tgt):
         'index.html': 'index.html',
         'game.min.%s.html': '%s.%s.html' % (app_name, '%s')
     }
-    params['webroot_dir'] = join(gamedir, '_web')
+    params['webroot_dir'] = join(gamedir, 'webroot')
     params['css_dir'] = join(params['webroot_dir'], 'css')
     params['js_dir'] = join(params['webroot_dir'], 'js')
     params['img_dir'] = join(params['webroot_dir'], 'img')
@@ -87,7 +86,6 @@ CONTENT_POSITION = [
     'engine',         # ( engine specified for linting only )
     'assets',         # -> assets to load
     'credits',        # -> credits (that are not contained in assets)
-    'lib',            # -> functions in lib dir
     'ui',             # -> functions in ui dir
     '_init',
     '_background',

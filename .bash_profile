@@ -7,6 +7,12 @@ then
    # exit 0
 fi
 
+if [ -f ~/.bashrc ]; then
+  source ~/.bashrc
+else
+  source /etc/bash.bashrc
+fi
+
 export WORKSPACE="${WORKSPACE:-$(realpath .)}"
 export TOOLS="$WORKSPACE/tools"
 export RESSOURCES="$WORKSPACE/ressources"

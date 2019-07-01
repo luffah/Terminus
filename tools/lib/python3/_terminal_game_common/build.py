@@ -139,12 +139,10 @@ def _dir2js(params):
 
     assets = Assets()
     assets.detect(params['project_dir'])
-    assets.detect(params['lib_dir'], rec=True)
     assets.detect(params['ui_dir'], rec=True)
 
     polines = POLines()
     polines.add(params['project_dir'])
-    polines.add(params['lib_dir'], rec=True)
     polines.add(params['ui_dir'], rec=True)
 
     assets_builder = params.get('assets_builder', default_assets_builder)
@@ -153,12 +151,11 @@ def _dir2js(params):
 
     jslines = {
         'license': licenses_builder(params),
-        'lib': get_content(params['lib_dir'], ext='.js'),
-        'ui': get_content(params['ui_dir'], ext='.js'),
         'contamination': [
             ('CONTAMINATION_NOTE',
              CONTAMINATION_NOTE.splitlines(True))
         ],
+        'ui': get_content(params['ui_dir'], ext='.js'),
         'engine': get_content(
             params.get('engine_files', [])
         ),

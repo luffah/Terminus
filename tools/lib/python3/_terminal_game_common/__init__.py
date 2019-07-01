@@ -5,7 +5,7 @@
    License : GPL
 """
 from os import listdir, environ, mkdir, system
-from os.path import isdir, isfile, islink, join, basename, dirname
+from os.path import isdir, isfile, islink, join, basename, dirname, relpath
 import re
 import shutil
 import sys
@@ -45,7 +45,8 @@ def write(fname, lines, append=False, title=''):
        write lines in the file fname
     """
     if lines:
-        print_info("%14s %s %s", title, '>>' if append else '> ', fname)
+        print_info("%14s %s %s", title, '>>' if append else '> ',
+                relpath(fname))
     with open(fname, ("a" if append else "w")) as buf:
         buf.writelines(lines)
 

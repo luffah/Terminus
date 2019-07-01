@@ -1,6 +1,7 @@
 composer: luffah
+original design: Emma Tolley & Shawn Conrad
 license: mit
 date: 2017
-sources: item_book from mprat terminus version, vim official logo
+sources: vim official logo
 comment:
  * artist note *

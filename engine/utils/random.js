@@ -10,7 +10,7 @@ function shuffleStr (src, complexity) {
   }
   return ret
 }
-// function randomStr (length) {
-//   var randsArr = ('. abcdefghijklmnopqrstuvwxyz -0123456789').repeat(length).split('').sort(randomSort)
-//   return randsArr.slice(0, length).join('')
-// }
+function randomStr (length) {
+  var randsArr = (' #$)~._-(\\/^&abcdefghijklmnopqrstuvwxyz -0123456789').repeat(length).split('').sort(randomSort)
+  return randsArr.slice(0, length).join('')
+}

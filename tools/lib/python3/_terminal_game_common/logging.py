@@ -6,6 +6,17 @@
 """
 from __future__ import print_function
 import sys
+from time import sleep
+try:
+    import colorama
+    RED, ORANGE, GREY, RESET = (
+            colorama.Fore.RED,
+            colorama.Fore.YELLOW,
+            colorama.Fore.LIGHTGREEN_EX,
+            colorama.Fore.RESET
+            )
+except:
+    RED, ORANGE, RESET = ['']*3
 
 ERROR_REDIR = sys.stderr
 WARNING_REDIR = sys.stderr
@@ -23,16 +34,17 @@ def silent_log():
 def print_err(msg, *keys):
     """ print an error (formatstr, keys,...) """
     if ERROR_REDIR:
-        print(u"›o‹ nooo : " + (msg % keys), file=ERROR_REDIR)
+        ERROR_REDIR.write(RED + u"›o‹ nooo : " + (msg % keys) + RESET + "\n")
+        sleep(2)
 
 
 def print_warn(msg, *keys):
     """ print a warning (formatstr, keys,...) """
     if WARNING_REDIR:
-        print(u"/!\\ " + (msg % keys), file=WARNING_REDIR)
+        WARNING_REDIR.write(ORANGE + u"! " + (msg % keys) + RESET + "\n")
 
 
 def print_info(msg, *keys):
     """ print an info (formatstr, keys,...) """
     if INFO_REDIR:
-        print(u"[!] " + (msg % keys), file=INFO_REDIR)
+        INFO_REDIR.write(GREY + (msg % keys) + RESET +  "\n")

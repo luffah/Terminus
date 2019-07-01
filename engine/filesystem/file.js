@@ -1,38 +1,32 @@
+FileModel.prototype._inheritable = ['poprefix']
+FileModel.prototype._clonable = ['cmd_event', 'cmd_hook', 'text']
+FileModel.prototype._copiable = []
 class File extends FileModel {
   constructor (prop) {
     super(prop)
-    this._inheritable = ['poprefix']
-    this._clonable = ['cmd_event', 'cmd_hook', 'text']
-    this._copiable = ['img']
     this.cmd_hook = {}
-    this.room = prop.room
+    this.room = null
     this.mod = new Modes()
     this.set(inject(
       { mod: this.default.mod,
-        owner: (prop.room ? prop.room.owner : this.default.owner),
-        group: (prop.room ? prop.room.group : this.default.group),
+        owner: (this.room ? this.room.owner : this.default.owner),
+        group: (this.room ? this.room.group : this.default.group),
         tgt: this }, prop)
     )
   }
 
   set (prop) {
-    if (prop.id) this.id = prop.id
-    if (prop.name) this.name = prop.name
-    if (prop.text) this.text = prop.text
-    if (prop.tgt) this.tgt = prop.tgt
-    if (prop.mod) this.chmod(prop.mod)
-    if (prop.syntax) this.syntax = prop.syntax
-    if (prop.group) this.group = prop.group || prop.id
-    if (prop.owner) this.owner = prop.owner || prop.id
-    if (def(prop.v)) this.v = prop.v // contextual variable
-    if (prop.var) {
-      this.var = prop.var || prop.id
-      window[this.var] = this
+    let t = this
+    t.consume(prop, ['group', 'owner'])
+    let p = consume(prop, ['mod', 'var', 'hooks'])
+    if (p.mod) t.chmod(p.mod)
+    if (p.var) {
+      t.var = p.var
+      window[t.var] = t
     }
-    let h = prop.hooks
-    if (h) {
-      Object.keys(h).forEach((i) => {
-        this.setHook(i, h[i] || _(prop.poid + '_' + i))
+    if (p.hooks) {
+      Object.keys(p.hooks).forEach((i) => {
+        this.setHook(i, p.hooks[i] || _(t.poid + '_' + i))
       })
     }
     super.set(prop)
@@ -116,7 +110,7 @@ class Item extends File {
 
   set (prop) {
     super.set(prop)
-    if (def(prop.cmd)) this.emPower(prop.cmd || prop.id)
+    if (prop.cmd) this.emPower(prop.cmd)
     else {
       this.exec = prop.exec || this.defaultExec
       this.syntax = prop.syntax || []
@@ -124,9 +118,9 @@ class Item extends File {
     if (prop.init) prop.init(this)
   }
 
-  defaultExec (args, room, vt) {
-    this.fire(vt, 'exec', args)
-    return cmdDone(vt, [[this, 0]], this.text, 'exec', args)
+  defaultExec (args, room, sys) {
+    this.fire(sys, 'exec', args)
+    return cmdDone(sys, [[this, 0]], this.text, 'exec', args)
   }
 
   disappear () {

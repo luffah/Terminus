@@ -1,9 +1,10 @@
-function Seq (list) {
-  this.seq = this._getlist(list)
-  this.idx = 0
-}
-Seq.prototype = {
-  _getlist: function (it) {
+class Seq {
+  constructor (list) {
+    this.seq = this._getlist(list)
+    this.idx = 0
+    this.current = this.seq[0]
+  }
+  _getlist (it) {
     let list = []
     if (it instanceof Seq) {
       list = it.seq
@@ -13,31 +14,47 @@ Seq.prototype = {
       list = [it]
     }
     return list
-  },
-  then: function (fu) {
+  }
+  then (fu) {
     this.seq.push(fu)
     return this
-  },
-  infect: function (idx, fu) {
+  }
+  infect (idx, fu) {
     if (idx < 0) { idx = this.seq.length + idx }
     if (this.seq[idx]) {
       fu(this.seq[idx])
     }
-  },
-  append: function (it) {
+  }
+  append (it) {
     this.seq = this.seq.concat(this._getlist(it))
-  },
-  next: function () {
+  }
+  next () {
     let t = this
-    t.idx++
     let r = t.seq.shift()
-    if (r instanceof Function) { r(function () { t.next() }); return true }
+    if (r) {
+      let idx = t.idx
+      t.idx++
+      if (r instanceof Function) { r(function () { t.next() }); return true }
+      r.__index__ = idx
+    }
     return r
-  },
-  length: function () {
+  }
+  [Symbol.iterator]() {
+    let t = this
+    return {
+      next() {
+        let ret = {value: t.next(), done: true}
+        if (ret.value) {
+          ret.done = false
+        }
+        return ret
+      }
+    }
+  }
+  get length() {
     return this.seq.length
-  },
-  getIdx: function () {
+  }
+  getIdx () {
     return this.idx
   }
 }

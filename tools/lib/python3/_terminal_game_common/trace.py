@@ -5,7 +5,7 @@
    License : GPL
 """
 from os import listdir
-from os.path import isfile, isdir, join
+from os.path import isfile, isdir, join, relpath
 from . import \
     add_comma as _add_comma, \
     rm_trailing_comma as _rm_trailing_comma,\
@@ -74,7 +74,8 @@ class LineFollower(object):
            write lines in the file fname
         """
         if lines_followed:
-            print_info("%14s %s %s", title, '>>', self.fname)
+            print_info("%14s %s %s", title, '>>',
+                    relpath(self.fname))
         for line_followed in lines_followed:
             if len(line_followed) == 2:
                 orig, lines = line_followed

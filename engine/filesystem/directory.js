@@ -28,38 +28,42 @@ class Room extends File {
     // text || _(PO_DEFAULT_ROOM_DESC),
   }
   set (prop) {
+    let peoples = prop.peoples
+    let items = prop.items
+    let children = prop.children
+    let tree = prop.tree
+    delete prop.items
+    delete prop.peoples
+    delete prop.children
+    delete prop.tree
     super.set(prop)
     if (!this.items) this.items = []
     if (!this.children) this.children = []
-    if (prop.starterMsg) this.starter_msg = prop.starterMsg
-    if (prop.lost) this.lost = prop.lost
-    if (prop.enterCallback) this._enterCallback = prop.enterCallback
-    if (prop.leaveCallback) this._leaveCallback = prop.leaveCallback
-    if (prop.pic_shown_as_item) this.pic_shown_as_item = prop.pic_shown_as_item
-    let h = prop.items
-    if (h) {
-      Object.keys(h).forEach((i) => {
+    // if (prop.starterMsg) this.starter_msg = prop.starterMsg
+    // if (prop.lost) this.lost = prop.lost
+    // if (prop.enterCallback) this.enterCallback = prop.enterCallback
+    // if (prop.leaveCallback) this.leaveCallback = prop.leaveCallback
+    // if (prop.pic_shown_as_item) this.pic_shown_as_item = prop.pic_shown_as_item
+    if (items) {
+      Object.keys(items).forEach((i) => {
         let m = i.match(re.batch)
-        if (m) this.newItemBatch(m[1], m[2].split(','), h[i])
-        else this.newItem(i, h[i])
+        if (m) this.newItemBatch(m[1], m[2].split(','), items[i])
+        else this.newItem(i, items[i])
       })
     }
-    h = prop.peoples
-    if (h) {
-      Object.keys(h).forEach((i) => {
-        this.newPeople(i, h[i])
+    if (peoples) {
+      Object.keys(peoples).forEach((i) => {
+        this.newPeople(i, peoples[i])
       })
     }
-    h = prop.children
-    if (h) {
-      Object.keys(h).forEach((i) => {
-        this.newRoom(i, h[i])
+    if (children) {
+      Object.keys(children).forEach((i) => {
+        this.newRoom(i, children[i])
       })
     }
-    h = prop.tree
-    if (h) {
-      Object.keys(h).forEach((i) => {
-        this.newRoom(i, h[i])
+    if (tree) {
+      Object.keys(tree).forEach((i) => {
+        this.newRoom(i, tree[i])
       })
     }
     return this
@@ -99,7 +103,7 @@ class Room extends File {
   removeDoor (child) { if (pick(this.children, child.uid, 'uid')) { child.room = null } }
   destroy () { pick(this.room.children, this.uid, 'uid'); this.room = null }
   getRoot () { return (this.tgt.room ? this.tgt.room.getRoot() : this.tgt) }
-  getDir (arg, ctx) {
+  getDir (arg, env) {
   /* Get a reachable room from current room
    * non recursive i.e. for rooms r/r2/r3
    * r.getDir("r2",c) returns r2
@@ -108,7 +112,7 @@ class Room extends File {
     let r = null
 
     if (arg === '~') {
-      r = ctx.h.v.HOME || ctx.h.r.getRoot()
+      r = env.get.HOME || env.cwd.getRoot()
     } else if (arg === '..') {
       r = this.room
     } else if (arg === '.') {
@@ -119,24 +123,24 @@ class Room extends File {
     return r || null
   }
   // callback when entering in the room
-  setLeaveCallback (fu) { this.tgt._leaveCallback = fu; return this }
+  setLeaveCallback (fu) { this.tgt.leaveCallback = fu; return this }
   doLeaveCallbackTo (to) {
     let r = this
     // console.log(r.toString(), 'doLeaveCallbackTo', to.toString())
     if (r.uid !== to.uid && r.room) {
-      if (typeof r._leaveCallback === 'function') {
-        r._leaveCallback()
+      if (typeof r.leaveCallback === 'function') {
+        r.leaveCallback()
       }
       r.room.doLeaveCallbackTo(to)
     }
   }
-  setEnterCallback (fu) { this.tgt._enterCallback = fu; return this }
+  setEnterCallback (fu) { this.tgt.enterCallback = fu; return this }
   doEnterCallbackTo (to) {
     let r = this
     if (r.uid === to.uid) {
     } else if (r.children.length) {
-      if (typeof r._leaveCallback === 'function') {
-        r._enterCallback()
+      if (typeof r.enterCallback === 'function') {
+        r.enterCallback()
       }
       if (r.room) {
         r.room.doEnterCallbackTo(to)
@@ -150,8 +154,8 @@ class Room extends File {
   /* Returns the room and the item corresponding to the path
    * if item is null, then the path describe a room and  room is the full path
    * else room is the room containing the item */
-  traversee (path, ctx) {
-    let [room, lastcomponent] = this.pathToRoom(path, ctx)
+  traversee (path, env) {
+    let [room, lastcomponent] = this.pathToRoom(path, env)
     let ret = { room: room, item_name: lastcomponent, item_idx: -1 }
     if (room) {
       ret.room_name = room.name
@@ -162,33 +166,39 @@ class Room extends File {
     }
     return ret
   }
-  checkAccess (ctx) {
-    let c = ctx.h.r.tgt
+  checkAccess (env) {
+    let c = env.cwd.tgt
     let r = this.tgt
     if (c.uid === r.uid) {
       return true
     } else if (r.isParentOf(c)) {
-      return r.ismod('x', ctx)
+      return r.ismod('x', env)
     } else if (c.isParentOf(r)) {
-      return r.ismod('x', ctx) && r.room.checkAccess(ctx)
+      return r.ismod('x', env) && r.room.checkAccess(env)
     } else {
-      return r.ismod('x', ctx) && (!r.room || r.room.checkAccess(ctx))
+      return r.ismod('x', env) && (!r.room || r.room.checkAccess(env))
     }
   }
-  pathToRoom (path, ctx) {
+  pathToRoom (path, env) {
     // returns [ room associated to the path,
     //           non room part of path,
     //           valid path ]
-    if (path !== '/') path = path.replace(/\/$/, '')
     let room = this.tgt
+    let pathstr = ''
+    if (path[0] === '/') {
+      room = this.getRoot()
+      pathstr = '/'
+    }
+    path = path.replace(/\/$/, '')
+    if (!path.length) return [room, null, pathstr]
     let pat = path.split('/')
-    let end = pat.slice(0, -1).findIndex((r) => !(room = room.getDir(r, ctx)))
-    let pathstr = pat.slice(0, end).join('/')
+    let end = pat.slice(0, -1).findIndex((r) => !(room = room.getDir(r, env)))
     let lastcomponent = null
     let cancd
+    pathstr += pat.slice(0, end).join('/')
     if (room) {
       lastcomponent = pat.pop() || null
-      cancd = room.getDir(lastcomponent, ctx)
+      cancd = room.getDir(lastcomponent, env)
       if (cancd) {
         room = cancd
         pathstr += (end <= 0 ? '' : '/') + lastcomponent + '/'
@@ -275,27 +285,26 @@ class Room extends File {
     return this
   }
 
-  static enter (r, vt) {
-    let ctx = vt.ctx
-    // console.log('enterRoom', r, ctx)
-    let prev = ctx.h.r
+  static enter (r, env) {
+    // console.log('enterRoom', r, env)
+    let prev = env.cwd
     if (prev && !prev.isParentOf(r)) {
       prev.doLeaveCallbackTo(r)
     }
-    ctx.h.r = r
+    env.cwd = r
     if (!r.lost) {
-      state.saveContext(ctx)
+      r.STATE.saveEnv(env)
     }
     if (r.music) {
       vt.playMusic(r.music, { loop: true })
     }
-    if (typeof r._enterCallback === 'function') {
-      r._enterCallback(r, vt)
+    if (typeof r.enterCallback === 'function') {
+      r.enterCallback(r, env)
     }
     if (typeof r.effects.enter_room === 'function') {
-      r.effects.enter_room(r, vt)
-    } else if (typeof vt.effects.enter_room === 'function') {
-      vt.effects.enter_room(r, vt)
+      r.effects.enter_room(r, env)
+    // } else if (typeof vt.effects.enter_room === 'function') {
+      // vt.effects.enter_room(r, vt)
     }
     return [r.toString(), r.text]
   }

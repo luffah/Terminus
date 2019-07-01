@@ -1,0 +1,44 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_lessons"
+msgstr "Cours"
+
+msgid "room_lessons_text"
+msgstr ""
+"Mis à part le monologue professoral, le calme règne dans cette salle.\n"
+"Le cours a déjà commencé et ça parle de \"Sort de déplacement.\""
+
+msgid "people_prof_mv0"
+msgstr "Bien essayé ! Mais c'est interdit... Question de libre arbitre."
+
+msgid "people_prof_mv1"
+msgstr "Ça devient agaçant."
+
+msgid "people_prof_mv2"
+msgstr "{{face,regard méchant}}"
+
+msgid "people_prof_text"
+msgstr ""
+"Le prof dit un tas de choses qui pour toi ressemblent à du charabia,\n"
+"mais tu as réussi à comprendre trois choses :\n"
+"1. '{{cmd,mv}}' sert à déplacer des objets \n"
+"2. il faut indiquer le nom de l'objet et de la destination ({{cmd,mv}} OBJET CHEMIN) \n"
+"3. Ce sort ne marche pas sur tous les objets, mais tu n'as pas réussi à bien comprendre lesquels n'étaient pas déplaçables."
+
+msgid "people_prof_textquit"
+msgstr ""
+"« Oh oh ! C'est pas bon, tu devrais partir. Tout de suite ! Tu peux écrire "
+"'{{cmd,cd}} ~'» "
+
+msgid "people_prof"
+msgstr "Professeur"
+
+msgid "room_lessons_textescape"
+msgstr ""
+"L'atmosphère de la pièce devient poussiéreuse.\n"
+"Des débris tombent du plafond.\n"
+"Plus personne dans les parages."

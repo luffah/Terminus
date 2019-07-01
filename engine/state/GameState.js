@@ -10,9 +10,11 @@ class GameState {
   }
 
   startCookie (name) {
+    console.log(name)
     this.cookie = new Cookie(name)
     if (this.cookie.check()) {
       this._params_cache = this.cookie.read()
+      console.log(this._params_cache)
       return true
     }
     return false
@@ -82,17 +84,17 @@ class GameState {
     return false
   }
 
-  saveContext (ctx) {
-    this.params[0] = ctx.stringify()
+  saveEnv (env) {
+    this.params[0] = env.stringify()
     this.saveCookie()
   }
 
-  loadContext () {
+  loadEnv () {
     let params = this._params_cache
     this.active = true
     if (params[0]) {
       this.params[0] = params[0]
-      return Context.parse(params[0])
+      return Env.parse(params[0])
     }
     return false
   }

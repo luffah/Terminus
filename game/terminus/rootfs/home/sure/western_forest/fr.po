@@ -1,0 +1,39 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_western_forest"
+msgstr "Bois"
+
+msgid "room_western_forest_text"
+msgstr ""
+"Te voici dans une forêt. Un chemin s'étale droit devant.\n"
+"Tout près, un panneau indique \"Académie des Bots : Grande école de Sorcellerie du Grand Ordinateur. \""
+
+msgid "item_gribouillis"
+msgstr "Gribouillis"
+
+msgid "item_gribouillis_text"
+msgstr ""
+"Il est formellement interdit d'essayer de parler aux non- anthropomorphes.\n"
+"Rappelez vous de l'incident de la semaine dernière et la perte de votre camarade."
+
+msgid "item_western_forest_academy_direction"
+msgstr "Panneau"
+
+msgid "item_western_forest_academy_direction_text"
+msgstr ""
+"Académie des Bots : Grande école de Sorcellerie du Grand Ordinateur.\n"
+"À ne pas manquer aujourd'hui : Leçon d'initiation aux commandes !"
+
+msgid "item_western_forest_back_direction"
+msgstr "RentreChezToi"
+
+msgid "item_western_forest_back_direction_text"
+msgstr ""
+"À tout moment :\n"
+"  pour revenir au point de départ, \n"
+"       écris juste la commande '{{cmd,cd}} ~' ; \n"
+"  pour savoir ou tu te trouves, écris '{{cmd,pwd}}'."

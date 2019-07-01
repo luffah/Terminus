@@ -1,8 +1,7 @@
 /*
  *   Define default properties on File object
  *
- *   Eventable -> Statable ->_
- *                POable   -' '->  FileModel -> File
+ *   Properties -> Eventable -> Statable -> POable ->  FileModel -> File
  *
  *
  *   Following structure is not modified :
@@ -12,23 +11,25 @@
  *           |-> Item (executable) -> People
  *
  **/
-class FileModel extends Statable {
+class RenderTree { /* class for extra rendering */
+  constructor (root, leafs) {
+    this.root = root
+    this.leafs = leafs
+  }
+}
+class FileModel extends POable {
   constructor (prop) {
+    for (let k of ['group', 'owner', 'cmd', 'var']) {
+      if (prop[k] === 0) prop[k] = prop.id
+    }
     super(prop)
-    POable.prototype.init.apply(this)
-    this.pic_shown_in_ls = true
   }
   set (prop) {
-    POable.prototype.set.call(this, prop)
-    if (prop.music) this.music = prop.music
-    if (prop.img) this.img = prop.img
-    if (prop.pic_shown_in_ls) this.pic_shown_in_ls = prop.pic_shown_in_ls
-    recordAssetRef(prop, this)
     super.set(prop)
+    recordAssetRef(prop, this)
   }
 }
 FileModel.prototype.default = { owner: 'user', group: 'user', mod: 'a+r' }
-inject(FileModel.prototype, POable.prototype, (k) => k !== 'set')
 
 function recordAssetRef (prop, obj) {
   Object.keys(RES).forEach(t => {

@@ -1,0 +1,14 @@
+#
+msgid ""
+msgstr ""
+"Language: fr\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_spell_casting_academy"
+msgstr "AcadémieDesBots"
+
+msgid "room_spell_casting_academy_text"
+msgstr ""
+"L'entrée de l'académie est très impressionnante.\n"
+"Le hall est bondé. Vous ne voyez qu'une nouée de visages amorphes.\n"
+"Le plafond est très haut et sous l'empilement d'étages en mezzanine, vous peinez à voir la fin des couloirs."
