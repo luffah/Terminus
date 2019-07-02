@@ -57,6 +57,14 @@ class File extends FileModel {
 
   toString () { return this.name }
 
+  get path () { 
+    return (this.room ? this.room.path + '/' + this.name : '')
+  }
+
+  relativepath (base) {
+    return (this.room && this.uid !== base.uid ? this.room.relativepath(base) + '/' + this.name : (this.room ? '.' : ''))
+  }
+
   ismod (right, ctx) {
     if (this.mod.get('o', right)) return true
     if (ctx) {

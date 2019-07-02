@@ -8,13 +8,15 @@ var re = {
   format: /\{(\d)\}/g, // format
   template: /\{\{(\w+):\}\}/g, // template
   noaccents: /[\u0300-\u036f]/g,
+  hidden: /^\..*/,
   str: /^'[^']*'$/,
   strv: /^"[^"]*"$/,
   strr: /("[^"]*"|'[^']*')/g,
   escaped: /\\(.)/g,
   escapend: /\\$/g,
   varr: /\$({\w+}|\w+)/g,
-  star: /.*\*.*/,
+  star: /\*/,
+  pathstar: /(^|\/)\*\*\//,
   nbsp: /\u00A0/g,
   tab: /\t/g,
   br: /(\n|<br\/?>)/g,

@@ -1,30 +1,23 @@
 Command.def('ls', [ARGT.dir], function (args, env, sys) {
 
-  function optL(room, path, showhidden, recursive) {
-    function prtStat (r, path, hidden) {
-      return [
-        r.link ? 'link' : (r instanceof Room ? 'dir' : 'file '),
-        r.mod.stringify(),
-        r.owner,
-        r.group,
-        (hidden ? path : (path || '') + '/' + (r.room ? r.id : '')),
-        '"' + r.toString() + '"',
-        r.link ? ' --> ' + r.link.id : ''
-      ]
-    }
-
+  function optL(room, path, showhidden) {
     let tab = []
-    if (showhidden) tab.push(prtStat(room, path, true))
-    function lFiles (room, path) {
-      console.log(path)
-      room.tgt.children.forEach(r => {
-        tab.push(prtStat(r, path))
-        if (recursive) lFiles(r, (path || '') + '/' + r.id)
-      })
-      room.tgt.items.forEach(i => tab.push(prtStat(i, path)))
+    let list = room.find(0,1)
+    if (showhidden) {
+      list.push(room)
+    } else {
+      list = list.filter((f) => !re.hidden.test(f.name))
     }
-    lFiles(room, path)
-    console.log(tab)
+    for (let f of list){
+      tab.push([
+        f.link ? 'link' : (f instanceof Room ? 'dir' : 'file '),
+        f.mod.stringify(),
+        f.owner,
+        f.group,
+        f.relativepath(room),
+        f.link ? ' --> ' + f.link.path : ''
+      ])
+    }
     return table_to_printf(tab)
   }
 

@@ -37,6 +37,7 @@ class Room extends File {
     delete prop.children
     delete prop.tree
     super.set(prop)
+    if (!this.peoples) this.peoples = []
     if (!this.items) this.items = []
     if (!this.children) this.children = []
     // if (prop.starterMsg) this.starter_msg = prop.starterMsg
@@ -206,6 +207,18 @@ class Room extends File {
       }
     }
     return [room, lastcomponent, pathstr]
+  }
+  find (regex, depth, fullpath, type) {
+    depth = depth || 99
+    let files = []
+    if (type != 'dir') for (let i of this.items.concat(this.peoples)){
+      if (!regex || regex.test(fullpath ? i.relativepath(this) : i.name)) files.push(i)
+    }
+    if (depth > 1) for (let i of this.children){
+      if (type != 'file' && (!regex || regex.test(fullpath ?  i.relativepath(this) : i.name))) files.push(i)
+      files = files.concat(i.find(regex, depth-1, fullpath, type))
+    }
+    return files
   }
   // item & people management
   addItem (f) {

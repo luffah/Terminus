@@ -353,10 +353,10 @@ class Shell {
     var newargs = []
     let env = this.env
     args.forEach((arg) => {
-      if (re.str.test(arg)) { //  simple 'quote'
-        return newargs.push(arg.slice(1, arg.length - 1))
-      }
-      // from escaped chars are accounted
+      // manage simple 'quote'
+      if (re.str.test(arg)) return newargs.push(arg.slice(1, arg.length - 1))
+
+      // manage \ (escape char)
       let escaped = (arg.match(re.escaped) || []).map((a) => a.replace(/^\\/, ''))
       let escword = (
         '#' + '‡†‰©š®²³µ¶¸¾½¼¿<ESCAPED;>'.repeat(5).split('').sort(randomSort).join('') + '#'
@@ -368,34 +368,41 @@ class Shell {
           () => { return escaped[escidx++] }
         )
       }
-      // console.log(arg)
       arg = arg.replace(re.escaped, escword)
-      //
-      // console.log(arg)
+
+      // manage env variable $VARNAME
       arg = arg.replace(re.varr, (a) => env.get[a.replace(/^\$/, '')] || '')
-      if (re.strv.test(arg)) { //  double "quote"
-        // console.log(arg)
-        return newargs.push(unesc(arg.slice(1, arg.length - 1)))
-      }
+
+      // manage "double quote"
+      if (re.strv.test(arg)) return newargs.push(unesc(arg.slice(1, arg.length - 1)))
+
+      // manage quote" in "arg
       arg = arg.replace(re.strr, (a) => a.slice(1, a.length - 1))
 
+      arg = unesc(arg)
+
+      let xargs = []
       if (re.star.test(arg)) {
-        let [room, lastcomponent, path] = env.cwd.pathToRoom(arg)
-        if (room && lastcomponent) {
-          let regexpArg = new RegExp(lastcomponent.replace(/\./g, '.').replace(/\*/g, '.*'))
-          let xargs = []
-          room.items.map(objToStr).filter((a) => regexpArg.test(a)).forEach((it) => {
-            // console.log(it)
-            xargs.push(unesc(path + (path.length ? '/' : '') + it))
-          })
-          newargs = newargs.concat(xargs.sort())
+        if (re.pathstar.test(arg)) {
+          let regexpArg = new RegExp(arg.replace(/\./g, '.').replace(/\*/g, '.*'))
+          let room = (arg[0] == '/') ? env.cwd.getRoot() : env.cwd
+          for (let f of room.find(regexpArg, 0, 1)){
+              xargs.push(f.relativepath(room))
+          }
         } else {
-          newargs.push(unesc(arg))
+          let [room, lastcomponent, path] = env.cwd.pathToRoom(arg)
+          let regexpArg = new RegExp(lastcomponent.replace(/\./g, '.').replace(/\*/g, '.*'))
+          if (room && lastcomponent) {
+            room.items.map(objToStr).filter((a) => regexpArg.test(a)).forEach((it) => {
+              xargs.push((path + (path.length ? '/' : '') + it))
+            })
+          }
         }
-      } else {
-        newargs.push(unesc(arg))
       }
+      if (xargs.length) newargs = newargs.concat(xargs.sort())
+      else newargs.push(arg)
     })
+    console.log(newargs)
     return newargs
   }
   completeArgs (args, idx, cword) { // return completion matches
