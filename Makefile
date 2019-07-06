@@ -21,7 +21,10 @@ devenv: ## Source .bash_profile in order to use dev tools
 	bash --init-file .bash_profile
 
 server:
-	cd game/${CURR_GAME}/webroot && php -S localhost:7341
+	export SERVPATH=game/${CURR_GAME}/webroot;\
+	export PIDFILE=$${SERVPATH}/server.pid;\
+	export SERVPORT=7341;\
+	bash -c "test -f \$${PIDFILE} && kill \$$(cat \$${PIDFILE}) || true; (cd \$${SERVPATH} &&  python -mSimpleHTTPServer \$${SERVPORT} & PID=\$$!; echo \$$PID > $${PIDFILE}; wait \$$PID; rm $${PIDFILE} ) 2> server.log &"
 
 build: ## Fully build
 	for _GAME in $$(ls -d game/*);do \
