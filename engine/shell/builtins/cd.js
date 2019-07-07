@@ -15,7 +15,7 @@ Builtin.def('cd', [ARGT.dir], function (args, env, sys) {
       return cmdDone(env, [[cwd.room, 0]],_stdout(_('cmd_cd_parent', Room.enter(cwd.room, env))), 'cd', args)
     } else return _stderr(_('cmd_cd_no_parent'))
   } else if (args[0] === '~') {
-    let home = env.getDir('~')
+    let home = env.HOME
     if (home && home.checkAccess(env)) {
       env.previous = cwd
       Room.enter(home, env)

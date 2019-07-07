@@ -1,4 +1,13 @@
 /* Terminal interface which solve completion problem */
+var CursorListener = {
+  listeners : [],
+  push: function(f){
+    CursorListener.listeners.push(f)
+  },
+  fire: function(k, pos){
+     CursorListener.listeners.forEach((f) => f(k, pos))
+  }
+}
 
 /*  HINTS
  *  use a vterm : let vt = new VTerm(document.body)
@@ -53,11 +62,14 @@ class VTerm extends Window {
      *  | |  .---------------------.||
      *  | | | inputdiv             ||| --> define user inventory style and offset
      *  | | |  .-----------------. |||
-     *  | | | | cmdline          | ||| --> define input style
+     *  | | | | cmdlinecontainer | ||| --> contain  input style 
      *  | | | |  .-------------. | |||
-     *  | | | | | inputline    | | |||
+     *  | | | | | cmdline    | | |||
      *  | | | | | [ prompt  ]  | | |||
-     *  | | | | | [ input   ]  | | |||
+     *  | | | | | .----------. | | |||
+     *  | | | | || cmdinput  | | | |||
+     *  | | | | ||[ input   ]| | | |||
+     *  | | | | |'-----------' | | |||
      *  | | | | '--------------' | |||
      *  | | | |  .-------------. | |||
      *  | | | | | belt         | | |||
@@ -71,11 +83,12 @@ class VTerm extends Window {
     v.monitor = addEl(el, 'div', picturable({ class: 'monitor'}) )
     v.inputcontainer = addEl(el, 'div', 'input-container')
     v.inputdiv = addEl(v.inputcontainer, 'div', 'input-div')
-    v.cmdline = addEl(v.inputdiv, 'p')
-    v.inputline = addEl(v.cmdline, 'p', accessible({ class: 'input' }))
-    v.PS1 = addEl(v.inputline, 'span')
-    v.input = addEl(v.inputline, 'input', { size: 80 })
-    v.belt = addEl(v.cmdline, 'div', 'belt')
+    v.cmdlinecontainer = addEl(v.inputdiv, 'p')
+    v.cmdline = addEl(v.cmdlinecontainer, 'p', accessible({ class: 'input' }))
+    v.PS1 = addEl(v.cmdline, 'span')
+    v.cmdinput = addEl(v.cmdline, 'span')
+    v.input = addEl(v.cmdinput, 'input', { size: 80 })
+    v.belt = addEl(v.cmdlinecontainer, 'div', 'belt')
     v.buttons = addEl(v.belt, 'div', 'keys')
     v.suggestions = addEl(v.belt, 'div', accessible({ class: 'suggest', 'aria-relevant': 'additions removals' }))
 
@@ -109,42 +122,19 @@ class VTerm extends Window {
     setTimeout(() => window.scroll(0, 0), this.timeout.scroll)
   }
   /* Setups */
-  disableInput () { // disable can act as a mutex, if a widget don't get true then it shouldn't enable input
-    let v = this
-    if (!v.disabled.input) {
-      v.disabled.input = true
-      v.btn_clear.setAttribute('disabled', '')
-      v.btn_tab.setAttribute('disabled', '')
-      v.inputdiv.removeChild(v.cmdline)
-      return true
-    }
-    return false
-  }
-  enableInput () {
-    let v = this
-    if (v.disabled.input) {
-      v.disabled.input = false
-      v.inputdiv.insertBefore(v.cmdline, v.inputdiv.childNodes[0])
-      v.btn_clear.removeAttribute('disabled')
-      v.btn_tab.removeAttribute('disabled')
-      v.enterKey = v.enter
-      v.input.focus()
-      v.emit(['InputFocused'])
-      return true
-    }
-    return false
-  }
   /* live ui */
-  _showChars (msgidx, msg, txttab, cb, txt, curvoice, opt) {
+  _showChars (msgidx, msg, txttab, cb, end, txt, curvoice, opt) {
     let v = this
     if (v.kill && !opt.unbreakable) {
       v.playSound('brokentext')
       if (opt.brokencb) {
         opt.brokencb()
+        end()
       }
       if (v.SAFE_BROKEN_TEXT || opt.safe) {
         if (cb) { cb() }
         if (opt.cb) { opt.cb() }
+        if (end) { end() }
       }
       v.printing = false
     } else if ((v.msgidx !== msgidx) || (v.charduration === 0) || opt.direct) {
@@ -152,6 +142,7 @@ class VTerm extends Window {
       v.emit(['ContentAdded', 'ContentChanged'])
       if (cb) { cb() }
       if (opt.cb) { opt.cb() }
+      if (end) { end() }
       v.printing = false
     } else {
       let l = txttab.shift()
@@ -179,29 +170,32 @@ class VTerm extends Window {
           }
         }
         setTimeout(function () {
-          v._showChars(msgidx, msg, txttab, cb, txt, curvoice, opt)
+          v._showChars(msgidx, msg, txttab, cb, end, txt, curvoice, opt)
         }, timeout * v.charduration)
       } else {
         v.playSound('endoftext')
         if (cb) { cb() }
         if (opt.cb) { opt.cb() }
+        if (end) { end() }
         v.printing = false
       }
     }
   }
-  render_out (lines, opt) {
-    this.echo(lines, opt)
+  render_out (lines, opt, cb) {
+    this.echo(lines, opt, cb)
   }
-  render_err (lines, opt) {
-    this.echo(lines, opt)
+  render_err (lines, opt, cb) {
+    this.echo(lines, opt, cb)
   }
-  echo (mesg, opt) {
+  echo (mesg, opt, end) {
     let v = this
     if (def(mesg)) {
       if (mesg instanceof Array) {
+        let last = mesg.pop()
         for (let m of mesg) {
           v.echo(m, opt)
         }
+        v.echo(last, opt, end)
         return v
       }
       opt = opt || {}
@@ -239,6 +233,7 @@ class VTerm extends Window {
         v.blindPrint(msg)
         if (cb) { cb() }
         if (opt.cb) { opt.cb() }
+        if (end) { end() }
       } else {
         let txt = msg.toString()// in case we have an object
         txt = txt.replace(re.hashtag, '<i class="hashtag"> $1 </i>').replace(re.voice, '<voice>$1</voice>')
@@ -246,7 +241,7 @@ class VTerm extends Window {
         txt = txt.replace(re.tab, '&nbsp;&nbsp;').replace(re.br, '<br/>').replace(re.nbsp, '&nbsp;')
         v.msgidx++
         v.blindPrint(txt)
-        v._showChars(v.msgidx, v.current_msg, txttab, cb, txt, 'char', opt)
+        v._showChars(v.msgidx, v.current_msg, txttab, cb, end, txt, 'char', opt)
       }
       v.emit(['MessageAdded', 'ContentAdded', 'ContentChanged'])
     }
@@ -309,6 +304,7 @@ class VTerm extends Window {
   }
   renewLine (promptHTML) {
     this.enableInput()
+    CursorListener.fire()
     this.PS1.innerHTML = promptHTML
     this.input.value = this.next_input_value
   }
@@ -325,21 +321,69 @@ class VTerm extends Window {
     var pr = v.input
 
     v.focusInput = function() {
-      pr.focus()
+      v.input.focus()
       v.emit(['InputFocused'])
     }
     pr.keydown = function (e) {
       let k = new Key(e)
-      v.shell.keydown(k)
+      v.shell.keydown(k, vt.readline)
       if (v.disabled.input) { v.msgidx +=1; v.next_input_value += k.str  }
     }
     pr.keyup = function (e) {
       let k = new Key(e)
       let ks = Key.toStr(k)
       v.statkey[ks] = (v.statkey[ks] || 0) + 1
-      v.shell.keyup(k)
+      v.shell.keyup(k, vt.readline)
+      CursorListener.fire(k, v.input.selectionStart)
     }
     v.shell.renewLine()
+  }
+  read(func, end){
+    let v = this
+    v.line = ''
+    v.readline = addEl(v.inputcontainer, 'p', accessible({ class: 'input' }))
+    v.readline.appendChild(v.cmdinput)
+    CursorListener.fire()
+    v.validateRead = function () {
+      v.echo(this.input.value, {direct:true})
+      if (func) func(v.line)
+      v.line =''
+    }
+    // console.log(end)
+    v.terminateRead = end
+  }
+  readEnd(){
+    let v = this
+    v.cmdline.appendChild(v.cmdinput)
+    v.inputcontainer.removeChild(v.readline)
+    delete v.readline
+    v.terminateRead()
+    delete v.validateRead
+    delete v.terminateRead
+    v.line =''
+    CursorListener.fire()
+  }
+  disableInput () { // disable can act as a mutex, if a widget don't get true then it shouldn't enable input
+    let v = this
+    if (v.disabled.input) return false
+    v.disabled.input = true
+    v.btn_clear.setAttribute('disabled', '')
+    v.btn_tab.setAttribute('disabled', '')
+    v.inputdiv.removeChild(v.cmdlinecontainer)
+    return true
+  }
+  enableInput () {
+    let v = this
+    if (!v.disabled.input) return false
+    v.disabled.input = false
+    v.inputdiv.insertBefore(v.cmdlinecontainer, v.inputdiv.childNodes[0])
+    v.btn_clear.removeAttribute('disabled')
+    v.btn_tab.removeAttribute('disabled')
+    v.enterKey = v.enter
+    v.input.focus()
+    v.emit(['InputFocused'])
+    CursorListener.fire()
+    return true
   }
   /** extra programs **/
   exec (fu, cb) {

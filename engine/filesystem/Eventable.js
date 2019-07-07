@@ -25,11 +25,11 @@ class Eventable extends Properties {
     return this
   }
 
-  fire (sys, cmd, args, idx, ct) {
-    ct = ct || {}
+  fire (cmd, args, env, sys, idx) {
+    let ct = env.cwd || {}
     let f = this.tgt
     let trigger = null
-    let ctx = { arg: (def(idx) ? args[idx] : null), args: args, i: idx, ct: ct, sys: sys }
+    let ctx = { arg: (def(idx) ? args[idx] : null), args: args, i: idx, env: env, sys: sys }
     if (ct.unreachable_room) {
       if ((ct.unreachable_room.name in globalSpec) && (cmd in globalSpec[ct.unreachable_room.name])) {
         trigger = globalSpec[ct.unreachable_room.name][cmd]

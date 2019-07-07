@@ -1,6 +1,6 @@
 var ARGT = {
   _test: function (env, val, syn) {
-    console.log(env, val, syn)
+    // console.log(env, val, syn)
     let f = ARGT._typedef[syn[0]]
     return f ? f(env, val, syn) : false
   },
@@ -99,20 +99,22 @@ function globalFire (categ) {
 }
 function globalFireDone () { globalFire('done') }
 
-function cmdDone (vt, fireables, ret, cmd, args) {
-  // fire events *_done when ret is shown
-  // console.log('done', vt, fireables, ret, cmd, args)
-  if (typeof ret === 'string') {
-    ret = _stdout(ret)
+class CmdSeq extends Seq {
+  constructor() {
+    super()
+    this.fireables = []
   }
-  ret = new Seq(ret)
-  ret.infect(-1, (it) => {
-    it.cb = () => {
-      fireables.forEach((f) => {
-        f[0].fire(vt, cmd + '_done', args, f[1])
-        globalFireDone()
-      })
-    }
-  })
-  return ret
+  done(sys, cmd, args) {
+    // fire events *_done when ret is shown
+    let s = this
+    this.infect(-1, (it) => {
+      it.cb = () => {
+        s.fireables.forEach((f) => {
+          f[0].fire(vt, cmd + '_done', args, f[1])
+          globalFireDone()
+        })
+      }
+    })
+    return this
+  }
 }

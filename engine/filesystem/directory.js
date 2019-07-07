@@ -103,25 +103,28 @@ class Room extends File {
   }
   removeDoor (child) { if (pick(this.children, child.uid, 'uid')) { child.room = null } }
   destroy () { pick(this.room.children, this.uid, 'uid'); this.room = null }
-  getRoot () { return (this.tgt.room ? this.tgt.room.getRoot() : this.tgt) }
-  getDir (arg, env) {
-  /* Get a reachable room from current room
-   * non recursive i.e. for rooms r/r2/r3
-   * r.getDir("r2",c) returns r2
-   * r.getDir("r2/r3",c) returns null
-   */
+  get root () { return (this.tgt.room ? this.tgt.room.root : this.tgt) }
+  next (arg, env) { /* Resolve a path step */
     let r = null
 
-    if (arg === '~') {
-      r = env.get.HOME || env.cwd.getRoot()
-    } else if (arg === '..') {
-      r = this.room
-    } else if (arg === '.') {
-      r = this
-    } else if (arg && !arg.includes('/')) {
-      r = this.tgt.children.find((i) => arg === i.toString())
-    }
+    if (arg === '~') r = env.v.HOME || env.cwd.root
+    else if (arg === '..') r = this.room
+    else if (arg === '.') r = this
+    else if (arg && !arg.includes('/')) r = this.tgt.children.find((i) => arg === i.toString())
+
     return r || null
+  }
+  getDir (path, env) {
+    // returns room associated to the path,
+    if (!path.length) return null
+    let room = this.tgt
+    if (path[0] === '/') {
+      room = this.root
+      path = path.slice(1)
+    }
+    path = path.replace(/\/$/, '')
+    path.split('/').findIndex((r) => !(room = room.next(r, env)))
+    return room
   }
   // callback when entering in the room
   setLeaveCallback (fu) { this.tgt.leaveCallback = fu; return this }
@@ -187,19 +190,19 @@ class Room extends File {
     let room = this.tgt
     let pathstr = ''
     if (path[0] === '/') {
-      room = this.getRoot()
+      room = this.root
       pathstr = '/'
     }
     path = path.replace(/\/$/, '')
     if (!path.length) return [room, null, pathstr]
     let pat = path.split('/')
-    let end = pat.slice(0, -1).findIndex((r) => !(room = room.getDir(r, env)))
+    let end = pat.slice(0, -1).findIndex((r) => !(room = room.next(r, env)))
     let lastcomponent = null
     let cancd
     pathstr += pat.slice(0, end).join('/')
     if (room) {
       lastcomponent = pat.pop() || null
-      cancd = room.getDir(lastcomponent, env)
+      cancd = room.next(lastcomponent, env)
       if (cancd) {
         room = cancd
         pathstr += (end <= 0 ? '' : '/') + lastcomponent + '/'

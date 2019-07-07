@@ -11,6 +11,9 @@ class Link extends Room {
       this.link = prop.link
       this.tgt = prop.link
     }
+    delete prop.link
+    delete prop.tgt
+    super.set(prop)
   }
 }
 /* TODO : split symbolic link which is just a path pointer

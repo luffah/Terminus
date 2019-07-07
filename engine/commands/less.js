@@ -6,7 +6,7 @@ function error (sys, cwd, err, args, i) {
 function get_files_args(args, cmd, env, sys){ // FIXME shall be auto for strictfile ?
   let cwd = env.cwd
   let files = []
-  for (var i = 0; i < args.length; i++) {
+  for (let i = 0; i < args.length; i++) {
     var tgt = env.traversee(args[i])
     var room = tgt.room
     if (room) {
@@ -23,7 +23,7 @@ function get_files_args(args, cmd, env, sys){ // FIXME shall be auto for strictf
           if (hret.ret) ret.push(hret.ret)
           if (hret.pass) continue
         }
-        files.push({item:item, room:room, i:i})
+        files.push([item, i])
       } else if (!tgt.item_name) {
         error(sys, cwd, 'invalid_param_folder', args)
       } else {
@@ -31,6 +31,7 @@ function get_files_args(args, cmd, env, sys){ // FIXME shall be auto for strictf
       }
     }
   }
+  return files
 }
 
 Command.def('less', [ARGT.strictfile], function (args, env, sys, cmd) { // event arg -> object
@@ -45,16 +46,14 @@ Command.def('less', [ARGT.strictfile], function (args, env, sys, cmd) { // event
     if (hret && hret.ret) return hret.ret
     return error(sys, cwd, 'less_no_arg', [cmd.name].concat(args), 0)
   } else {
-    var ret = []; var fireables = []
-
-    for (let f of get_files_args(args, 'less', env, sys)){
-          f.room.fire(sys, 'less', args, f.i)
-          f.item.fire(sys, 'less', args, f.i)
-          fireables.push([f.room, 0])
-          fireables.push([f.item, f.i + 0])
-          // console.log(item.text)
-          ret.push({ stdout: f.item.text, render: f.item })
+    var ret = new CmdSeq();
+    for (let [f, i] of get_files_args(args, 'less', env, sys)){
+      f.room.fire(sys, 'less', args, i)
+      f.fire(sys, 'less', args, i)
+      ret.fireables.push([f.room, 0])
+      ret.fireables.push([f, i])
+      ret.push({ stdout: f.text, render: f })
     }
-    return cmdDone(sys, fireables, ret, 'less', args)
+    return ret.done(sys, 'less', args)
   }
 })

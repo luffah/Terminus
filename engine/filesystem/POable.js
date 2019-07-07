@@ -17,7 +17,7 @@ class POable extends Statable {
   setPo (name, vars) {
     this.poid = this.poprefix + name
     this.povars = vars
-    if (!this.nopo.includes('name')) this.name = _(this.poid, vars)
+    if (!this.nopo.includes('name')) this.name = _(this.poid, vars, )
     if (!this.nopo.includes('text')) this.text = _(this.poid + POSUFFIX_DESC, vars)
     return this
   }

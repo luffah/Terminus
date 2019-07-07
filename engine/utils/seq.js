@@ -15,6 +15,9 @@ class Seq {
     }
     return list
   }
+  push (fu) {
+    this.seq.push(fu)
+  }
   then (fu) {
     this.seq.push(fu)
     return this
@@ -50,6 +53,19 @@ class Seq {
         return ret
       }
     }
+  }
+  run(func, terminate) {
+    let supercb = []
+    for (let a of this.seq) {
+      supercb.push(() => {
+        let next = supercb.shift()
+        func(a, next)
+      })
+    }
+    supercb.push(() => {
+      if (terminate) terminate()
+    })
+    supercb.shift()()
   }
   get length() {
     return this.seq.length

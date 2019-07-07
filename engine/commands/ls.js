@@ -1,5 +1,4 @@
 Command.def('ls', [ARGT.dir], function (args, env, sys) {
-
   function optL(room, path, showhidden) {
     let tab = []
     let list = room.find(0,1)
@@ -35,7 +34,7 @@ Command.def('ls', [ARGT.dir], function (args, env, sys) {
     let tmpret = ''
     doors.forEach((f, i) => { tmpret += _span(f.toString() + '/', 't-room') + '\n\t' })
     if (doors.length || room.isRoot()) {
-      ret += _('ls_title_directions', ['\n\t' + (room.isRoot() ? '' : ( _span('..', 't-room') + (room.is(env.get.HOME) ? '' : ' (revenir sur tes pas)') + '\n\t')) + tmpret ]
+      ret += _('ls_title_directions', ['\n\t' + (room.isRoot() ? '' : ( _span('..', 't-room') + (room.is(env.HOME) ? '' : ' (revenir sur tes pas)') + '\n\t')) + tmpret ]
       ) + '\t\n'
     }
 

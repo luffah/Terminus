@@ -126,8 +126,8 @@ class Item extends File {
     if (prop.init) prop.init(this)
   }
 
-  defaultExec (args, room, sys) {
-    this.fire(sys, 'exec', args)
+  defaultExec (args, env, sys, cmd, arrs) {
+    this.fire('exec', args, sys, args)
     return cmdDone(sys, [[this, 0]], this.text, 'exec', args)
   }
 

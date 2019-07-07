@@ -1,14 +1,4 @@
 /* Shell interface which solve completion problem */
-var CursorListener = {
-  listeners : [],
-  push: function(f){
-    CursorListener.listeners.push(f)
-  },
-  fire: function(k, pos){
-     CursorListener.listeners.forEach((f) => f(k, pos))
-  }
-}
-
 function shRx(s) {
   let ret = ''
   let escaped = false
@@ -34,13 +24,13 @@ class Shell {
     let v = this
     /* non dom properties */
     v.env = env || new Env()
-    v.env.shell = v
+    v.env.sh = v
     v.vt = view
     v.histindex = 0
     v.history = []
-    v.stdin  = new TextIO(TextIO.STDIN)
-    v.stdout = new TextIO(TextIO.STDOUT, (m, opt) => v.vt.render_out(m, opt))
-    v.stderr = new TextIO(TextIO.STDERR, (m, opt) => v.vt.render_err(m, opt))
+    v.stdin  = new TextIO(TextIO.STDIN, 0, (func,cb) => v.vt.read(func,cb))
+    v.stdout = new TextIO(TextIO.STDOUT, (m, opt, cb) => v.vt.render_out(m, opt, cb))
+    v.stderr = new TextIO(TextIO.STDERR, (m, opt, cb) => v.vt.render_err(m, opt, cb))
     v.similar_score_min = 0.5
     v.returncode = 0
     v.lastkey = null
@@ -66,7 +56,6 @@ class Shell {
 
   renewLine () {
     this.vt.renewLine(this.env.PS1)
-    CursorListener.fire()
   }
 
   emit(l, t) {
@@ -90,17 +79,18 @@ class Shell {
       return true
     }
 
-    let args = l.split(' ')
-    let idx = 0
-
-    /* find current word */
+    /* find current word and args */
     let offset = 0
     var pos = v.vt.selectionStart
-    for (;idx < args.length; idx++) {
-      offset += args[idx].length + 1
-      if (offset > pos) break
-    }
-    let cword = args[idx]
+    let cmdbefore = l.slice(0, pos+1)
+    let cmdafter = l.slice(pos+1)
+    let cmdcurrent = v.splitPipe(v.splitCommands(cmdbefore).pop()).pop()
+    cmdbefore = cmdbefore.slice(0, cmdbefore.length - cmdcurrent.length)
+    if (cmdbefore.slice(-1) == '|') cmdbefore += ' '
+    let args = v.splitArgs(cmdcurrent)
+    let idx = args.length
+    let cword = ''
+    if (cmdcurrent.slice(-1) !== " ") cword = args[--idx]
 
     let comreply = v.completeArgs(args, idx, cword)
     // find solutions
@@ -116,9 +106,9 @@ class Shell {
         let lb = cword.split('/')
         lb[lb.length - 1] = comreply[0]
         args.splice(idx, 1, lb.join('/')) // insert value at idx
-        v.line = args.join(' ').replace('././', './')// regex workaround
+        v.line = cmdbefore + args.join(' ').replace('././', './') + cmdafter
       } else {
-        if (comreply[0] === cword) {
+        if (comreply[0] === cword && cmdafter.length == 0) {
           v.line = l + ' '
         }
         v.showSuggestions(comreply)
@@ -127,7 +117,7 @@ class Shell {
       let hlidxs = []
       let lcp = commonprefix(comreply)
       if (comreply.indexOf(lcp) > -1) {
-        v.line = l + ' '
+        v.line = cmdbefore + ' ' + cmdafter
       } else if (tabidx > -1) {
         if (tabidx < comreply.length) {
           //          v.line = comreply[idx]+' '
@@ -141,7 +131,7 @@ class Shell {
         let lb = cword.split('/')
         lb[lb.length - 1] = lcp
         args.splice(idx, 1, lb.join('/'))
-        v.line = args.join(' ')
+        v.line = cmdbefore + args.join(' ') + cmdafter
       }
       v.showSuggestions(comreply, hlidxs)
     }
@@ -165,72 +155,96 @@ class Shell {
       v.history.push(l)
     }
   }
-  parseExec (line, io) {
-    let ret = new Seq()
-    if (this.isEmpty(line)) return ret
-    let lines = this.splitCommands(line) // shall manage INSTR ; INSTR
-    for (let lo of lines) {
-      let piped = lo.match(/(".*?"|[^"|]+)(?=\s*\||\s*$)/g)
-      if (piped) {
-        let io_list = []
+  execCmdLine (line, io, endline) {  // INSTR; INSTR | INSTR
+    // only manage pipe; FIXME: < > || &&
+    let v = this
+    if (v.isEmpty(line)) return 0
+    let lines = new Seq(v.splitCommands(line)) // shall manage INSTR ; INSTR
 
-        let prev_io = io
-        for (let i=(piped.length - 1); i > 0; i--){
-          let ntio = new NestedTextIO(prev_io.stdout, new TextIO(), prev_io.stderr)
+    let execInstr = function (lo, end) {
+      let piped = v.splitPipe(lo) // --> ['INSTR', '|', 'INSTR']
+      if (piped[piped.length-1] == '|') { endline(); return 1}
+      // TODO: erreur symbole inattendu
+      if (piped.length > 1) {
+        let cmds = []
+        let prev = ''
+        for (let c of piped) {
+          if (c === '|') { if (prev === '|') {endline(); return 1} }
+          else cmds.push(c.trim())
+          prev = c
+        }
+        let ntio = new NestedTextIO(io.stdin, new TextIO(), io.stderr)
+        let prev_io = ntio
+        let io_list = [ntio]
+        for (let i=1; i < cmds.length-1; i++){
+          ntio = new NestedTextIO(prev_io.stdout, new TextIO(), prev_io.stderr)
           prev_io = ntio
           io_list.push(ntio)
         }
         io_list.push(new NestedTextIO(prev_io.stdout, io.stdout, prev_io.stderr))
-        for (let i=0; i < piped.length; i++){
-          let res = this.parseCmdLine(piped[i], io_list[i])
-          ret.append(res)
+        for (let i=0; i < cmds.length; i++){
+          // console.log(cmds[i],'take', io_list[i])
+          v.execInstr(cmds[i], io_list[i], end)
         }
-      } else {
-          let res = this.parseCmdLine(lo, io)
-          ret.append(res)
-      }
+      } else v.execInstr(lo, io, end)
     }
-    return ret
+    lines.run((lo, next) => {
+      execInstr(lo, (i, re) => {
+        // console.log('returncode' ,i)
+        v.returncode = i
+        if (re) v.emit(['ReturnStatement'], re)
+        next()
+      })
+    }, endline)
+    return v.returncode
   }
-  parseCmdLine (line, io) {
+  execInstr (line, io, returncode) { // INSTR -- does print to stderr stdout
     let sh = this
     let env = this.env
     let arrs = sh.splitArgs(line)
     let cmdname = arrs[0]
     if (env.guessCmd) cmdname = env.guessCmd(cmdname, this)
-    let r = env.r
-    let ret = ''
-    console.log('parse and execute : ', arrs, io)
+    let r = env.cwd
+    let ret = null
+    // console.log('parse and execute : ', arrs, io)
     let args = sh.expandArgs(arrs.slice(1))
     // find the program to launch
     let cmd = env.getCommand(cmdname)
 
-    // test command hook eligibility when no existant cmd
-    if (!cmd) {
+    if (!cmd) { // test if there is a hook for the command name
       if (cmdname in r.cmd_hook) {
         r.fire(this, cmdname + '_cmd_hook', args, 0)
-        re = r.cmd_hook[cmd](args)
-        if ('ret' in re) {
-          ret = re.ret
-        }
+        ret = r.cmd_hook[cmdname](args)
+        if ('ret' in ret) ret = ret.ret
       } else {
-        // console.log(line)
         r.fire(this, 'cmd_not_found', args, 0)
         r.fire(this, cmdname + '_cmd_not_found', args, 0)
-        ret = sh.psychologist(cmdname, args, line) || _('cmd_not_found', [cmdname, env.r.name])
+        ret = sh.psychologist(cmdname, args, line) || _('cmd_not_found', [cmdname, env.cwd.name])
+        if ('string' === typeof ret) ret = {stdout: ret}
       }
-      if (ret.stdout) io.stdout.write(ret.stdout)
-      return ret
+    } else {
+      let result = cmd.tgt.exec(args, env, io, cmd, arrs)
+      if (result) {
+        ret = result
+      } else if (cmdname in r.cmd_hook) {
+        ret = r.cmd_hook[cmdname](args)
+      }
     }
-
-    let result = cmd.exec(args, env, io, cmd, arrs)
-    if (result) {
-      ret = result
-    } else if (cmdname in r.cmd_hook) {
-      ret = r.cmd_hook[cmd](args)
-    }
-    if (ret.stdout) io.stdout.write(ret.stdout)
-    return ret
+    let retcode = 0
+    if (ret) {
+      if (ret.wait) {
+        ret.returncode = returncode
+        return
+      }
+      ret = new Seq(ret)
+        // console.log(ret)
+      ret.run((re, next) => {
+        if (re.returncode) retcode = re.returncode
+        if (re.stdout) (io.stdout.write(re.stdout, re, next))
+        if (re.stderr) (io.stderr.write(re.stderr, re, next))
+        sh.emit(['ReturnStatement'], re)
+      }, () => returncode(retcode, ret))
+    } else { returncode(retcode) }
   }
   psychologist (cmd, args, line) {
     let c = this.getSimilarCommands(cmd)
@@ -252,27 +266,12 @@ class Shell {
     if (l.length > 0) {
       let io = new NestedTextIO(this.stdin, this.stdout, this.stderr)
       v.busy = true
-      let ret = v.parseExec(l, io)
-       ret = undefined // FIXME bloquing callbacks
-      // v.vt.openStdOut()
-      // console.log(ret)
-      if (ret && ret.length > 0) {
-        let supercb = []
-        for (let a of ret) {
-          supercb.push(() => {
-            v.emit(['ReturnStatement'], a)
-            v.vt.echo(a, { cb: supercb.shift() })
-          })
-        }
-        supercb.push(() => {
+      let ret = v.execCmdLine(l, io, 
+        () => {
           v.busy = false
           v.renewLine()
-        })
-        supercb.shift()()
-      } else {
-          v.renewLine()
-      }
-      // v.vt.closeStdOut()
+        }
+      )
     } else {
       v.renewLine()
     }
@@ -322,17 +321,22 @@ class Shell {
   }
   keydown(k) {
   }
-  keyup(k) {
+  validateRead() {
+    this.vt.validateRead()
+  }
+  keyup(k, readline) {
     let v = this
     v.hideSuggestions()
     if (k.is(KEYMAP.enter)) {
-      v.validateInput()
+      if (readline) v.validateRead()
+      else v.validateInput()
     } else if (k.is(KEYMAP.tab)) {
-      v.nextSuggestion()
+      if (readline) v.line += "\t"
+      else v.nextSuggestion()
     } else if (k.is(KEYMAP.break)) {
-      if (v.busy) {
-        v.SIGINT()
-      } else {
+      if (readline) v.vt.readEnd(KEYMAP.break)
+      else if (v.busy) v.SIGINT()
+      else {
         v.terminateLine(KEYMAP.break)
         v.renewLine()
       }
@@ -347,7 +351,6 @@ class Shell {
     } else if (k.is(KEYMAP.up, 'ArrowUp')) {
       v.histRewind()
     }
-    CursorListener.fire(k, vt.input.selectionStart)
   }
   expandArgs (args) {
     var newargs = []
@@ -371,7 +374,7 @@ class Shell {
       arg = arg.replace(re.escaped, escword)
 
       // manage env variable $VARNAME
-      arg = arg.replace(re.varr, (a) => env.get[a.replace(/^\$/, '')] || '')
+      arg = arg.replace(re.varr, (a) => env.v[a.replace(/^\$/, '')] || '')
 
       // manage "double quote"
       if (re.strv.test(arg)) return newargs.push(unesc(arg.slice(1, arg.length - 1)))
@@ -385,7 +388,7 @@ class Shell {
       if (re.star.test(arg)) {
         if (re.pathstar.test(arg)) {
           let regexpArg = new RegExp(arg.replace(/\./g, '.').replace(/\*/g, '.*'))
-          let room = (arg[0] == '/') ? env.cwd.getRoot() : env.cwd
+          let room = (arg[0] == '/') ? env.cwd.root : env.cwd
           for (let f of room.find(regexpArg, 0, 1)){
               xargs.push(f.relativepath(room))
           }
@@ -402,14 +405,14 @@ class Shell {
       if (xargs.length) newargs = newargs.concat(xargs.sort())
       else newargs.push(arg)
     })
-    console.log(newargs)
+    // console.log(newargs)
     return newargs
   }
   completeArgs (args, idx, cword) { // return completion matches
     let v = this
     let env = v.env
     var comreply = []
-
+    // console.log(args, idx, cword)
     cword = shRx(cword)
 
     let trymatch = (potential, cword) => {
@@ -423,7 +426,7 @@ class Shell {
     if (idx) {
       let cmd = env.getCommand(args[0])
       if (cmd) {
-        argtype = cmd.getSyntax(idx - 1)
+        argtype = cmd.tgt.getSyntax(idx - 1)
       } else {
         argtype = 'file'
       }
@@ -431,7 +434,7 @@ class Shell {
 
     if (argtype === 'cmdname') {
       var cmds = env.getCommands()
-      console.log(cmds)
+      // console.log(cmds)
       cmds.forEach((i) => {
         if (trymatch(i, cword)) {
           comreply.push(i + ((i === cword) ? ' ' : ''))// if uniq, then go to next arg
@@ -445,13 +448,13 @@ class Shell {
     } else {
       // Iterate through each room
       let roomNext
-      let roomCurrent = cword.substring(0, 1) === '~' ? env.get.HOME : env.cwd
+      let roomCurrent = cword.substring(0, 1) === '~' ? env.HOME : env.cwd
       let path = cword.split('/')
       if (argtype === 'dir' && path.length === 1 && path[0].length === 0) {
         comreply.push('..')
       }
       for (let i = 0; i < path.length; i++) {
-        roomNext = roomCurrent.getDir(path[i], env)
+        roomNext = roomCurrent.next(path[i], env)
         if (roomNext) {
           roomCurrent = roomNext
           if (i === path.length - 1) {
@@ -493,6 +496,9 @@ class Shell {
   splitArgs (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
     return line.replace(/\s+$/, '').match(/(('[^']*')|("[^"]*"))|[^'" ]*/g).filter(s => s.length)
   }
+  splitPipe (line) {
+    return line.match(/((".*?"|[^"|]+)+)|(\s*\||\s+)/g)
+  }
   isValidInput (line) {
     let lines = this.splitCommands(line)
     // console.log(commands)
@@ -502,7 +508,7 @@ class Shell {
       let cmd = this.getCommand(args.shift())
       if (!cmd) return false
       for (let i = 0; i < args.length; i++) {
-        if (!ARGT._test(this, args[i], cmd.syntax[i])) return false
+        if (!ARGT._test(this, args[i], cmd.tgt.syntax[i])) return false
       }
     }
     return true

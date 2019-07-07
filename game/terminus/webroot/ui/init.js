@@ -1,6 +1,6 @@
 var vt = (new VTerm(dom.Id('term'))).addon(VTermImages, RES.img)
-invidiv = addEl(vt.inputline, 'pre', {class: 'invidiv'})
-cursorblock = addEl(vt.inputline, 'div', {
+invidiv = addEl(vt.cmdinput, 'pre', {class: 'invidiv'})
+cursorblock = addEl(vt.cmdinput, 'div', {
   class:'cursorblock',
 })
 CursorListener.push((k, pos) => {
@@ -88,7 +88,8 @@ Game.prototype = {
       g.state.setCookieDuration(7 * 24 * 60) // in minutes
       if (useCookies === 0) vt.env = g.state.loadEnv()
     } else g.state.stopCookie() // do not use cookie
-  
+
+    $bin.newLink('grep', {nopo:['name'],tgt:$backroom.items[0]})
     if (vt.env.r) {
       g.state.loadActions()
       vt.mute = 0
@@ -96,7 +97,14 @@ Game.prototype = {
       vt.echo(_('welcome_msg', vt.env.me) + '\n' + vt.env.r.starterMsg)
       vt.enableInput()
     } else {
-      vt.env = new Env({ me: 'sure', v: { PATH: [$bin], HOME: $sure } })
+      vt.env = new Env({
+        me: 'sure', // current user
+        r: $sure, // current working dir
+        users: {
+          sure:{groups:[], v:{HOME:$sure.path, PATH:$bin.path}}
+        }
+      })
+      vt.env.addGroup('user')
       vt.mute = 0
       new Seq([
         // (next) => {
