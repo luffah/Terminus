@@ -223,7 +223,7 @@ class Shell {
         if ('string' === typeof ret) ret = {stdout: ret}
       }
     } else {
-      let result = cmd.tgt.exec(args, env, io, cmd, arrs)
+      let result = cmd.exec(args, env, io, cmd, arrs)
       if (result) {
         ret = result
       } else if (cmdname in r.cmd_hook) {
@@ -426,7 +426,7 @@ class Shell {
     if (idx) {
       let cmd = env.getCommand(args[0])
       if (cmd) {
-        argtype = cmd.tgt.getSyntax(idx - 1)
+        argtype = cmd.getSyntax(idx - 1)
       } else {
         argtype = 'file'
       }
@@ -508,7 +508,7 @@ class Shell {
       let cmd = this.getCommand(args.shift())
       if (!cmd) return false
       for (let i = 0; i < args.length; i++) {
-        if (!ARGT._test(this, args[i], cmd.tgt.syntax[i])) return false
+        if (!ARGT._test(this, args[i], cmd.syntax[i])) return false
       }
     }
     return true
