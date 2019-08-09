@@ -21,10 +21,7 @@ devenv: ## Source .bash_profile in order to use dev tools
 	bash --init-file .bash_profile
 
 server:
-	export SERVPATH=game/${CURR_GAME}/webroot;\
-	export PIDFILE=$${SERVPATH}/server.pid;\
-	export SERVPORT=7341;\
-	bash -c "test -f \$${PIDFILE} && kill \$$(cat \$${PIDFILE}) || true; (cd \$${SERVPATH} &&  python -mSimpleHTTPServer \$${SERVPORT} & PID=\$$!; echo \$$PID > $${PIDFILE}; wait \$$PID; rm $${PIDFILE} ) 2> server.log &"
+	./tools/start_game_server.sh ${CURR_GAME}
 
 build: ## Fully build
 	for _GAME in $$(ls -d game/*);do \

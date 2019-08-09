@@ -25,69 +25,81 @@ var ARGT = {
 }
 Object.keys(ARGT._typedef).forEach((i) => { ARGT[i] = [i] })
 
-function _stdout (a) { return { stdout: a } }
-function _stderr (a) { return { stderr: a } }
-function _getOpts (opts) {
-  let ret = {}
-  opts.forEach((it) => {
-    if (it[0].slice(0, 2) === '--') {
-      ret[it[0].slice(2)] = { idx: it[1] }
-    } else {
-      it[0].split('').forEach((c) => {
-        ret[c] = { idx: it[1] }
-      })
-    }
-  })
-  return ret
+class Command {
+  constructor(name, syntax, fu) {
+    // syntax example : cmd dir [-d|-e] (undo|redo) -> [ARGT.dir,ARGT.opt.concat(['-d','e']),ARGT.instr.concat['undo','redo']],
+    // fu example : (args, env, sys) => sys.stdout.write(env.HOME)
+    this.exec = fu
+    this.syntax = syntax
+    Command.reg[name] = this
+  }
+  copyPower (c) {
+    c.exec = this.exec
+    c.syntax = this.syntax
+  }
+  getSyntax (idx) {
+    return !this.syntax.length ? null : idx > this.syntax.length ? this.syntax[-1][0] : this.syntax[idx][0]
+  }
 }
-
-function Command (syntax, fu) {
-  // syntax example : cmd dir [-d|-e] (undo|redo) -> [ARGT.dir,ARGT.opt.concat(['-d','e']),ARGT.instr.concat['undo','redo']],
-  // fu example : (args, env, sys) => sys.stdout.write(env.HOME)
-  this.exec = fu
-  this.syntax = syntax
-}
-
-inject(Command, {
-  h: {},
-  def: (name, syntax, fu) => { Command.h[name] = new Command(syntax, fu); return Command.h[name] },
-  get: (n) => Command.h[n],
-  prototype: {
-    getSyntax: function (idx) {
-      return !this.syntax.length ? null : idx > this.syntax.length ? this.syntax[-1][0] : this.syntax[idx][0]
-    }
+Object.assign(Command, {
+  reg : {},
+  def(name, syntax, fu) {
+    return new Command(name, syntax, fu)
   },
-  tools: {
-    parseArgs : function (args){
+  get: (cmd) => Command.reg[cmd],
+  tools : {
+    parseArgs (args){
       let indexed = args.map((s, i) => [s, i])
       return [
         indexed.filter((s) => s[0][0] !== '-'),  //arguments
-        _getOpts(indexed.filter((s) => s[0][0] === '-')) // options
+        this._getOpts(indexed.filter((s) => s[0][0] === '-')) // options
       ]
+    },
+    _getOpts (opts) {
+      let ret = {}
+      opts.forEach((it) => {
+        if (it[0].slice(0, 2) === '--') {
+          ret[it[0].slice(2)] = { idx: it[1] }
+        } else {
+          it[0].split('').forEach((c) => {
+            ret[c] = { idx: it[1] }
+          })
+        }
+      })
+      return ret
     }
   }
 })
 
-var Builtin = {
-  h: {},
-  def (name, syntax, fu) {
-    return (Builtin.h[name] = new Command(syntax, fu))
+class Builtin extends Command {
+  constructor(name, syntax, fu) {
+    super(name, syntax, fu)
+    Builtin.reg[name] = this
+  }
+}
+Object.assign(Builtin, {
+  reg : {},
+  def(name, syntax, fu) {
+    return new Builtin(name, syntax, fu)
   },
-  get: (n) => Builtin.h[n],
-  _keys: () => Object.keys(Builtin.h),
-  keys: () => Builtin._keys().filter(k => !Builtin.h[k].hidden),
+  hidden : {},
+  get : (cmd) => Builtin.hidden[cmd] ? undefined : Builtin.reg[cmd],
+  _keys: () => Object.keys(Builtin.reg),
+  keys: () => Builtin._keys().filter(k => !Builtin.reg[k].hidden),
   hide (query) {
     Builtin._keys().forEach((i) => {
-      if (i.match(query)) Builtin.h[i].hidden = 1
+      if (i.match(query)) Builtin.hidden[i] = 1
     })
   },
   unhide (query) {
     Builtin._keys().forEach((i) => {
-      if (i.match(query)) Builtin.h[i].hidden = 0
+      if (i.match(query)) Builtin.hidden[i] = 0
     })
   }
-}
+})
 
+
+//----------
 var globalFireables = { done: [] }
 function globalFire (categ) {
   let f = globalFireables[categ]

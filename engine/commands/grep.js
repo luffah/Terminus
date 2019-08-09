@@ -27,21 +27,25 @@ function splitLines(text){
   return ret
 }
 
-Command.def('grep', [ARGT.pattern, ARGT.strictfile], function (args, env, sys) {
+Command.def('grep', [ARGT.pattern, ARGT.strictfile],
+  function (args, env, sys) {
+  let task = this
+
   let word = args[0]
   // console.log(sys)
   if (args.length == 1){
-    let ret = { wait: 1}
-    sys.stdin.loop((lines) => {
+    return sys.stdin.loop((lines) => {
       lines = splitLines(lines).filter((l) => l.indexOf(word) >= 0) 
       // console.log(lines)
       if (lines) sys.stdout.write(lines)
-    }, () => ret.returncode(0))
-    return ret
+    }, () => task.exit())
   } else {
     for (let [f, i] of get_files_args(args.slice(1), 'grep', env, sys)) {
       let lines = splitLines(f.text).filter((l) => l.indexOf(word) >= 0)
-      if (lines) sys.stdout.write(lines)
+      if (lines) {
+        sys.stdout.write(lines)
+      }
     }
+    task.exit() // FIXME ////////// TASKSSSSS
   }
 })

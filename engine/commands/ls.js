@@ -1,4 +1,7 @@
-Command.def('ls', [ARGT.dir], function (args, env, sys) {
+Command.def('ls', [ARGT.dir], function () {
+  let task = this
+  let [ args, sys, env ] = [ task.args, task.io, task.env ]
+
   function optL(room, path, showhidden) {
     let tab = []
     let list = room.find(0,1)
@@ -40,22 +43,22 @@ Command.def('ls', [ARGT.dir], function (args, env, sys) {
 
     if (peoples.length > 0) { ret += _('ls_title_peoples', ['\n\t' + peoples.map((n) => _span(n.toString(), 't-people')).join('\n\t')]) + '\t\n' }
     if (items.length > 0) { ret += _('ls_title_items', ['\n\t' + items.map(function (n) { return _span(n.toString(), 't-item') }).join('\n\t')]) + '\t\n' }
-    return { stdout: ret, render: new RenderTree(room, doors.concat(items, peoples)) }
+   return { stdout: ret, render: new RenderTree(room, doors.concat(items, peoples)) }
   }
 
   let [files, opts] = Command.tools.parseArgs(args)
   if (files.length) {
     let room = env.traversee(files[0][0]).room 
     if (room) {
-      let hret = room.tryhook('ls', files)
-      if (hret && hret.ret) return hret.ret
+      // let hret = room.tryhook('ls', files)
+      // if (hret && hret.ret) return hret.ret
       return main(room, files[0], opts)
     } else {
       sys.stderr.write(_('room_unreachable'))
     }
   } else {
-    let hret = env.cwd.tryhook('ls', args)
-    if (hret && hret.ret) return hret.ret
+    // let hret = env.cwd.tryhook('ls', args)
+    // if (hret && hret.ret) return hret.ret
     return main(env.cwd, '.', opts)
   }
 })

@@ -19,8 +19,51 @@ function shRx(s) {
   return ret
 }
 
+
+// Process Model with parent and pid properties
+class Task {
+  constructor(ptask, terminate, cmdline, cmd, args, env, io){
+    this.ptask = ptask
+    // this.ppid = ptask
+    this.id = Task.id++
+    this.io = io
+    this.env = env
+    this.cmdline = cmdline
+    this.cmd = cmd
+    this.args = args
+    this.terminate = terminate
+    Task.reg[this.id] = this
+    if (this.cmd) this._run()
+  }
+  _run(){
+    let [cmd, env, sys, args] = [this.cmd, this.env, this.io, this.args]
+    let hret, ret
+    if (cmd.hookable) {
+      hret = r.tryhook(cmdname, args, cmd)
+    }
+    if (hret && hret.ret) ret = hret.ret
+    if (!(hret && hret.ret && !hret.continue)){
+      // ret = cmd.exec(args, env, io, cmd, arrs)
+      ret = cmd.exec.call(this, args, env, sys)
+    }
+    if (typeof ret === "number") this.returncode = ret
+    if (ret instanceof Object) {
+      if (ret.returncode) this.returncode = ret.returncode
+      sys.push(ret)
+    }
+    this.exit(this.returncode)
+  }
+  exit(returncode){
+    this.returncode = returncode || 0
+    this.terminate(returncode) // FIXME : implement this
+  }
+}
+Task.id = 1
+Task.reg = {}
+
+// --
 class Shell {
-  constructor (view, env) {
+  constructor (view, env, ptask) {
     let v = this
     /* non dom properties */
     v.env = env || new Env()
@@ -41,6 +84,7 @@ class Shell {
     v.complete_opts = { case: 'i', normalize: noAccents, humanized: true }
     v.cmdoutput = true
     v.suggestion_selected = null
+    v.task = new Task(ptask)
   }
   get line () { return this.vt.line }
   set line (s) { this.vt.line = s }
@@ -158,7 +202,7 @@ class Shell {
   execCmdLine (line, io, endline) {  // INSTR; INSTR | INSTR
     // only manage pipe; FIXME: < > || &&
     let v = this
-    if (v.isEmpty(line)) return 0
+    if (v.isEmpty(line)) return
     let lines = new Seq(v.splitCommands(line)) // shall manage INSTR ; INSTR
 
     let execInstr = function (lo, end) {
@@ -211,6 +255,24 @@ class Shell {
     // find the program to launch
     let cmd = env.getCommand(cmdname)
 
+    io.push = (re) => {
+      if (re.render) sh.emit(['Render'], re)
+      if (re.stderr) io.stdout.write(re.stderr)
+      if (re.stdout) io.stdout.write(re.stdout)
+    }
+    io.exec = (line) => {
+      let l = trim(line)
+
+      if (l.length > 0) {
+        let nio = new NestedTextIO(io.stdin, io.stdout, io.stderr)
+        sh.execCmdLine(l, nio, 
+          () => { console.log('TODO SUB COMMAND ENDING???') }
+        )
+      }
+    }
+
+    let task = new Task(sh.task, returncode, line, cmd, args, env, io)
+
     if (!cmd) { // test if there is a hook for the command name
       if (cmdname in r.cmd_hook) {
         r.fire(this, cmdname + '_cmd_hook', args, 0)
@@ -222,18 +284,21 @@ class Shell {
         ret = sh.psychologist(cmdname, args, line) || _('cmd_not_found', [cmdname, env.cwd.name])
         if ('string' === typeof ret) ret = {stdout: ret}
       }
-    } else {
-      let result = cmd.exec(args, env, io, cmd, arrs)
-      if (result) {
-        ret = result
-      } else if (cmdname in r.cmd_hook) {
-        ret = r.cmd_hook[cmdname](args)
-      }
+    // } else {
+    //   let hret
+    //   if (cmd.hookable) {
+    //     hret = r.tryhook(cmdname, args, cmd)
+    //   }
+    //   if (hret && hret.ret) ret = hret.ret
+    //   if (!(hret && hret.ret && !hret.continue)){
+    //     ret = cmd.exec(args, env, io, cmd, arrs)
+    //   }
     }
     let retcode = 0
     if (ret) {
-      if (ret.wait) {
-        ret.returncode = returncode
+      // à revoir
+      if (ret instanceof Task) {
+        ret.exit = returncode
         return
       }
       ret = new Seq(ret)
@@ -242,8 +307,17 @@ class Shell {
         if (re.returncode) retcode = re.returncode
         if (re.stdout) (io.stdout.write(re.stdout, re, next))
         if (re.stderr) (io.stderr.write(re.stderr, re, next))
+        if (re.fireables) {
+          ret.cb = () => {
+            re.fireables.forEach((f) => {
+              f[0].fire(vt, cmdname + '_done', args, f[1])
+              globalFireDone()
+            })
+          }
+          // ret.cb()
+        }
         sh.emit(['ReturnStatement'], re)
-      }, () => returncode(retcode, ret))
+      }, () => {returncode(retcode, ret)})
     } else { returncode(retcode) }
   }
   psychologist (cmd, args, line) {
@@ -266,7 +340,7 @@ class Shell {
     if (l.length > 0) {
       let io = new NestedTextIO(this.stdin, this.stdout, this.stderr)
       v.busy = true
-      let ret = v.execCmdLine(l, io, 
+      v.execCmdLine(l, io, 
         () => {
           v.busy = false
           v.renewLine()

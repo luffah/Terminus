@@ -1,57 +1,56 @@
-Command.def('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // event arg -> object (source)
-  let ret = []
+Command.def('mv', [ARGT.strictfile, ARGT.file], function (args, env, sys) {
   let src
-  let dest = ctx.traversee(args[args.length - 1])
+  let dest = env.traversee(args[args.length - 1])
   console.log(dest, args)
   if (dest.item_name && args.length > 2) {
-    ret.push(_stderr(_('cmd_mv_flood')))
+    sys.stderr.write(_('cmd_mv_flood'))
   } else {
-    let retfireables = []; let rename; let overwritten
+    let fireables = []; let rename; let overwritten
     for (let i = 0; i < (args.length - 1); i++) {
-      src = ctx.traversee(args[i])
+      src = env.traversee(args[i])
       let hret = src.item.tryhook(['mv', args[i], args[args.length - 1]])
       if (hret) {
-        if (hret.ret) ret.push(hret.ret)
+        if (hret.ret) sys.push(hret.ret)
         if (hret.pass) continue
       }
       if (src.room) {
         if (src.item && dest.room) {
           rename = (dest.item_name && (src.item_name !== dest.item_name))
           overwritten = (dest.item)
-          if (!dest.room.ismod('w', ctx)) {
-            ret.push(_stderr(_('permission_denied') + ' ' + _('cmd_mv_dest_fixed')))
-            src.item.fire(vt, 'permission_denied', args, 0)
+          if (!dest.room.ismod('w', env)) {
+            sys.push({stderr:_('permission_denied') + ' ' + _('cmd_mv_dest_fixed')})
+            src.item.fire(sys, 'permission_denied', args, 0)
           } else if (src.item_idx > -1) {
-            if (src.room.ismod('w', ctx)) {
+            if (src.room.ismod('w', env)) {
               if (overwritten) {
                 dest.room.removeItemByIdx(dest.item_idx)
               }
               if (rename) {
                 src.item.name = dest.item_name
               }
-              src.room.fire(vt, 'mv', [args[i], args[args.length - 1]], 0)
+              src.room.fire(sys, 'mv', [args[i], args[args.length - 1]], 0)
               if (src.room.uid !== dest.room.uid) {
                 dest.room.addItem(src.item)
                 src.room.removeItemByIdx(src.item_idx)
-                src.item.fire(vt, 'mv_outside', [args[i], args[args.length - 1]], 0)
-                ret.push(_stdout(_('cmd_mv_done', [args[i], args[args.length - 1]])))
+                src.item.fire(sys, 'mv_outside', [args[i], args[args.length - 1]], 0)
+                sys.push({stdout:_('cmd_mv_done', [args[i], args[args.length - 1]])})
               } else {
-                src.item.fire(vt, 'mv_local', [args[i], args[args.length - 1]], 0)
+                src.item.fire(sys, 'mv_local', [args[i], args[args.length - 1]], 0)
               }
-              src.item.fire(vt, 'mv', [args[i], args[args.length - 1]], 0)
+              src.item.fire(sys, 'mv', [args[i], args[args.length - 1]], 0)
               if (rename) {
-                src.item.fire(vt, 'mv_name', args, 0)
+                src.item.fire(sys, 'mv_name', args, 0)
                 if (!overwritten) {
-                  ret.push(_stdout(_('cmd_mv_name_done', [args[i], args[args.length - 1]])))
+                  sys.push({stdout:_('cmd_mv_name_done', [args[i], args[args.length - 1]])})
                 }
               }
               if (overwritten) {
-                ret.push(_stdout(_('cmd_mv_overwrite_done', [args[i], args[args.length - 1]])))
+                sys.push({stdout:_('cmd_mv_overwrite_done', [args[i], args[args.length - 1]])})
               }
-              retfireables.push([src.item, 0])
+              fireables.push([src.item, 0])
             } else {
-              ret.push(_stderr(_('permission_denied') + ' ' + _('cmd_mv_fixed')))
-              src.item.fire(vt, 'permission_denied', args, 0)
+              sys.push({stderr:_('permission_denied') + ' ' + _('cmd_mv_fixed')})
+              src.item.fire(sys, 'permission_denied', args, 0)
             }
           }
         } else if (!src[2]) {
@@ -60,11 +59,10 @@ Command.def('mv', [ARGT.strictfile, ARGT.file], function (args, ctx, vt) { // ev
         }
       } else {
         // got nothing
-        ret.push(_stderr(_('cmd_mv_no_file', [args[i]])))
+        sys.push({stderr:_('cmd_mv_no_file', [args[i]])})
       }
     }
-    return cmdDone(vt, retfireables, ret, 'mv', args)
-    //      return _("cmd_mv_invalid");
+    return {fireables:fireables}
   }
   return ret
-})
+}).hookable = false

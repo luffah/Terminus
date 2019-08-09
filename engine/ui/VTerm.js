@@ -204,9 +204,9 @@ class VTerm extends Window {
       // v.loop_waiting()
       v.current_msg = addEl(opt.el || v.monitor, 'pre', 'msg' + ' ' + (opt.cls || ''))
       if (typeof mesg === 'string') {
-        mesg = _stdout(mesg)
+        mesg = {stdout :mesg}
       } else if (typeof mesg === 'number') {
-        mesg = _stdout(String(mesg))
+        mesg = {stdout :String(mesg)}
       } else if (mesg instanceof Node) {
           v.current_msg.appendChild(mesg)
         }

@@ -93,10 +93,10 @@ class File extends FileModel {
     return this
   }
 
-  tryhook (cmd, args) {
-    let f = this.cmd_hook[cmd]
+  tryhook (cmdname, args, cmd) {
+    let f = this.cmd_hook[cmdname]
     if (f) {
-      let ret = f(this, args)
+      let ret = f(this, cmd, args, env, sys)
       if (def(ret.ret)) return ret
       return { ret: ret, pass: (ret.pass != 0) } // eslint-disable-line
     }
@@ -142,12 +142,7 @@ class Item extends File {
   }
 
   emPower (cmd) {
-    this.copyPower(Command.get(cmd))
-  }
-
-  copyPower (c) {
-    this.exec = c.exec
-    this.syntax = c.syntax
+    Command.get(cmd).copyPower(this)
   }
 
   disPower () {

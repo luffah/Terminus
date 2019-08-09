@@ -8,7 +8,7 @@ function VTermImages(args) {  // IMAGES //
   this.addon(VTermImages.prototype)
   this.imgbank = new Images(args)
   this.imgs = {}
-  this.on('ReturnStatement', function (ret){
+  this.on('Render', function (ret){
     if (ret.render){
       let img
       if (ret.render instanceof File) {

@@ -7,11 +7,11 @@ Command.def('mkdir', [ARGT.dirnew], function (args, ctx, vt) { // event arg -> c
       if (!tr.item) {
         tr.room.addDoor(new Room(tr.item_name))
         ctx.h.r.fire(vt, 'mkdir', args, 0)
-        return _stdout(_('room_new_created', args))
+        return {stdout:_('room_new_created', args)}
       }
-      return _stderr(_('tgt_already_exists', [args[0]]))
+      return {stderr:_('tgt_already_exists', [args[0]])}
     }
-    return _stderr(_('permission_denied') + ' ' + _('room_not_writable'))
+    return {stderr:_('permission_denied') + ' ' + _('room_not_writable')}
   }
-  return _stderr(_('incorrect_syntax'))
+  return {stderr:_('incorrect_syntax')}
 })

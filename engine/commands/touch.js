@@ -1,7 +1,7 @@
 Command.def('touch', [ARGT.filenew], function (args, ctx, vt) {
   var cwd = ctx.h.r
   if (args.length < 1) {
-    return _stdout(_('cmd_touch_nothing'))
+    return {stdout:_('cmd_touch_nothing')}
   } else {
     var createdItemsString = ''
     let ret = [] // FIXME : ret shall be returned
@@ -12,7 +12,7 @@ Command.def('touch', [ARGT.filenew], function (args, ctx, vt) {
         if (hret.pass) continue
       }
       if (cwd.getItemFromName(args[i])) {
-        return _stderr(_('tgt_already_exists', [args[i]]))
+        return {stderr:_('tgt_already_exists', [args[i]])}
       } else if (args[i].length > 0) {
         cwd.addItem(new Item({
           name: args[i],
@@ -23,8 +23,8 @@ Command.def('touch', [ARGT.filenew], function (args, ctx, vt) {
       }
     }
     if (createdItemsString === '') {
-      return _stderr(_('cmd_touch_none'))
+      return {stderr:_('cmd_touch_none')}
     }
-    return _stdout(_('cmd_touch_created', [createdItemsString]))
+    return {stdout:_('cmd_touch_created', [createdItemsString])}
   }
 })
