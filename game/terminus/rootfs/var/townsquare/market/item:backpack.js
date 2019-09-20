@@ -10,7 +10,7 @@
       vt.ctx.addGroup('unzip')
       learn(vt, 'unzip', re)
       o.unsetCmdEvent('less').setPoDelta(['.zip']).setCmdEvent('unzip', (ct) => {
-        let unzipped = []
+        const unzipped = []
         unzipped.push(ct.room.newItem('rm_cost'))
         unzipped.push(ct.room.newItem('mkdir_cost'))
         o.unsetCmdEvent('unzip').setPoDelta([])

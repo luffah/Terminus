@@ -29,6 +29,11 @@ USAGE = (
     "If you want to re-execute only one step use '-only'."
 )
 
+
+def rsymlink(src, dst):
+    symlink(relpath(src, dirname(dst)), dst)
+
+
 def _link_dirs_in_project(params, dirs):
     for n in dirs:
         if not isdir(params['%s_dir' % n]):
@@ -36,7 +41,7 @@ def _link_dirs_in_project(params, dirs):
                 makedirs(params['target_%s_dir' % n])
             if islink(params['%s_dir' % n]):
                 remove(params['%s_dir' % n])
-            symlink(params['target_%s_dir' % n], params['%s_dir' % n])
+            rsymlink(params['target_%s_dir' % n], params['%s_dir' % n])
 
 def _main(gamedir, tgt, opts):
     if not isdir(tgt):

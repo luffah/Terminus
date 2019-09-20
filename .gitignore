@@ -6,7 +6,7 @@
 
 # Python bytes
 *.pyc
-G
+
 # other vcs
 *.svn
 
@@ -18,6 +18,14 @@ G
 *.bak
 bak
 .back*
+
+# logs / traces
+*.log
+*.pid
+*.out
+
+# vim sessions
+*.vim
 
 # trashes
 _trash

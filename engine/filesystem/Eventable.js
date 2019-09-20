@@ -5,7 +5,7 @@ class Eventable extends Properties {
   }
 
   set (prop) {
-    let events = prop.events
+    const events = prop.events
     delete prop.events
     super.set(prop)
     if (events) {
@@ -26,10 +26,10 @@ class Eventable extends Properties {
   }
 
   fire (cmd, args, env, sys, idx) {
-    let ct = env.cwd || {}
-    let f = this.tgt
+    const ct = env.cwd || {}
+    const f = this.tgt
     let trigger = null
-    let ctx = { arg: (def(idx) ? args[idx] : null), args: args, i: idx, env: env, sys: sys }
+    const ctx = { arg: (def(idx) ? args[idx] : null), args: args, i: idx, env: env, sys: sys }
     if (ct.unreachable_room) {
       if ((ct.unreachable_room.name in globalSpec) && (cmd in globalSpec[ct.unreachable_room.name])) {
         trigger = globalSpec[ct.unreachable_room.name][cmd]
@@ -38,7 +38,7 @@ class Eventable extends Properties {
       trigger = f.cmd_event[cmd]
     }
     if (trigger) {
-      let ck = (typeof trigger === 'function' ? trigger(ctx, this, cmd) : trigger)
+      const ck = (typeof trigger === 'function' ? trigger(ctx, this, cmd) : trigger)
       if (ck) {
         console.log(f.uid + ' FIRE ' + ck)
         this.apply && this.apply(ck)

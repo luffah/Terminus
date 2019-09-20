@@ -4,32 +4,32 @@ dom.Id = dom.getElementById
 dom.El = dom.createElement
 dom.Txt = dom.createTextNode
 
-function picturable(attrs){
+function picturable (attrs) {
   attrs['aria-hidden'] = 'true'
   return attrs
 }
-function accessible(attrs){
+function accessible (attrs) {
   attrs['role'] = 'log'
   attrs['aria-live'] = 'polite'
   return attrs
 }
 
 function prEl (root, tag, attrs) {
-  let el = dom.El(tag)
+  const el = dom.El(tag)
   root.insertBefore(el, root.childNodes[0])
   return addAttrs(el, attrs)
 }
 
 function addEl (root, tag, attrs) {
-  let el = dom.El(tag)
+  const el = dom.El(tag)
   // console.log(el, root, attrs)
   root.appendChild(el)
   return addAttrs(el, attrs)
 }
 
 function overclass (a) {
-  let cls = a.replace(/[^a-zA-Z0-9]/g, '-')
-  let t = cls.split('-')
+  const cls = a.replace(/[^a-zA-Z0-9]/g, '-')
+  const t = cls.split('-')
   return 't-' + t[0] + (t.length > 1 ? ' t-' + t[0] + '-' + t[1] + (t.length > 2 ? ' t-' + cls : '') : '')
 }
 
@@ -41,19 +41,19 @@ function _span (content, cls) {
 //   return '<div' + (cls ? " class='" + cls + "'" : '') + '>' + content + '</div>'
 // }
 
-function _table (tab, cls) {
-  return '<table' + (cls ? " class='" + cls + "'" : '') + '>' + tab.map(
-    i => '<tr>' + i.map(j => '<td>' + j + '</td>'
-    ).join('') + '</tr>').join('') + '</table>'
-}
+// function _table (tab, cls) {
+//   return '<table' + (cls ? " class='" + cls + "'" : '') + '>' + tab.map(
+//     i => '<tr>' + i.map(j => '<td>' + j + '</td>'
+//     ).join('') + '</tr>').join('') + '</table>'
+// }
 
-function _ul (tab, cls) {
-  return '<ul' + (cls ? " class='" + cls + "'" : '') + '>' + tab.map(
-    i => '<li>' + i + '</li>').join('') + '</ul>'
-}
+// function _ul (tab, cls) {
+//   return '<ul' + (cls ? " class='" + cls + "'" : '') + '>' + tab.map(
+//     i => '<li>' + i + '</li>').join('') + '</ul>'
+// }
 
 function _img (src, title, legend) {
-  let i = '<img src="' + src + '" title="' + title + '"/>'
+  const i = '<img src="' + src + '" title="' + title + '"/>'
   return legend ? '<figure>' + i + '<figcaption>' + legend + '</figcaption>' + '</figure>' : i
 }
 

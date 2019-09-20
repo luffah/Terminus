@@ -1,7 +1,7 @@
-// var STATE = 
+// var STATE =
 class Statable extends Eventable {
   set (prop) {
-    let states = prop.states
+    const states = prop.states
     delete prop.states
     super.set(prop)
     if (states) {
@@ -12,7 +12,7 @@ class Statable extends Eventable {
   }
 
   getHash () {
-    let h = {}
+    const h = {}
     h['m'] = this.mod.stringify()
     h['d'] = this.hasOwnProperty('children') * 1
     h['events'] = this.cmd_event

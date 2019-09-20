@@ -17,7 +17,7 @@
     },
     less_no_arg: (re, o, e) => {
       o.unsetCmdEvent(e)
-      if (o.v=2) mesg(_('cmd_cat_'+v), re, { timeout: 500 })
+      if (o.v = 2) mesg(_('cmd_cat_' + v), re, { timeout: 500 })
       o.v++
       mesg(_('cmd_cat_first_try'), re, { timeout: 500 })
     },

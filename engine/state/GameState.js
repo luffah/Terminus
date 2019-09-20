@@ -1,7 +1,7 @@
 class GameState {
   constructor () {
-    this.params = {opts:{}}
-    this._params_cache = {opts:{}}
+    this.params = { opts: {} }
+    this._params_cache = { opts: {} }
     this.active = false
     this.actions = {}
     this.filesystem = {}
@@ -47,16 +47,16 @@ class GameState {
     return this.params[name]
   }
 
-  setopt (name, val)  {
+  setopt (name, val) {
     if (this.active) this.params.opts[name] = val
     else this._params_cache.opts[name] = val
   }
 
-  getopt (name, fallback)  {
+  getopt (name, fallback) {
     let val
     if (this.active) val = this.params.opts[name]
     else val = this._params_cache.opts[name]
-    return (def(val)?val:fallback)
+    return (def(val) ? val : fallback)
   }
 
   applied (name) {
@@ -90,7 +90,7 @@ class GameState {
   }
 
   loadEnv () {
-    let params = this._params_cache
+    const params = this._params_cache
     this.active = true
     if (params[0]) {
       this.params[0] = params[0]

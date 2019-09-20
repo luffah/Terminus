@@ -2,14 +2,14 @@ function credits (room) {
   if (room) {
 
   } else {
-    let ret = []
+    const ret = []
     let tcredit
     CREDITS_ORD.forEach(t => {
       if (t === 'assets') {
         Object.keys(RES).sort().forEach(p => {
           let full = true
-          let poid = 'credit_' + p
-          let cls = overclass(poid)
+          const poid = 'credit_' + p
+          const cls = overclass(poid)
           ret.push(_span(_(poid), cls))
           tcredit = {}
           Object.keys(RES[p]).sort().forEach(ref => {
@@ -22,9 +22,9 @@ function credits (room) {
             if (RES[p][ref].by.designer) {
               author += _('and_designed_by', [RES[p][ref].by.designer])
             }
-            let title = RES[p][ref].by.title || ref
+            const title = RES[p][ref].by.title || ref
             if (!(author in tcredit)) tcredit[author] = []
-            let files = RES[p][ref].files
+            const files = RES[p][ref].files
             if (p === 'img') {
               tcredit[author].push(_img(RES[p][ref].src, title, files ? Object.keys(files).sort().join(', ') : '—'))
             } else {
@@ -45,8 +45,8 @@ function credits (room) {
         })
         return
       }
-      let poid = 'credit_' + t
-      let cls = overclass(poid)
+      const poid = 'credit_' + t
+      const cls = overclass(poid)
       if (t === 'translation') {
         ret.push(_span(_(poid), cls))
         ret.push(ul(LANG_CREDITS[t].map(name => _(name)), 'ul-credit'))

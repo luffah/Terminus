@@ -8,17 +8,17 @@ class File extends FileModel {
     this.room = null
     this.mod = new Modes()
     this.set(inject(
-      { mod: this.default.mod,
-        owner: (this.room ? this.room.owner : this.default.owner),
-        group: (this.room ? this.room.group : this.default.group),
+      { mod: File.mod,
+        owner: (this.room ? this.room.owner : File.owner),
+        group: (this.room ? this.room.group : File.group),
         tgt: this }, prop)
     )
   }
 
   set (prop) {
-    let t = this
+    const t = this
     t.consume(prop, ['group', 'owner'])
-    let p = consume(prop, ['mod', 'var', 'hooks'])
+    const p = consume(prop, ['mod', 'var', 'hooks'])
     if (p.mod) t.chmod(p.mod)
     if (p.var) {
       t.var = p.var
@@ -34,14 +34,14 @@ class File extends FileModel {
   }
 
   copy (name) {
-    let nut = this.constructor(name)
-    for (let attr in this._copiable) {
+    const nut = this.constructor(name)
+    for (const attr in this._copiable) {
       if (this.hasOwnProperty(attr)) nut[attr] = this[attr].copy()
     }
-    for (let attr in this._clonable) {
+    for (const attr in this._clonable) {
       if (this.hasOwnProperty(attr)) nut[attr] = clone(this[attr])
     }
-    for (let attr in this._inheritable) {
+    for (const attr in this._inheritable) {
       if (this.hasOwnProperty(attr)) nut[attr] = this[attr]
     }
     return nut
@@ -57,7 +57,7 @@ class File extends FileModel {
 
   toString () { return this.name }
 
-  get path () { 
+  get path () {
     return (this.room ? this.room.path + '/' + this.name : '')
   }
 
@@ -82,7 +82,7 @@ class File extends FileModel {
     if (typeof fu === 'object') {
       fu = () => { return { ret: fu } }
     } else if (typeof fu === 'string') {
-      fu = () => { return { ret: _stdout(fu), pass: true } }
+      fu = () => { return { ret: { stdout: fu }, pass: true } }
     }
     this.cmd_hook[cmd] = fu
     return this
@@ -94,9 +94,9 @@ class File extends FileModel {
   }
 
   tryhook (cmdname, args, cmd) {
-    let f = this.cmd_hook[cmdname]
+    const f = this.cmd_hook[cmdname]
     if (f) {
-      let ret = f(this, cmd, args, env, sys)
+      const ret = f(this, cmd, args, env, sys)
       if (def(ret.ret)) return ret
       return { ret: ret, pass: (ret.pass != 0) } // eslint-disable-line
     }
@@ -127,8 +127,8 @@ class Item extends File {
   }
 
   defaultExec (args, env, sys, cmd, arrs) {
-    this.fire('exec', args, sys, args)
-    return cmdDone(sys, [[this, 0]], this.text, 'exec', args)
+    this.fire('exec', args, env, sys, 0)
+    return { fireables: [[this, 0]], stdout: this.text }
   }
 
   disappear () {
@@ -160,5 +160,12 @@ class People extends Item {
   constructor (prop) {
     prop.poprefix = prop.poprefix || POPREFIX_PEOPLE
     super(prop)
+  }
+}
+
+class RenderTree { /* class for extra rendering, a kind of abstract fs */
+  constructor (root, leafs) {
+    this.root = root
+    this.leafs = leafs
   }
 }

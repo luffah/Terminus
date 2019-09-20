@@ -18,7 +18,7 @@ class Modes {
         } else if (i === '-') {
           change = 0
         } else {
-          let scope = 'ugo'.indexOf(i)
+          const scope = 'ugo'.indexOf(i)
           if (scope !== -1) {
             curscope.push(scope)
           } else {

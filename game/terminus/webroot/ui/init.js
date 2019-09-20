@@ -1,7 +1,7 @@
 var vt = (new VTerm(dom.Id('term'))).addon(VTermImages, RES.img)
-invidiv = addEl(vt.cmdinput, 'pre', {class: 'invidiv'})
+invidiv = addEl(vt.cmdinput, 'pre', { class: 'invidiv' })
 cursorblock = addEl(vt.cmdinput, 'div', {
-  class:'cursorblock',
+  class: 'cursorblock'
 })
 CursorListener.push((k, pos) => {
   invidiv.innerText = vt.input.value.slice(0, pos)
@@ -10,16 +10,17 @@ CursorListener.push((k, pos) => {
 })
 
 var bottom = vt.container.style.bottom = 0
-window.onwheel = function(e) {
+window.onwheel = function (e) {
   vt.input.blur()
-  if (e.deltaY){
+  if (e.deltaY) {
+    if (e.deltaY < 0 && vt.container.offsetTop > 0) return
     bottom += (e.deltaY < 0 ? -1 : 1)
-    if (bottom < 0){
-      vt.container.style.bottom = bottom + 'em';
+    if (bottom < 0) {
+      vt.container.style.bottom = bottom + 'em'
     }
   }
 }
-vt.on('InputFocused', function(){
+vt.on('InputFocused', function () {
   bottom = vt.container.style.bottom = 0
 })
 
@@ -30,7 +31,7 @@ function loadSoundBank () {
 
 window.addEventListener('load', Game)
 function Game () {
-  let g = Game.prototype
+  const g = Game.prototype
   g.version = CREDITS.game.version
   g.title = CREDITS.game.title
   g.state = File.prototype.STATE
@@ -52,7 +53,7 @@ Game.prototype = {
   },
   menu (next) {
     flash(0, 550)
-    let g = Game.prototype
+    const g = Game.prototype
     vt.clear()
     // prepare game loading
     // TODO : add checkbox for snd and textspeed
@@ -78,7 +79,7 @@ Game.prototype = {
     }, 1200)
   },
   start (useCookies) {
-    let g = this
+    const g = this
     vt.clear()
     console.log('Start game')
     loadBackgroud('game')
@@ -89,7 +90,7 @@ Game.prototype = {
       if (useCookies === 0) vt.env = g.state.loadEnv()
     } else g.state.stopCookie() // do not use cookie
 
-    $bin.newLink('grep', {nopo:['name'],tgt:$backroom.items[0]})
+    $bin.newLink('grep', { nopo: ['name'], tgt: $backroom.items[0] })
     if (vt.env.r) {
       g.state.loadActions()
       vt.mute = 0
@@ -101,7 +102,7 @@ Game.prototype = {
         me: 'sure', // current user
         r: $sure, // current working dir
         users: {
-          sure:{groups:[], v:{HOME:$sure.path, PATH:$bin.path}}
+          sure: { password: 'ifhtp', groups: [], v: { HOME: $sure.path, PATH: $bin.path } }
         }
       })
       vt.env.addGroup('user')

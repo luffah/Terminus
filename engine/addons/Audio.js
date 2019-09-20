@@ -1,4 +1,4 @@
-function VTermAudio(args) { 
+function VTermAudio (args) {
   this.soundbank = new SoundBank(args.sound)
   this.musicbank = new Music(this.soundbank, args.music)
   this.addon({
@@ -33,7 +33,7 @@ class SoundBank {
   }
 
   set (ref, orig, file, exts) {
-    let t = this
+    const t = this
     t.ldr++
     t.refs[ref] = orig
     t.snds[ref] = new Howl({
@@ -47,7 +47,7 @@ class SoundBank {
   }
 
   play (key) {
-    let snd = this.get(key)
+    const snd = this.get(key)
     if (snd) {
       snd.stop()
       snd.currenttime = 0
@@ -55,9 +55,10 @@ class SoundBank {
       snd.play()
     }
   }
+
   get (key) {
-    let snd = this.snds[key]
-    let ref = this.refs[key]
+    const snd = this.snds[key]
+    const ref = this.refs[key]
     if (ref) ref.used = true
     return snd
   }
@@ -84,12 +85,13 @@ class Music {
     this.soundbank = soundbank
     this.soundbank.add(h)
   }
+
   play (ref, attrs) {
     attrs = attrs || {}
-    let n = this.soundbank.get(ref)
+    const n = this.soundbank.get(ref)
     if (this.current !== ref) {
       // console.log('play ' +ref);
-      let c = this.soundbank.get(this.current)
+      const c = this.soundbank.get(this.current)
       if (c) {
         c.pause()
         c.currentTime = 0

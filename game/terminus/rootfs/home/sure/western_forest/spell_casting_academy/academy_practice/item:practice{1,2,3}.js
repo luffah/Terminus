@@ -2,6 +2,7 @@
   img: 'test',
   states: {
     mv_done: (re) => {
+      console.log('mv_done pillier...')
       if (++$academy_practice.v === 3) {
         $spell_casting_academy.setEnterCallback(null)
         if (re) { $spell_casting_academy.chmod('-x') } else {

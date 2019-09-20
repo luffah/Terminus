@@ -1,14 +1,16 @@
 // only valid for command names
-Command.def('man', [ARGT.cmdname], function (args, ctx, vt) { // event arg -> cmd
+Command.def('man', [ARGT.cmdname], function () {
+  const task = this
+  const [args, sys, env] = [task.args, task.io, task.env]
+
   if (args.length < 1) {
-    return {stderr:_('cmd_man_no_query')}
+    return { stderr: _('cmd_man_no_query') }
   } else {
-    let cwd = ctx.h.r
-    let hret = cwd.tryhook('man', args)
+    const hret = env.cwd.tryhook('man', args)
     if (hret && hret.ret) return hret.ret
     if (('man_' + args[0]) in dialog) {
-      return {stdout:_('man_' + args[0])}
+      return { stdout: _('man_' + args[0]) }
     }
-    return {stderr:_('cmd_man_not_found')}
+    return { stderr: _('cmd_man_not_found') }
   }
 })

@@ -1,7 +1,7 @@
 var ARGT = {
   _test: function (env, val, syn) {
     // console.log(env, val, syn)
-    let f = ARGT._typedef[syn[0]]
+    const f = ARGT._typedef[syn[0]]
     return f ? f(env, val, syn) : false
   },
   _typedef: { // TODO
@@ -25,38 +25,52 @@ var ARGT = {
 }
 Object.keys(ARGT._typedef).forEach((i) => { ARGT[i] = [i] })
 
-class Command {
-  constructor(name, syntax, fu) {
+class Functionnal {
+
+  constructor (name, syntax, fu) {
     // syntax example : cmd dir [-d|-e] (undo|redo) -> [ARGT.dir,ARGT.opt.concat(['-d','e']),ARGT.instr.concat['undo','redo']],
     // fu example : (args, env, sys) => sys.stdout.write(env.HOME)
     this.exec = fu
     this.syntax = syntax
-    Command.reg[name] = this
+    this.function_name = name
   }
+
   copyPower (c) {
     c.exec = this.exec
+    c.function_name = this.function_name
     c.syntax = this.syntax
   }
+
   getSyntax (idx) {
     return !this.syntax.length ? null : idx > this.syntax.length ? this.syntax[-1][0] : this.syntax[idx][0]
   }
+
+}
+
+class Command extends Functionnal {
+  constructor (name, syntax, fu) {
+    super(name, syntax, fu)
+    Command.reg[name] = this
+  }
 }
 Object.assign(Command, {
-  reg : {},
-  def(name, syntax, fu) {
+  reg: {},
+  def (name, syntax, fu) {
     return new Command(name, syntax, fu)
   },
   get: (cmd) => Command.reg[cmd],
-  tools : {
-    parseArgs (args){
-      let indexed = args.map((s, i) => [s, i])
+  _keys: () => Object.keys(Command.reg),
+  keys: () => Command._keys(),
+  tools: {
+    parseArgs (args) {
+      const indexed = args.map((s, i) => [s, i])
       return [
-        indexed.filter((s) => s[0][0] !== '-'),  //arguments
+        indexed.filter((s) => s[0][0] !== '-'), // arguments
         this._getOpts(indexed.filter((s) => s[0][0] === '-')) // options
       ]
     },
     _getOpts (opts) {
-      let ret = {}
+      const ret = {}
       opts.forEach((it) => {
         if (it[0].slice(0, 2) === '--') {
           ret[it[0].slice(2)] = { idx: it[1] }
@@ -71,19 +85,19 @@ Object.assign(Command, {
   }
 })
 
-class Builtin extends Command {
-  constructor(name, syntax, fu) {
+class Builtin extends Functionnal {
+  constructor (name, syntax, fu) {
     super(name, syntax, fu)
     Builtin.reg[name] = this
   }
 }
 Object.assign(Builtin, {
-  reg : {},
-  def(name, syntax, fu) {
+  reg: {},
+  def (name, syntax, fu) {
     return new Builtin(name, syntax, fu)
   },
-  hidden : {},
-  get : (cmd) => Builtin.hidden[cmd] ? undefined : Builtin.reg[cmd],
+  hidden: {},
+  get: (cmd) => Builtin.hidden[cmd] ? undefined : Builtin.reg[cmd],
   _keys: () => Object.keys(Builtin.reg),
   keys: () => Builtin._keys().filter(k => !Builtin.reg[k].hidden),
   hide (query) {
@@ -97,36 +111,3 @@ Object.assign(Builtin, {
     })
   }
 })
-
-
-//----------
-var globalFireables = { done: [] }
-function globalFire (categ) {
-  let f = globalFireables[categ]
-  if (f) {
-    while (f.length) {
-      f.shift()()
-    }
-  }
-}
-function globalFireDone () { globalFire('done') }
-
-class CmdSeq extends Seq {
-  constructor() {
-    super()
-    this.fireables = []
-  }
-  done(sys, cmd, args) {
-    // fire events *_done when ret is shown
-    let s = this
-    this.infect(-1, (it) => {
-      it.cb = () => {
-        s.fireables.forEach((f) => {
-          f[0].fire(vt, cmd + '_done', args, f[1])
-          globalFireDone()
-        })
-      }
-    })
-    return this
-  }
-}

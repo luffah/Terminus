@@ -14,7 +14,7 @@ function pogenDL () {
   ret += '"Content-Transfer-Encoding: 8bit\\n"\n'
   ret += '"Language: ' + LANG + '\\n"\n'
 
-  for (let i in dialog) {
+  for (const i in dialog) {
     ret += 'msgid "' + i + '"\n'
     ret += 'msgstr "' + dialog[i].replace(/"/g, '\\"').replace(/(\\n|\n)/g, '\\n"\n"') + '"\n\n'
   }
@@ -25,7 +25,7 @@ function pogenDL () {
 var _rxVar = /\{\{\w+(,[^,}]*)*\}\}/g
 function resolveVar (a) {
   a = a.substring(2, a.length - 2)
-  let b = a.split(',')
+  const b = a.split(',')
   return __(b[0], b.slice(1))
 }
 

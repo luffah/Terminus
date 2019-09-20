@@ -6,7 +6,7 @@ NODEBIN=${TOOLS}/node_modules/.bin
 
 LANG_REGEX=\(.*\.dialog\.\).*\(\.js\)
 LANGS=fr en
-CURR_GAME=terminus
+GAME?=terminus
 SRC=./engine
 
 default: help
@@ -21,15 +21,19 @@ devenv: ## Source .bash_profile in order to use dev tools
 	bash --init-file .bash_profile
 
 server:
-	./tools/start_game_server.sh ${CURR_GAME}
+	./tools/start_game_server.sh ${GAME}
 
 build: ## Fully build
-	for _GAME in $$(ls -d game/*);do \
+	for _GAME in $$(ls -d game/$${GAME}*);do \
+		echo "BUILD $${_GAME}"; \
+		echo "------------------------------"; \
 		${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}) -html; \
 	done
 
 assemble: ## Transform game file into an usable script
-	for _GAME in $$(ls -d game/*);do \
+	for _GAME in $$(ls -d game/$${GAME}*);do \
+		echo "ASSEMBLE $${_GAME}"; \
+		echo "------------------------------"; \
 		${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}); \
 	done
 

@@ -1,14 +1,14 @@
-function splitLines(text){
+function splitLines (text) {
   let ret = []
   if (text instanceof Object) {
-    for (let t of text) {
+    for (const t of text) {
       ret = ret.concat(splitLines(t))
     }
   } else {
-    let node = document.createElement('p')
+    const node = document.createElement('p')
     node.innerHTML = text.replace(/([^\\])?\n/, '<br/>')
     let curr = ''
-    for (let o of node.childNodes){
+    for (const o of node.childNodes) {
       if (o.data) {
         curr += o.data
       } else if (o.tagName === 'SPAN') {
@@ -27,21 +27,21 @@ function splitLines(text){
   return ret
 }
 
-Command.def('grep', [ARGT.pattern, ARGT.strictfile],
-  function (args, env, sys) {
-  let task = this
+Command.def('grep', [ARGT.pattern, ARGT.strictfile], function () {
+  const task = this
+  const [args, sys, env] = [task.args, task.io, task.env]
 
-  let word = args[0]
+  const word = args[0]
   // console.log(sys)
-  if (args.length == 1){
+  if (args.length == 1) {
     return sys.stdin.loop((lines) => {
-      lines = splitLines(lines).filter((l) => l.indexOf(word) >= 0) 
+      lines = splitLines(lines).filter((l) => l.indexOf(word) >= 0)
       // console.log(lines)
       if (lines) sys.stdout.write(lines)
     }, () => task.exit())
   } else {
-    for (let [f, i] of get_files_args(args.slice(1), 'grep', env, sys)) {
-      let lines = splitLines(f.text).filter((l) => l.indexOf(word) >= 0)
+    for (const [f, i] of get_files_args(args.slice(1), 'grep', env, sys)) {
+      const lines = splitLines(f.text).filter((l) => l.indexOf(word) >= 0)
       if (lines) {
         sys.stdout.write(lines)
       }

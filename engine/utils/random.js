@@ -2,8 +2,8 @@ function randomSort () {
   return 0.5 - Math.random()
 }
 function shuffleStr (src, complexity) {
-  let chars = ' #$)~._-(\\/^&abcdefghijklmnopqrstuvwxyz -0123456789'
-  let randsArr = chars.repeat(src.length).split('').sort(randomSort)
+  const chars = ' #$)~._-(\\/^&abcdefghijklmnopqrstuvwxyz -0123456789'
+  const randsArr = chars.repeat(src.length).split('').sort(randomSort)
   let ret = ''
   for (let i = 0; i < src.length; i++) {
     ret += (Math.random() > complexity ? src[i] : randsArr.shift())

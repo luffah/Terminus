@@ -8,10 +8,20 @@ import os
 from os.path import split, join, isfile, isdir, dirname, realpath
 import sys
 from .logging import print_err
+from ogaget.common.credit_file import parse
 TOOLS = dirname(dirname(sys.argv[0]))
 BUILD_TOOLS = join(TOOLS, 'build')
 
-DEFAULT_LANGS = ['en', 'fr']
+DEFAULT_LANGS = []
+
+
+def parse_info(fpath):
+    parsed = parse(fpath)
+    ret = {}
+    params = parsed.get('params')
+    if params:
+        ret = params[0]
+    return ret
 
 
 def get_project_parameters(gamedir, tgt):
@@ -20,11 +30,12 @@ def get_project_parameters(gamedir, tgt):
     params = {
         # source
         # 'project_dir_info': '(directory that contains game files)',
+        # 'root_dir_info': '(directory that represent file system content)',
         'project_dir': gamedir,
-        'root_dir_info': '(directory that represent file system content)',
         'game_info_file': 'credits.txt',
-        'root_subdir': 'rootfs',
-        'ui_subdir': 'ui',
+        'root_dir': 'rootfs',
+        'webroot_dir': 'webroot',
+        'ui_dir': 'ui',
         'app_name': app_name,
         # target
         'target_dir': realpath(tgt),
@@ -33,28 +44,29 @@ def get_project_parameters(gamedir, tgt):
         'target_sound_subdir': 'snd',
         'target_music_subdir': 'snd',
         'target_js_subdir': 'js',
-        'dialog.%s.js': '%s.dialog.%s.js' % (app_name, '%s'),
-        'dialog.%s.po': '%s.%s.po' % (app_name, '%s'),
-        'game.js': '%s.js' % app_name,
-        'game.min.%s.js': '%s.min.%s.js' % (app_name, '%s'),
-        'min.css':  '%s.min.css' % app_name,
-        'all_transpiled.%s.js': '%s.es5.%s.js' % (app_name, '%s'),
+        'dialog.%s.js': 'dialog.%s.js',
+        'dialog.%s.po': '%s.po',
+        'game.js': 'game.js',
+        'game.min.%s.js': 'game.min.%s.js',
+        'min.css':  'game.min.css',
+        'all_transpiled.%s.js': 'game.es5.%s.js',
         'index.html': 'index.html',
         'game.min.%s.html': '%s.%s.html' % (app_name, '%s')
     }
-    params['webroot_dir'] = join(gamedir, 'webroot')
-    params['css_dir'] = join(params['webroot_dir'], 'css')
-    params['js_dir'] = join(params['webroot_dir'], 'js')
-    params['img_dir'] = join(params['webroot_dir'], 'img')
-    params['sound_dir'] = join(params['webroot_dir'], 'snd')
-    params['music_dir'] = join(params['webroot_dir'], 'snd')
 
-    for key in list(params.keys()):
-        if key.endswith('_subdir'):
-            params[key.replace('_subdir', '_dir')] = join(
-                params['target_dir'] if key.startswith('target_') else
-                params['project_dir'],
-                params[key])
+    game_infos = parse_info(join(params['project_dir'],
+                                 params['game_info_file']))
+    params.update(game_infos)
+    params['root_dir'] = join(gamedir, params['root_dir'])
+    params['webroot_dir'] = join(gamedir, params['webroot_dir'])
+    params['ui_dir'] = join(gamedir, params['ui_dir'])
+    for a in ['css', 'img', 'js', 'sound', 'music']:
+        params[a + '_dir'] = join(
+            params['webroot_dir'],
+            params['target_' + a + '_subdir'])
+        params['target_' + a + '_dir'] = join(
+            params['target_dir'],
+            params['target_' + a + '_subdir'])
 
     for key in list(params.keys()):
         if key.endswith('_file'):

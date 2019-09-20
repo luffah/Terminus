@@ -1,0 +1,9 @@
+Traduction:
+ - consolider le texte en 'fr' (relecture à faire)
+ - ajouter en commentaires le contexte du message (chemin -automatique- + commentaire explicatif) dans le '.po' regroupant toutes les traductions, et rendre ce dernier plus facile à réutiliser
+
+Scénario:
+ - à débloquer
+
+Fonctionnalité:
+ - plan raproché sur un perso

@@ -67,13 +67,13 @@ function setChr (str, pos, chr) {
   return str.slice(0, pos) + chr + str.slice(pos + chr.length)
 }
 
-function rtrim(t){
-  return t.replace(/\s+$/, '')
-}
-function ltrim(t){
+// function rtrim (t) {
+//   return t.replace(/\s+$/, '')
+// }
+function ltrim (t) {
   return t.replace(/^\s*/, '')
 }
-function trim(t){
+function trim (t) {
   return t.replace(/^\s*/, '').replace(/\s+$/, '')
 }
 
@@ -81,18 +81,18 @@ var CONSONANT = 'bcdfghjklmnpqrstvwxz'
 
 function articulate (txt) {
   // using a node to ignore html tags
-  let node = document.createElement('p')
+  const node = document.createElement('p')
   node.innerHTML = txt
-  let tret = []
+  const tret = []
   for (let i = 0; i < node.childNodes.length; i++) {
-    let o = node.childNodes[i]
+    const o = node.childNodes[i]
     if (o.data) {
-      let txttab = o.data.split('')
+      const txttab = o.data.split('')
       let syl = ['', '']
       let idx = 0
       let prev = 0
       while (txttab.length) {
-        let c = txttab.shift()
+        const c = txttab.shift()
         if (/[-']/.test(c)) {
           syl[idx] += c
           prev = 0
@@ -157,7 +157,7 @@ function downloadAsFile (fname, text) {
   textFile = window.URL.createObjectURL(data)
 
   if (textFile !== null) {
-    let dl = dom.El('a')
+    const dl = dom.El('a')
     dl.setAttribute('download', fname)
     dl.href = textFile
     dl.innerText = dl.href
@@ -168,23 +168,23 @@ function downloadAsFile (fname, text) {
 }
 
 function table_to_printf (tab) {
-  let column_size = new Array(tab[0].length +1).fill(0)
-  for (let row of tab) {
-    for (let i=0; i<row.length; i++) {
+  const column_size = new Array(tab[0].length + 1).fill(0)
+  for (const row of tab) {
+    for (let i = 0; i < row.length; i++) {
       column_size[i] = Math.max(row[i].length, column_size[i])
     }
   }
   let ret = ''
   let val
-  for (let row of tab) {
-    for (let i=0; i<row.length; i++) {
+  for (const row of tab) {
+    for (let i = 0; i < row.length; i++) {
       val = row[i]
-      for (let j=val.length; j<=column_size[i]+1; j++){
+      for (let j = val.length; j <= column_size[i] + 1; j++) {
         val += ' '
       }
       ret += val
     }
-    ret += "\n"
+    ret += '\n'
   }
   return ret
 }

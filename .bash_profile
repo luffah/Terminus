@@ -103,6 +103,7 @@ EOF
   _desc_cmd 'lint' compile for lint check
   _desc_cmd 'fixlint' helper for fixing lint
   _desc_cmd 'lintlocal' simple lint check on current directory
+  _desc_cmd 'start_game_server' run webroot as server
 
   _mk_gen(){
     [ -z "$1" ] && return
@@ -138,7 +139,7 @@ EOF
     [ -n "$1"] && potouch . $1 && $EDITOR $1.po
   }
 
-  build(){ ( cd $WORKSPACE; $(which build) $GAMEDIR _build) }
+  build(){ ( cd $WORKSPACE; $(which build) $GAMEDIR _build/$(basename $GAMEDIR)) }
   fixlint(){ ( cd $WORKSPACE; $(which lint) $GAMEDIR -v -live -fix --no-style $*  2>&1 | tee .lint_errors) }
   lint(){ ( cd $WORKSPACE;  $(which lint) $GAMEDIR -v --no-style $*  2>&1 | tee .lint_errors) }
   lintlocal(){
@@ -146,6 +147,13 @@ EOF
     (
     cd $WORKSPACE
     lint.py $tgt -local -fix $* -vars Blob,vt,mesg,Builtin,learn,state,_,global_fire_done | grep -v ':1: Expected'
+    )
+  }
+  start_game_server(){
+    GAME=$(basename $GAMEDIR)
+    (
+    cd $WORKSPACE
+    GAME=$GAME make server
     )
   }
 
@@ -156,7 +164,7 @@ EOF
   _desc_cmd poget     show a msgstr from its msgid
   _desc_cmd polist    show all msgids
   alias pofix='NOPOLIB= po_arrange_metadatas .'
-  alias pocheck='pocheck . \$POLANG'
+  alias pocheck='pocheck . $POLANG'
   alias poinject='poinject .'
   alias polist='poget -list'
 

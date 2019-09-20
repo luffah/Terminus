@@ -1,0 +1,1 @@
+- Utiliser le selecteur de ogaget pour proposer le jeu à lancer/compiler => ajouter tools/select_game.py (from ogaget import choose...);  modifier Makefile

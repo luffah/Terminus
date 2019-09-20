@@ -1,0 +1,18 @@
+game:
+    title: Test Engine
+#   date:  yyyy
+    version: xxxx
+    author: zzzz
+
+params:
+    root_dir: ./fs
+    webroot_dir: ./web
+
+assets:< credits for assets are in ressources directory
+
+assets sources:
+    opengameart.org
+
+[lang] transalations: anonym
+
+license: CC0

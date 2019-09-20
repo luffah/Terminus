@@ -4,18 +4,17 @@ function getTime () {
 }
 
 function learn (cmds, re) {
-  if (typeof cmds === 'string') {
+  if (cmds instanceof String){
     cmds = [cmds]
   }
   if (!re) {
-    globalFireables.done.push(
-      function () {
-        for (var j = 0; j < cmds.length; j++) {
-          badge(cmds[j], _('you_learn', [cmds[j]]))
-          vt.playSound('learned')
-        }
+    vt.onNext('CmdLineDone',
+      function (ret) {
+      for (var j = 0; j < cmds.length; j++) {
+        badge(cmds[j], _('you_learn', [cmds[j]]))
+        vt.playSound('learned')
       }
-    )
+    })
   }
 }
 

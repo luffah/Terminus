@@ -1,0 +1,15 @@
+.ghost-monitor:before {
+  content:'screen reader';
+  text-decoration:underline;
+}
+.ghost-monitor {
+  color:grey;
+  text-transform:uppercase;
+  font-family:mono;
+  font-size:0.5em;
+  width:50%;
+  position:absolute;
+  right:0;
+  z-index:-99;
+}
+.

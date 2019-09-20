@@ -2,6 +2,7 @@
 <html>
   <head id='head'>
   <meta charset="utf-8" />
+  <script type="text/javascript" src="engine/utils/xhr.js"></script>
   <script>
   /*
    *  Load index.html and inject test scripts inside
@@ -10,36 +11,14 @@
    *  Date :    2018-10-20
    *  Usage :   testing.html?test1,test2...
    */
-  var __tests = [ '../tests/Testing.js' ].concat(
+  xhr_load(
+    "index.html",
+    [ '../tests/Testing.js' ].concat(
     window.location.search.substr(1).split(',').map(
       (s) => '../tests/test_' + s + '.js')
+    ),
+    'css/terminus.testing.css'
   )
-  document.open()
-  var __el = document.createElement( 'html' )
-  var __xhr = new XMLHttpRequest()
-  __xhr.open("GET","index.html")
-  __xhr.setRequestHeader('Content-type',
-    'application/x-www-form-urlencoded; charset=utf-8;')
-  __xhr.onreadystatechange = function(){
-    if (__xhr.readyState == 4 && __xhr.status == 200) {
-      __el.innerHTML=__xhr.responseText
-      __body = __el.getElementsByTagName('body')[0]
-      __tests.forEach((t) => {
-         let node = document.createElement('script')
-         node.type = "text/javascript"
-         node.setAttribute('src', t)
-         __body.appendChild(node)
-      })
-      __head = __el.getElementsByTagName('head')[0]
-      let node = document.createElement('link')
-      node.setAttribute('rel', "stylesheet")
-      node.setAttribute('href', "./css/terminus.testing.css")
-      __head.appendChild(node)
-      document.write(__el.innerHTML)
-      document.close()
-    }
-  }
-  __xhr.send()
    </script>
   </head>
 </html>

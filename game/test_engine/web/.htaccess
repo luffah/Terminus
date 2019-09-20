@@ -1,0 +1,3 @@
+<Files *.po>
+  ForceType applicaton/octet-stream
+</Files>

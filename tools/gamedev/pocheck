@@ -3,7 +3,7 @@
 Show missing po entries for a directory
 """
 import sys
-from os.path import isfile, join, realpath, relpath, basename
+from os.path import isfile, join, realpath, relpath, basename, dirname
 from polib import pofile
 import argparse
 sys.path.append(
@@ -138,9 +138,9 @@ def _global_check(d, langs, po_source=False):
                 ))
 
 
-def main(d=None, g=None, po_source=None, rec=None, lang=None):
+def main(d=None, g=None, po_source=None, rec=None, langs=None):
     d = realpath(d)
-    langs = lang and lang.split(',') or fetch_langs(d)
+    langs = langs or fetch_langs(d)
     po = po_source and pofile(po_source) or False
 
     if g:
@@ -151,11 +151,15 @@ def main(d=None, g=None, po_source=None, rec=None, lang=None):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('dir', dest='d')
-    group = parser.add_mutually_exclusive_group()
-    group.add_argument('lang')
-    group.add_argument('lang.po', dest="po_source")
+    parser.add_argument('d', metavar='dir')
+    parser.add_argument('langs', metavar='lang[.po]', nargs='*')
     parser.add_argument('-rec', help="recursive", action='store_true')
     parser.add_argument('-g', help="global", action='store_true')
     args=parser.parse_args()
-    main(args)
+
+    for i, v in enumerate(args.langs):
+        if v.endswith('.po'):
+            args.po_source = v
+            args.langs[i] = v[:-3]
+
+    main(**vars(args))

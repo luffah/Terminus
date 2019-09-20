@@ -1,20 +1,20 @@
-let WM = {
-    set activeWindow (w) {
-      this._activeWindow = w
-      this.behave()
-    },
-    get activeWindow () { return this._activeWindow },
-    behave(){
-      let v = this
-      dom.body.onkeydown = function (e) {
-        e = e || window.event// Get event
-        return v._activeWindow.onkeydown(e)
-      }
-      dom.body.onkeyup = function (e) {
-        e = e || window.event// Get event
-        return v._activeWindow.onkeyup(e)
-      }
+const WM = {
+  set activeWindow (w) {
+    this._activeWindow = w
+    this.behave()
+  },
+  get activeWindow () { return this._activeWindow },
+  behave () {
+    const v = this
+    dom.body.onkeydown = function (e) {
+      e = e || window.event// Get event
+      return v._activeWindow.onkeydown(e)
     }
+    dom.body.onkeyup = function (e) {
+      e = e || window.event// Get event
+      return v._activeWindow.onkeyup(e)
+    }
+  }
 }
 
 function overide (e) {
@@ -22,7 +22,7 @@ function overide (e) {
   e.stopPropagation()
 }
 
-function overideINPUT(e){
+function overideINPUT (e) {
   if (e.code.match(/Tab|Enter|ArrowUp|ArrowDown/)) {
     overide(e)
   } else if (e.ctrlKey) {
@@ -32,24 +32,25 @@ function overideINPUT(e){
   }
 }
 
-function overideDEFAULT(e){
+function overideDEFAULT (e) {
 }
 
-class Window{
-  constructor(){
+class Window {
+  constructor () {
     WM.activeWindow = this
   }
-  focus(el){
-    let v = this
+
+  focus (el) {
     this.focused = el
-    if (el.tagName == 'INPUT'){
+    if (el.tagName === 'INPUT') {
       this.overide = overideINPUT
     } else {
       this.overide = overideDEFAULT
     }
   }
-  onkeydown(e) {
-    let focused = dom.activeElement
+
+  onkeydown (e) {
+    const focused = dom.activeElement
     if (!focused || focused !== this.focused) {
       this.focusInput()
     }
@@ -57,8 +58,9 @@ class Window{
     this.focused.keydown(e)
     return !e.defaultPrevented
   }
-  onkeyup(e) {
-    let focused = dom.activeElement
+
+  onkeyup (e) {
+    const focused = dom.activeElement
     if (!focused || focused !== this.focused) {
       this.focusInput()
     }

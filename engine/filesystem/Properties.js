@@ -8,15 +8,17 @@ class Properties {
   constructor (prop) {
     this.uid = genUID(prop.poid || prop.name)
   }
+
   set (prop) {
     Object.assign(this, prop)
   }
-  consume(prop, keys, func){
+
+  consume (prop, keys, func) {
     if (keys instanceof String) {
-      keys = [ keys ]
+      keys = [keys]
     }
-    for (let k of keys) {
-      if ( prop.hasOwnProperty(k) ) {
+    for (const k of keys) {
+      if (prop.hasOwnProperty(k)) {
         if (func) func(this, k, prop[k])
         else this[k] = prop[k]
         delete prop[k]

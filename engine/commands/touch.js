@@ -1,18 +1,20 @@
-Command.def('touch', [ARGT.filenew], function (args, ctx, vt) {
-  var cwd = ctx.h.r
+Command.def('touch', [ARGT.filenew], function () {
+  const task = this
+  const [args, sys, env] = [task.args, task.io, task.env]
+
   if (args.length < 1) {
-    return {stdout:_('cmd_touch_nothing')}
+    return { stdout: _('cmd_touch_nothing') }
   } else {
     var createdItemsString = ''
-    let ret = [] // FIXME : ret shall be returned
+    const ret = [] // FIXME : ret shall be returned
     for (var i = args.length - 1; i >= 0; i--) {
-      let hret = cwd.tryhook('touch', [args[i]])
+      const hret = cwd.tryhook('touch', [args[i]])
       if (hret) {
         if (def(hret.ret)) ret.push(hret.ret)
         if (hret.pass) continue
       }
       if (cwd.getItemFromName(args[i])) {
-        return {stderr:_('tgt_already_exists', [args[i]])}
+        return { stderr: _('tgt_already_exists', [args[i]]) }
       } else if (args[i].length > 0) {
         cwd.addItem(new Item({
           name: args[i],
@@ -23,8 +25,8 @@ Command.def('touch', [ARGT.filenew], function (args, ctx, vt) {
       }
     }
     if (createdItemsString === '') {
-      return {stderr:_('cmd_touch_none')}
+      return { stderr: _('cmd_touch_none') }
     }
-    return {stdout:_('cmd_touch_created', [createdItemsString])}
+    return { stdout: _('cmd_touch_created', [createdItemsString]) }
   }
 })

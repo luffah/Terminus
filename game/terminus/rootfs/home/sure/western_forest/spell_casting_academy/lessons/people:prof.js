@@ -2,8 +2,8 @@
   v: 0,
   var: 'prof',
   img: 'prof',
-  states: { less: (re, o) => {
-    o.unsetCmdEvent('less')
+  states: { _less: (re, o) => {
+    o.unsetCmdEvent('_less')
     addGroup('mv')
     learn('mv', re)
   } },

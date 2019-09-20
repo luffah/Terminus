@@ -1,11 +1,13 @@
 /* Terminal interface which solve completion problem */
+// require(['shell/Shell','shell/Key']);
+
 var CursorListener = {
-  listeners : [],
-  push: function(f){
+  listeners: [],
+  push: function (f) {
     CursorListener.listeners.push(f)
   },
-  fire: function(k, pos){
-     CursorListener.listeners.forEach((f) => f(k, pos))
+  fire: function (k, pos) {
+    CursorListener.listeners.forEach((f) => f(k, pos))
   }
 }
 
@@ -26,7 +28,7 @@ var CursorListener = {
 class VTerm extends Window {
   constructor (el, env) {
     super()
-    let v = this
+    const v = this
     /* non dom properties */
     v.shell = new Shell(v, env)
     v.msgidx = 0
@@ -62,7 +64,7 @@ class VTerm extends Window {
      *  | |  .---------------------.||
      *  | | | inputdiv             ||| --> define user inventory style and offset
      *  | | |  .-----------------. |||
-     *  | | | | cmdlinecontainer | ||| --> contain  input style 
+     *  | | | | cmdlinecontainer | ||| --> contain  input style
      *  | | | |  .-------------. | |||
      *  | | | | | cmdline    | | |||
      *  | | | | | [ prompt  ]  | | |||
@@ -80,7 +82,7 @@ class VTerm extends Window {
     // for screen reader, to remove if there is an alternative
     v.ghost_monitor = prEl(dom.body, 'div', accessible({ class: 'ghost-monitor' }))
     v.container = el
-    v.monitor = addEl(el, 'div', picturable({ class: 'monitor'}) )
+    v.monitor = addEl(el, 'div', picturable({ class: 'monitor' }))
     v.inputcontainer = addEl(el, 'div', 'input-container')
     v.inputdiv = addEl(v.inputcontainer, 'div', 'input-div')
     v.cmdlinecontainer = addEl(v.inputdiv, 'p')
@@ -93,7 +95,7 @@ class VTerm extends Window {
     v.suggestions = addEl(v.belt, 'div', accessible({ class: 'suggest', 'aria-relevant': 'additions removals' }))
 
     // buttons
-    let k = v.buttons
+    const k = v.buttons
     // console.log(v.env)
     v.btn_clear = addBtn(k, 'key', '✗', v.env.km.clear.name, (e) => {
       v.line = ''; v.showSuggestions(v.env.getCommands().map(addspace))
@@ -109,22 +111,29 @@ class VTerm extends Window {
     v.focus(v.input)
     // to put in a renewPrompt function
   }
+
   get env () { return this.shell.env }
+
   set env (c) { this.shell.env = c }
+
   get line () { return this.input.value }
+
   set line (s) { this.input.value = s }
-  get selectionStart() { return this.input.selectionStart }
-  set selectionStart(p) { this.input.selectionStart = p }
-  
+
+  get selectionStart () { return this.input.selectionStart }
+
+  set selectionStart (p) { this.input.selectionStart = p }
+
   // clear the terminal window
   clear () {
     this.monitor.innerHTML = ''
     setTimeout(() => window.scroll(0, 0), this.timeout.scroll)
   }
+
   /* Setups */
   /* live ui */
   _showChars (msgidx, msg, txttab, cb, end, txt, curvoice, opt) {
-    let v = this
+    const v = this
     if (v.kill && !opt.unbreakable) {
       v.playSound('brokentext')
       if (opt.brokencb) {
@@ -145,7 +154,7 @@ class VTerm extends Window {
       if (end) { end() }
       v.printing = false
     } else {
-      let l = txttab.shift()
+      const l = txttab.shift()
       if (l) {
         let timeout = 0
         if (l instanceof Node) {
@@ -156,14 +165,14 @@ class VTerm extends Window {
             msg.appendChild(l)
           }
         } else {
-          let el = dom.El('span')
+          const el = dom.El('span')
           el.innerHTML = v.charhtml[l] || l
           msg.appendChild(el)
           if (l.length > 1) {
             timeout = get(v.charfactor[curvoice], 'voy') || v.charfactor.char.voy
             v.playSound(curvoice)
           } else {
-            let f = get(v.charfactor[curvoice], l) || v.charfactor.char[l]
+            const f = get(v.charfactor[curvoice], l) || v.charfactor.char[l]
             v.playSound(def(f) ? l : curvoice)
             timeout = f || v.charfactor.char.char
             if (l === '\n') v.emit(['NewLine', 'ContentAdded'], msg)
@@ -181,18 +190,21 @@ class VTerm extends Window {
       }
     }
   }
+
   render_out (lines, opt, cb) {
     this.echo(lines, opt, cb)
   }
+
   render_err (lines, opt, cb) {
     this.echo(lines, opt, cb)
   }
+
   echo (mesg, opt, end) {
-    let v = this
+    const v = this
     if (def(mesg)) {
       if (mesg instanceof Array) {
-        let last = mesg.pop()
-        for (let m of mesg) {
+        const last = mesg.pop()
+        for (const m of mesg) {
           v.echo(m, opt)
         }
         v.echo(last, opt, end)
@@ -204,15 +216,15 @@ class VTerm extends Window {
       // v.loop_waiting()
       v.current_msg = addEl(opt.el || v.monitor, 'pre', 'msg' + ' ' + (opt.cls || ''))
       if (typeof mesg === 'string') {
-        mesg = {stdout :mesg}
+        mesg = { stdout: mesg }
       } else if (typeof mesg === 'number') {
-        mesg = {stdout :String(mesg)}
+        mesg = { stdout: String(mesg) }
       } else if (mesg instanceof Node) {
-          v.current_msg.appendChild(mesg)
-        }
-        // FIXME
-        // work arounded -- std / err flux shall be separated...
-        let msg = ''
+        v.current_msg.appendChild(mesg)
+      }
+      // FIXME
+      // work arounded -- std / err flux shall be separated...
+      let msg = ''
       v.stdout = ''
       v.stderr = ''
       if (mesg.hasOwnProperty('stderr')) {
@@ -237,7 +249,7 @@ class VTerm extends Window {
       } else {
         let txt = msg.toString()// in case we have an object
         txt = txt.replace(re.hashtag, '<i class="hashtag"> $1 </i>').replace(re.voice, '<voice>$1</voice>')
-        let txttab = articulate(txt)
+        const txttab = articulate(txt)
         txt = txt.replace(re.tab, '&nbsp;&nbsp;').replace(re.br, '<br/>').replace(re.nbsp, '&nbsp;')
         v.msgidx++
         v.blindPrint(txt)
@@ -247,6 +259,7 @@ class VTerm extends Window {
     }
     return v
   }
+
   blindPrint (txt) {
     this.ghostel = addEl(this.ghost_monitor, 'p')
     this.ghostel.innerHTML = txt.replace(re.br, '<&nbsp;><br/>'
@@ -254,6 +267,7 @@ class VTerm extends Window {
     ).replace(re.quote, '"'
     ).replace(re.dots, '<br>')
   }
+
   /* Suggestion part */
   showSuggestions (list, highlights) {
     highlights = highlights || []
@@ -262,9 +276,10 @@ class VTerm extends Window {
       this.addSuggestion(list[i], highlights[i])
     }
   }
+
   addSuggestion (txt, hlcls) {
-    let v = this
-    let c = v.shell
+    const v = this
+    const c = v.shell
     // v.histindex = 0
     // console.log(txt, hlcls)
     addBtn(v.suggestions, hlcls, txt.replace(re.hashtag, '<i class="hashtag"> $1 </i>'), txt, function (e) {
@@ -276,42 +291,49 @@ class VTerm extends Window {
       }
     })
   }
+
   hideSuggestions () {
     this.suggestions.innerHTML = ''
   }
+
   /* */
   keyEffect (k) {
-    let v = this
+    const v = this
     if (v.env && k in v.env.cwd.effects.key) {
       v.env.cwd.effects.key[k](v)
     } else if (k in v.effects.key) {
       v.effects.key[k](v)
     }
   }
+
   terminateLine (k) {
     this.msgidx++
-    let prev = addEl(this.monitor, 'p', 'input')
+    const prev = addEl(this.monitor, 'p', 'input')
     prev.appendChild(this.PS1.cloneNode(true))
     prev.appendChild(dom.Txt(this.input.value))
     if (!k) {
       this.keyEffect('Enter')
       this.playSound('enter')
     } else {
-      addEl(prev, 'span').innerHTML= k.show
+      addEl(prev, 'span').innerHTML = k.show
     }
+    // this.monitor =
     this.next_input_value = ''
     this.disableInput()
   }
+
   renewLine (promptHTML) {
     this.enableInput()
     CursorListener.fire()
     this.PS1.innerHTML = promptHTML
     this.input.value = this.next_input_value
   }
+
   show_sigint () {
     this.current_msg.innerHTML += '<br>' + KEYMAP.break.show
     this.msgidx++
   }
+
   /*****************/
   /** Prompt behavior part **/
   /*****************/
@@ -320,51 +342,54 @@ class VTerm extends Window {
     var v = this
     var pr = v.input
 
-    v.focusInput = function() {
+    v.focusInput = function () {
       v.input.focus()
       v.emit(['InputFocused'])
     }
     pr.keydown = function (e) {
-      let k = new Key(e)
+      const k = new Key(e)
       v.shell.keydown(k, vt.readline)
-      if (v.disabled.input) { v.msgidx +=1; v.next_input_value += k.str  }
+      if (v.disabled.input) { v.msgidx += 1; v.next_input_value += k.str }
     }
     pr.keyup = function (e) {
-      let k = new Key(e)
-      let ks = Key.toStr(k)
+      const k = new Key(e)
+      const ks = Key.toStr(k)
       v.statkey[ks] = (v.statkey[ks] || 0) + 1
       v.shell.keyup(k, vt.readline)
       CursorListener.fire(k, v.input.selectionStart)
     }
     v.shell.renewLine()
   }
-  read(func, end){
-    let v = this
+
+  read (func, end) {
+    const v = this
     v.line = ''
     v.readline = addEl(v.inputcontainer, 'p', accessible({ class: 'input' }))
     v.readline.appendChild(v.cmdinput)
     CursorListener.fire()
     v.validateRead = function () {
-      v.echo(this.input.value, {direct:true})
+      v.echo(this.input.value, { direct: true })
       if (func) func(v.line)
-      v.line =''
+      v.line = ''
     }
     // console.log(end)
     v.terminateRead = end
   }
-  readEnd(){
-    let v = this
+
+  readEnd () {
+    const v = this
     v.cmdline.appendChild(v.cmdinput)
     v.inputcontainer.removeChild(v.readline)
     delete v.readline
     v.terminateRead()
     delete v.validateRead
     delete v.terminateRead
-    v.line =''
+    v.line = ''
     CursorListener.fire()
   }
+
   disableInput () { // disable can act as a mutex, if a widget don't get true then it shouldn't enable input
-    let v = this
+    const v = this
     if (v.disabled.input) return false
     v.disabled.input = true
     v.btn_clear.setAttribute('disabled', '')
@@ -372,8 +397,9 @@ class VTerm extends Window {
     v.inputdiv.removeChild(v.cmdlinecontainer)
     return true
   }
+
   enableInput () {
-    let v = this
+    const v = this
     if (!v.disabled.input) return false
     v.disabled.input = false
     v.inputdiv.insertBefore(v.cmdlinecontainer, v.inputdiv.childNodes[0])
@@ -385,16 +411,17 @@ class VTerm extends Window {
     CursorListener.fire()
     return true
   }
+
   /** extra programs **/
   exec (fu, cb) {
-    let v = this
+    const v = this
     v.line = ''
-    let m = v.monitor
+    const m = v.monitor
     //    var m = document.body;
-    let cont = addEl(m, 'div', 'app-container')
+    const cont = addEl(m, 'div', 'app-container')
     v.overapp = addEl(cont, 'div', 'app')
     v.disableInput()
-    let endapp = () => {
+    const endapp = () => {
       v.overapp.setAttribute('disabled', true)
       m.removeChild(cont)
       v.overapp = undefined
@@ -403,35 +430,36 @@ class VTerm extends Window {
     v.enterKey = function () { console.log('what is an overapp ?') }
     return fu(v, v.overapp, endapp)
   }
+
   /** Choice prompt **/
   /** TODO : add live action function option **/
   askChoose (question, choices, cb, opts = {}) {
-    let v = this
-    let buttons = []
+    const v = this
+    const buttons = []
+    const disabled = opts.disabled_choices || []
+    const direct = opts.direct
     let curidx = 0
-    let disabled = opts.disabled_choices || []
-    let direct = opts.direct
-    while (disabled.indexOf(curidx) > -1) {
-      curidx++
-    }
-    let choicebox = addEl(v.monitor, 'div', 'choicebox')
+    while (disabled.indexOf(curidx) > -1) curidx++
+    const choicebox = addEl(v.monitor, 'div', 'choicebox')
     v.echo(question, { direct: direct, el: choicebox })
 
     v.line = ''
     v.choose_input = addEl(choicebox, 'fieldset', 'choices')
-    let reenable = v.disableInput()
+    const reenable = v.disableInput()
 
-    let click = function (e) {
-      let i = e.target.getAttribute('idx')
+    const click = function (e) {
+      console.log('click')
+      const i = e.target.getAttribute('idx')
       addAttrs(buttons[curidx], { checked: '' })
       addAttrs(buttons[i], { checked: 'checked' })
       curidx = i
       return v.enterKey()
     }
-    let onkeydown = (e) => {
+    const onkeydown = (e) => {
       v._keyChoose(e)
     }
     v.enterKey = function (e) {
+      console.log('enter')
       v.playSound('choiceselect')
       v.choose_input.value = choices[curidx]
       v.echo(choices[curidx], { direct: direct, el: choicebox, unbreakable: true })
@@ -441,7 +469,8 @@ class VTerm extends Window {
       setTimeout(() => v.echo(cb(v, curidx), { direct: direct }), v.timeout.ask)
     }
     v._keyChoose = function (e) {
-      let k = e.code
+      console.log('key choose')
+      const k = e.code
       if (k === 'ArrowDown' || k === 'ArrowUp' || k === 'Tab') {
         v.playSound('choicemove')
         buttons[curidx].removeAttribute('checked')
@@ -467,7 +496,8 @@ class VTerm extends Window {
 
     for (let i = 0; i < choices.length; i++) {
       if (disabled.indexOf(i) === -1) {
-        let cho = addEl(v.choose_input, 'div', 'choice')
+        // console.log(i)
+        const cho = addEl(v.choose_input, 'div', 'choice')
         buttons.push(
           addEl(cho, 'input', {
             type: 'radio',
@@ -494,18 +524,19 @@ class VTerm extends Window {
     addAttrs(v.choose_input, { value: choices[curidx] })
     addAttrs(buttons[curidx], { checked: 'checked' })
     //    buttons[0].focus();
-    v.emit(['ContentAdded', 'ContentChanged'])
+    v.emit(['askChoose', 'ContentAdded', 'ContentChanged'])
   }
+
   /** Question prompt **/
   ask (question, cb, args) {
-    let v = this
+    const v = this
     v.line = ''
-    let reenable = v.disableInput()
-    let choicebox = addEl(v.monitor, 'div', args.cls || 'choicebox')
-    let createAnswer = () => {
-      v.answer_input = (args.multiline ?
-        addEl(choicebox, 'textarea', { cols: 78 }) :
-        addEl(choicebox, 'input', { size: 78 })
+    const reenable = v.disableInput()
+    const choicebox = addEl(v.monitor, 'div', args.cls || 'choicebox')
+    const createAnswer = () => {
+      v.answer_input = (args.multiline
+        ? addEl(choicebox, 'textarea', { cols: 78 })
+        : addEl(choicebox, 'input', { size: 78 })
       )
       addBtn(addEl(choicebox, 'div', 'keys'), 'key', '↵', 'Enter', function (e) { v.enterKey() })
       v.answer_input.value = args.value || ''
@@ -526,11 +557,11 @@ class VTerm extends Window {
         }
       }
     }
-    let endAnswer = () => {
+    const endAnswer = () => {
       if (args.disappear) args.disappear()
       if (reenable) v.enableInput()
     }
-    let lockAnswer = () => {
+    const lockAnswer = () => {
       v.answer_input.setAttribute('disabled', true)
       v.answer_input = undefined
       if (args.disappear) choicebox.outerHTML = ''
@@ -556,7 +587,7 @@ class VTerm extends Window {
         endAnswer()
         v.echo(ret)
       }, v.timeout.ask)
-      v.emit(['AnswerGiven','ContentChanged'])
+      v.emit(['AnswerGiven', 'ContentChanged'])
     }
 
     v.echo(question, { el: choicebox,
@@ -567,8 +598,10 @@ class VTerm extends Window {
         }
       } })
   }
-  playSound(){/*hook me*/}
-  playMusic(){/*hook me*/}
+
+  playSound () { /* hook me */ }
+
+  playMusic () { /* hook me */ }
 }
 
 VTerm.prototype.SAFE_BROKEN_TEXT = true

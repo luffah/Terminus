@@ -4,8 +4,8 @@ from os.path import join, dirname, realpath, basename
 sys.path.append(
     join(dirname(dirname(realpath(__file__))),'lib','python3')
 )
-from common import write, onlyfiles
-from common.po import get_po_content, gen_po_header, lang_from_fname
+from _terminal_game_common import write, onlyfiles
+from _terminal_game_common.po import get_po_content, gen_po_header, lang_from_fname
 
 
 def main(d):

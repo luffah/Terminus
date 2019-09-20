@@ -6,8 +6,11 @@ class Link extends Room {
     // linkname || _(PO_DEFAULT_LINK, [])
     super(prop)
   }
-  get exec() { return this.tgt.exec }
-  get syntax() { return this.tgt.syntax }
+
+  get exec () { return this.tgt.exec }
+
+  get syntax () { return this.tgt.syntax }
+
   set (prop) {
     if (prop.link) {
       this.link = prop.link

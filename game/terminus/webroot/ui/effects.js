@@ -50,15 +50,15 @@ function animElContent (el, list, opt) {
 }
 */
 function badge (title, text) {
-  let badge = addEl(EFFECTS.notifications, 'div', 'badge')
-  let now = Date.now()
-  let diff = EFFECTS.last_notify - now
+  const badge = addEl(EFFECTS.notifications, 'div', 'badge')
+  const now = Date.now()
+  const diff = EFFECTS.last_notify - now
   let uptimeout = 0
   if (diff > 0) {
     uptimeout = diff
   }
-  let disappeartimeout = uptimeout + (EFFECTS.timeout.badge / 2)
-  let downtimeout = uptimeout + EFFECTS.timeout.badge
+  const disappeartimeout = uptimeout + (EFFECTS.timeout.badge / 2)
+  const downtimeout = uptimeout + EFFECTS.timeout.badge
   setTimeout(function () {
     EFFECTS.notifications.removeChild(badge)
   }, downtimeout)
@@ -74,15 +74,15 @@ function badge (title, text) {
 }
 
 function notification (text) {
-  let notif = addEl(EFFECTS.notifications, 'div', 'notification')
-  let now = Date.now()
-  let diff = EFFECTS.last_notify - now
+  const notif = addEl(EFFECTS.notifications, 'div', 'notification')
+  const now = Date.now()
+  const diff = EFFECTS.last_notify - now
   let uptimeout = 0
   if (diff > 0) {
     uptimeout = diff
   }
-  let disappeartimeout = uptimeout + (EFFECTS.timeout.notifation / 2)
-  let downtimeout = uptimeout + EFFECTS.timeout.notification
+  const disappeartimeout = uptimeout + (EFFECTS.timeout.notifation / 2)
+  const downtimeout = uptimeout + EFFECTS.timeout.notification
   setTimeout(function () {
     EFFECTS.notifications.removeChild(notif)
   }, downtimeout)
@@ -99,7 +99,7 @@ function notification (text) {
 function showEpicImg (vt, i, clss, scrldelay, callback) {
   vt.scrl_lock = true
   vt.busy = true
-  let c = addEl(vt.monitor, 'div', 'img-container ' + clss)
+  const c = addEl(vt.monitor, 'div', 'img-container ' + clss)
   vt.mkImg({ img: i }).render(c, () => {
     console.log('nenene')
     c.className += ' loaded'
@@ -115,18 +115,18 @@ function showEpicImg (vt, i, clss, scrldelay, callback) {
 }
 
 function autoShuffleLine (t, msg, fromcomplexicity, tocomplexicity, stepcomplexity, period, duration, incstep) {
-  let idx = t.msgidx
+  const idx = t.msgidx
   msg = msg || t.input.value
   if (t.input_operation_interval) {
     clearInterval(t.input_operation_interval)
   }
   let inccnt = 0
   let tmpc = fromcomplexicity
-  let sens = (tocomplexicity > fromcomplexicity ? 1 : -1)
-  let limit = tocomplexicity * sens
-  let step = (tocomplexicity - fromcomplexicity) / stepcomplexity
-  let line_sh = shuffleStr(msg, tmpc)
-  let len = line_sh.lenght
+  const sens = (tocomplexicity > fromcomplexicity ? 1 : -1)
+  const limit = tocomplexicity * sens
+  const step = (tocomplexicity - fromcomplexicity) / stepcomplexity
+  const line_sh = shuffleStr(msg, tmpc)
+  const len = line_sh.lenght
   t.input_operation_interval = setInterval(() => {
     if (t.msgidx !== idx) {
       clearInterval(t.input_operation_interval)
@@ -135,8 +135,8 @@ function autoShuffleLine (t, msg, fromcomplexicity, tocomplexicity, stepcomplexi
       if (((tmpc * sens) < limit) && ((inccnt % incstep) === 0)) {
         tmpc = tmpc + step
       }
-      let line_sh = shuffleStr(msg, tmpc)
-      if (tmpc > tocomplexicity ) line = setChr(line, inccnt % msg.length, '###')
+      const line_sh = shuffleStr(msg, tmpc)
+      if (tmpc > tocomplexicity) line = setChr(line, inccnt % msg.length, '###')
       else clearInterval(t.input_operation_interval)
       t.line = line
       CursorListener.fire(line.charAt(0), line.lenght)

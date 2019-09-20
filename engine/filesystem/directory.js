@@ -27,11 +27,12 @@ class Room extends File {
     // name || _(PO_DEFAULT_ROOM),
     // text || _(PO_DEFAULT_ROOM_DESC),
   }
+
   set (prop) {
-    let peoples = prop.peoples
-    let items = prop.items
-    let children = prop.children
-    let tree = prop.tree
+    const peoples = prop.peoples
+    const items = prop.items
+    const children = prop.children
+    const tree = prop.tree
     delete prop.items
     delete prop.peoples
     delete prop.children
@@ -47,7 +48,7 @@ class Room extends File {
     // if (prop.pic_shown_as_item) this.pic_shown_as_item = prop.pic_shown_as_item
     if (items) {
       Object.keys(items).forEach((i) => {
-        let m = i.match(re.batch)
+        const m = i.match(re.batch)
         if (m) this.newItemBatch(m[1], m[2].split(','), items[i])
         else this.newItem(i, items[i])
       })
@@ -69,12 +70,18 @@ class Room extends File {
     }
     return this
   }
+
   isRoot () { return !this.room }
+
   getDoors () { return this.tgt.children }
+
   getItems () { return this.tgt.items.filter((o) => !(o instanceof People)) }
+
   getPeoples () { return this.tgt.items.filter((o) => (o instanceof People)) }
+
   // a message displayed on game start
   set starterMsg (txt) { this.tgt.starter_msg = txt; return this.tgt }
+
   get starterMsg () {
     if (this.tgt.starter_msg) {
       return this.tgt.starter_msg
@@ -82,15 +89,18 @@ class Room extends File {
       return _(POPREFIX_CMD + 'pwd', [this.tgt.name]).concat('\n').concat(this.tgt.text)
     }
   }
+
   // sub room management
   getChildFromName (name) {
     return this.children.find(c => c.name === name)
   }
+
   hasChild (child) { return this.getChildFromName(child.name) }
-  addDoor (f, wayback=true) {
+
+  addDoor (f, wayback = true) {
     if (f) {
       let i = 0
-      let name = f.name
+      const name = f.name
       while (this.children.find(c => c.name === f.name)) {
         f.name = name + '.' + (++i)
       }
@@ -101,9 +111,13 @@ class Room extends File {
     }
     return this.tgt
   }
+
   removeDoor (child) { if (pick(this.children, child.uid, 'uid')) { child.room = null } }
+
   destroy () { pick(this.room.children, this.uid, 'uid'); this.room = null }
+
   get root () { return (this.tgt.room ? this.tgt.room.root : this.tgt) }
+
   next (arg, env) { /* Resolve a path step */
     let r = null
 
@@ -114,6 +128,7 @@ class Room extends File {
 
     return r || null
   }
+
   getDir (path, env) {
     // returns room associated to the path,
     if (!path.length) return null
@@ -126,10 +141,12 @@ class Room extends File {
     path.split('/').findIndex((r) => !(room = room.next(r, env)))
     return room
   }
+
   // callback when entering in the room
   setLeaveCallback (fu) { this.tgt.leaveCallback = fu; return this }
+
   doLeaveCallbackTo (to) {
-    let r = this
+    const r = this
     // console.log(r.toString(), 'doLeaveCallbackTo', to.toString())
     if (r.uid !== to.uid && r.room) {
       if (typeof r.leaveCallback === 'function') {
@@ -138,9 +155,11 @@ class Room extends File {
       r.room.doLeaveCallbackTo(to)
     }
   }
+
   setEnterCallback (fu) { this.tgt.enterCallback = fu; return this }
+
   doEnterCallbackTo (to) {
-    let r = this
+    const r = this
     if (r.uid === to.uid) {
     } else if (r.children.length) {
       if (typeof r.enterCallback === 'function') {
@@ -151,16 +170,21 @@ class Room extends File {
       }
     }
   }
+
   isParentOf (par) { return par.room && (par.room.uid === this.uid || this.isParentOf(par.room)) }
+
   setOutsideEvt (name, fun) { globalSpec[this.name][name] = fun; return this }
+
   unsetOutsideEvt (name) { delete globalSpec[this.name][name]; return this }
+
   isEmpty () { return (this.tgt.children.length === 0 && this.tgt.items.length === 0) }
+
   /* Returns the room and the item corresponding to the path
    * if item is null, then the path describe a room and  room is the full path
    * else room is the room containing the item */
   traversee (path, env) {
-    let [room, lastcomponent] = this.pathToRoom(path, env)
-    let ret = { room: room, item_name: lastcomponent, item_idx: -1 }
+    const [room, lastcomponent] = this.pathToRoom(path, env)
+    const ret = { room: room, item_name: lastcomponent, item_idx: -1 }
     if (room) {
       ret.room_name = room.name
       if (lastcomponent) {
@@ -170,9 +194,10 @@ class Room extends File {
     }
     return ret
   }
+
   checkAccess (env) {
-    let c = env.cwd.tgt
-    let r = this.tgt
+    const c = env.cwd.tgt
+    const r = this.tgt
     if (c.uid === r.uid) {
       return true
     } else if (r.isParentOf(c)) {
@@ -183,6 +208,7 @@ class Room extends File {
       return r.ismod('x', env) && (!r.room || r.room.checkAccess(env))
     }
   }
+
   pathToRoom (path, env) {
     // returns [ room associated to the path,
     //           non room part of path,
@@ -195,8 +221,8 @@ class Room extends File {
     }
     path = path.replace(/\/$/, '')
     if (!path.length) return [room, null, pathstr]
-    let pat = path.split('/')
-    let end = pat.slice(0, -1).findIndex((r) => !(room = room.next(r, env)))
+    const pat = path.split('/')
+    const end = pat.slice(0, -1).findIndex((r) => !(room = room.next(r, env)))
     let lastcomponent = null
     let cancd
     pathstr += pat.slice(0, end).join('/')
@@ -211,23 +237,29 @@ class Room extends File {
     }
     return [room, lastcomponent, pathstr]
   }
+
   find (regex, depth, fullpath, type) {
     depth = depth || 99
     let files = []
-    if (type != 'dir') for (let i of this.items.concat(this.peoples)){
-      if (!regex || regex.test(fullpath ? i.relativepath(this) : i.name)) files.push(i)
+    if (type != 'dir') {
+      for (const i of this.items.concat(this.peoples)) {
+        if (!regex || regex.test(fullpath ? i.relativepath(this) : i.name)) files.push(i)
+      }
     }
-    if (depth > 1) for (let i of this.children){
-      if (type != 'file' && (!regex || regex.test(fullpath ?  i.relativepath(this) : i.name))) files.push(i)
-      files = files.concat(i.find(regex, depth-1, fullpath, type))
+    if (depth > 1) {
+      for (const i of this.children) {
+        if (type != 'file' && (!regex || regex.test(fullpath ? i.relativepath(this) : i.name))) files.push(i)
+        files = files.concat(i.find(regex, depth - 1, fullpath, type))
+      }
     }
     return files
   }
+
   // item & people management
   addItem (f) {
     if (f) {
       let i = 0
-      let name = f.name
+      const name = f.name
       while (this.tgt.items.find(it => it.name === f.name)) {
         f.name = name + '.' + (++i)
       }
@@ -236,31 +268,39 @@ class Room extends File {
     }
     return this.tgt
   }
+
   removeItemByIdx (idx) {
     return pop(this.tgt.items, idx)
   }
+
   removeItemByName (name) {
     return pick(this.tgt.items, name, 'name')
   }
+
   hasItem (name, args, prefix) {
-    let n = _((prefix || POPREFIX_ITEM) + name, args || [])
+    const n = _((prefix || POPREFIX_ITEM) + name, args || [])
     return this.tgt.items.find(i => i.name === n)
   }
+
   removeItem (name, args, prefix) {
     return this.tgt.removeItemByName(_((prefix || POPREFIX_ITEM) + name, args || []))
   }
+
   hasPeople (name, args) {
     return this.tgt.hasItem(name, args, POPREFIX_PEOPLE)
   }
+
   removePeople (name, args) {
     return this.tgt.removeItem(name, args, POPREFIX_PEOPLE)
   }
+
   getItemFromName (name) {
     return this.tgt.items.find(i => i.name === name)
   }
+
   // PO ready room and item definition
   newItemBatch (id, names, prop) {
-    let ret = []
+    const ret = []
     prop = prop || {}
     for (let i = 0; i < names.length; i++) {
       prop.poid = id
@@ -271,19 +311,22 @@ class Room extends File {
     }
     return ret
   }
+
   newItem (id, prop) {
-    let ret = new Item(inject({ poid: id, id: id }, prop))
+    const ret = new Item(inject({ poid: id, id: id }, prop))
     this.tgt.addItem(ret)
     return ret
   }
+
   newPeople (id, prop) {
-    let ret = new People(inject({ poid: id, id: id }, prop))
+    const ret = new People(inject({ poid: id, id: id }, prop))
     this.tgt.addItem(ret)
     return ret
   }
+
   newLink (id, prop) {
     if (!prop.tgt) return undefined
-    let ret = new Link(inject({ poid: id, id: id }, prop))
+    const ret = new Link(inject({ poid: id, id: id }, prop))
     if (prop.tgt instanceof Room) {
       this.tgt.addDoor(ret)
     } else {
@@ -291,11 +334,13 @@ class Room extends File {
     }
     return ret
   }
+
   newRoom (id, prop) {
-    let ret = newRoom(id, prop)
+    const ret = newRoom(id, prop)
     this.tgt.addDoor(ret)
     return ret
   }
+
   addRoom (id, prop) {
     this.tgt.addDoor(newRoom(id, prop))
     return this
@@ -303,7 +348,7 @@ class Room extends File {
 
   static enter (r, env) {
     // console.log('enterRoom', r, env)
-    let prev = env.cwd
+    const prev = env.cwd
     if (prev && !prev.isParentOf(r)) {
       prev.doLeaveCallbackTo(r)
     }
@@ -327,5 +372,5 @@ class Room extends File {
 }
 function newRoom (id, prop) {
   // this function automatically set the variable $id to ease game saving
-  return new Room(inject({ poid: id, id: id, var: ('$' + id) }, prop))
+  return new Room(inject({ poid: id, id: id, var: ('$' + id) }, prop || {}))
 }

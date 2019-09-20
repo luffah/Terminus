@@ -1,3 +1,3 @@
 ({
-  img: 'meadow',
+  img: 'meadow'
 })

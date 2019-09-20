@@ -1,6 +1,6 @@
 class POable extends Statable {
   constructor (prop) {
-    prop.nopo = prop.nopo || []
+    prop.nopo = prop.nopo || clone(POable.nopo) || []
     super(prop)
   }
 
@@ -8,7 +8,7 @@ class POable extends Statable {
     // if (prop.nopo) this.nopo = prop.nopo
     // if (prop.poprefix) this.poprefix = prop.poprefix
     // if (prop.textIdx) this.textIdx = prop.textIdx
-    let p = consume(prop, ['poid', 'povars'])
+    const p = consume(prop, ['poid', 'povars'])
     super.set(prop)
     if (!this.name && this.nopo.includes('name')) this.name = prop.id
     if (p.poid) this.setPo(p.poid, p.povars)
@@ -17,7 +17,7 @@ class POable extends Statable {
   setPo (name, vars) {
     this.poid = this.poprefix + name
     this.povars = vars
-    if (!this.nopo.includes('name')) this.name = _(this.poid, vars, )
+    if (!this.nopo.includes('name')) this.name = _(this.poid, vars)
     if (!this.nopo.includes('text')) this.text = _(this.poid + POSUFFIX_DESC, vars)
     return this
   }
@@ -27,7 +27,7 @@ class POable extends Statable {
   }
 
   set textIdx (textidx) {
-    let poid = this.poid + POSUFFIX_DESC
+    const poid = this.poid + POSUFFIX_DESC
     this.text = _(poid + textidx, this.povars, poid)
   }
 

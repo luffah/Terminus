@@ -1,6 +1,6 @@
 addTest(function (next) {
   console.log('TEST INIT')
-  vt.setContext(new Context({ 'sure': { groups: ['user', 'dir', 'cat'], address: 'DTC' } }, 'sure', $home, {}))
+  vt.setContext(new Context({ sure: { groups: ['user', 'dir', 'cat'], address: 'DTC' } }, 'sure', $home, {}))
   $home.owner = vt.context.currentuser
   load_soundbank(vt)
   loadLevel1()

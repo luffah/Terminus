@@ -4,6 +4,7 @@ class Seq {
     this.idx = 0
     this.current = this.seq[0]
   }
+
   _getlist (it) {
     let list = []
     if (it instanceof Seq) {
@@ -15,38 +16,44 @@ class Seq {
     }
     return list
   }
+
   push (fu) {
     this.seq.push(fu)
   }
+
   then (fu) {
     this.seq.push(fu)
     return this
   }
+
   infect (idx, fu) {
     if (idx < 0) { idx = this.seq.length + idx }
     if (this.seq[idx]) {
       fu(this.seq[idx])
     }
   }
+
   append (it) {
     this.seq = this.seq.concat(this._getlist(it))
   }
+
   next () {
-    let t = this
-    let r = t.seq.shift()
+    const t = this
+    const r = t.seq.shift()
     if (r) {
-      let idx = t.idx
+      const idx = t.idx
       t.idx++
       if (r instanceof Function) { r(function () { t.next() }); return true }
       r.__index__ = idx
     }
     return r
   }
-  [Symbol.iterator]() {
-    let t = this
+
+  [Symbol.iterator] () {
+    const t = this
     return {
-      next() {
-        let ret = {value: t.next(), done: true}
+      next () {
+        const ret = { value: t.next(), done: true }
         if (ret.value) {
           ret.done = false
         }
@@ -54,11 +61,12 @@ class Seq {
       }
     }
   }
-  run(func, terminate) {
-    let supercb = []
-    for (let a of this.seq) {
+
+  run (func, terminate) {
+    const supercb = []
+    for (const a of this.seq) {
       supercb.push(() => {
-        let next = supercb.shift()
+        const next = supercb.shift()
         func(a, next)
       })
     }
@@ -67,9 +75,11 @@ class Seq {
     })
     supercb.shift()()
   }
-  get length() {
+
+  get length () {
     return this.seq.length
   }
+
   getIdx () {
     return this.idx
   }

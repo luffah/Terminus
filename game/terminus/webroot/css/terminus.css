@@ -181,10 +181,15 @@ color:grey;
 }
 pre.msg, .msg pre {
   white-space:pre-wrap;
+  margin:0;
+  padding:0;
 }
 
 .msg pre{
   display:inline;
+}
+.msg span {
+  line-height:1.2em;
 }
 .passinput:before {
   content:'#>';

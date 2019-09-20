@@ -18,6 +18,7 @@ from .nodejs import transpile, minify, postcss as _postcss
 from .po import POLines, lang_from_fname, po2json
 from .trace import (LineFollower, follow_as, get_attrs_content,
                     get_content, add_comma, rm_trailing_comma)
+from .logging import print_err, print_info
 
 INDENT_STRING = '  '
 
@@ -204,10 +205,11 @@ def pogen(params, polines):
     """ build dialog file"""
     for (lang, content) in polines.get():
         if lang not in LANG_CREDITS:
-            print(
-                "please credits translators\n"
-                "by adding '[%s] translation: names;...'\n"
+            print_err(
+                "Missing translators information.\n"
+                "Add a line '[%s] translation: names;...'\n"
                 "in file: '%s'" % (lang, params['./game_info_file']))
+            print_info('exiting...')
             exit()
         write(params['./dialog.%s.po'] % lang, content)
         write(

@@ -1,77 +1,32 @@
 /* Shell interface which solve completion problem */
-function shRx(s) {
+function shRx (s) {
   let ret = ''
   let escaped = false
   let quoted = false
-  for (let c of s) {
+  for (const c of s) {
     if (escaped) {
-      if (c=='\\' || c == '*') { ret += c; escaped=false }
-    }
-    else if (quoted) {
+      if (c == '\\' || c == '*') { ret += c; escaped = false }
+    } else if (quoted) {
       ret += c
-      if (c===quoted) { quoted = false }
-    }
-    else if (c=='\\') escaped=true
-    else if (c=='"' || c=="'") { quoted = c; ret += c }
-    else if (c=='*') ret += '.*'
+      if (c === quoted) { quoted = false }
+    } else if (c == '\\') escaped = true
+    else if (c == '"' || c == "'") { quoted = c; ret += c } else if (c == '*') ret += '.*'
     else ret += c
   }
   return ret
 }
 
-
-// Process Model with parent and pid properties
-class Task {
-  constructor(ptask, terminate, cmdline, cmd, args, env, io){
-    this.ptask = ptask
-    // this.ppid = ptask
-    this.id = Task.id++
-    this.io = io
-    this.env = env
-    this.cmdline = cmdline
-    this.cmd = cmd
-    this.args = args
-    this.terminate = terminate
-    Task.reg[this.id] = this
-    if (this.cmd) this._run()
-  }
-  _run(){
-    let [cmd, env, sys, args] = [this.cmd, this.env, this.io, this.args]
-    let hret, ret
-    if (cmd.hookable) {
-      hret = r.tryhook(cmdname, args, cmd)
-    }
-    if (hret && hret.ret) ret = hret.ret
-    if (!(hret && hret.ret && !hret.continue)){
-      // ret = cmd.exec(args, env, io, cmd, arrs)
-      ret = cmd.exec.call(this, args, env, sys)
-    }
-    if (typeof ret === "number") this.returncode = ret
-    if (ret instanceof Object) {
-      if (ret.returncode) this.returncode = ret.returncode
-      sys.push(ret)
-    }
-    this.exit(this.returncode)
-  }
-  exit(returncode){
-    this.returncode = returncode || 0
-    this.terminate(returncode) // FIXME : implement this
-  }
-}
-Task.id = 1
-Task.reg = {}
-
 // --
 class Shell {
   constructor (view, env, ptask) {
-    let v = this
+    const v = this
     /* non dom properties */
     v.env = env || new Env()
     v.env.sh = v
     v.vt = view
     v.histindex = 0
     v.history = []
-    v.stdin  = new TextIO(TextIO.STDIN, 0, (func,cb) => v.vt.read(func,cb))
+    v.stdin = new TextIO(TextIO.STDIN, 0, (func, cb) => v.vt.read(func, cb))
     v.stdout = new TextIO(TextIO.STDOUT, (m, opt, cb) => v.vt.render_out(m, opt, cb))
     v.stderr = new TextIO(TextIO.STDERR, (m, opt, cb) => v.vt.render_err(m, opt, cb))
     v.similar_score_min = 0.5
@@ -86,7 +41,9 @@ class Shell {
     v.suggestion_selected = null
     v.task = new Task(ptask)
   }
+
   get line () { return this.vt.line }
+
   set line (s) { this.vt.line = s }
 
   clear () {
@@ -102,20 +59,20 @@ class Shell {
     this.vt.renewLine(this.env.PS1)
   }
 
-  emit(l, t) {
-     this.vt.emit(l, t)
+  emit (l, t) {
+    this.vt.emit(l, t)
   }
 
   // echo (mesg, opt) {
-    // v.emit(['MessageAdded', 'ContentAdded', 'ContentChanged'])
-    // return v
+  // v.emit(['MessageAdded', 'ContentAdded', 'ContentChanged'])
+  // return v
   // }
   /* Suggestion part */
   makeSuggestions (tabidx = -1, autocomplete = true) {
-    let v = this
-    let env = v.env
+    const v = this
+    const env = v.env
     v.suggestion_selected = null
-    let l = ltrim(v.line)
+    const l = ltrim(v.line)
 
     /* if nothing given, propose commands */
     if (!l.length) {
@@ -124,19 +81,19 @@ class Shell {
     }
 
     /* find current word and args */
-    let offset = 0
+    const offset = 0
     var pos = v.vt.selectionStart
-    let cmdbefore = l.slice(0, pos+1)
-    let cmdafter = l.slice(pos+1)
-    let cmdcurrent = v.splitPipe(v.splitCommands(cmdbefore).pop()).pop()
+    let cmdbefore = l.slice(0, pos + 1)
+    const cmdafter = l.slice(pos + 1)
+    const cmdcurrent = v.splitPipe(v.splitCommands(cmdbefore).pop()).pop()
     cmdbefore = cmdbefore.slice(0, cmdbefore.length - cmdcurrent.length)
     if (cmdbefore.slice(-1) == '|') cmdbefore += ' '
-    let args = v.splitArgs(cmdcurrent)
+    const args = v.splitArgs(cmdcurrent)
     let idx = args.length
     let cword = ''
-    if (cmdcurrent.slice(-1) !== " ") cword = args[--idx]
+    if (cmdcurrent.slice(-1) !== ' ') cword = args[--idx]
 
-    let comreply = v.completeArgs(args, idx, cword)
+    const comreply = v.completeArgs(args, idx, cword)
     // find solutions
     if (comreply.length === 0) {
       v.line = l + '?'
@@ -147,7 +104,7 @@ class Shell {
     let ret = true
     if (comreply.length === 1) {
       if (autocomplete) {
-        let lb = cword.split('/')
+        const lb = cword.split('/')
         lb[lb.length - 1] = comreply[0]
         args.splice(idx, 1, lb.join('/')) // insert value at idx
         v.line = cmdbefore + args.join(' ').replace('././', './') + cmdafter
@@ -158,8 +115,8 @@ class Shell {
         v.showSuggestions(comreply)
       }
     } else {
-      let hlidxs = []
-      let lcp = commonprefix(comreply)
+      const hlidxs = []
+      const lcp = commonprefix(comreply)
       if (comreply.indexOf(lcp) > -1) {
         v.line = cmdbefore + ' ' + cmdafter
       } else if (tabidx > -1) {
@@ -172,7 +129,7 @@ class Shell {
         }
       }
       if (lcp.length > 0 && autocomplete) {
-        let lb = cword.split('/')
+        const lb = cword.split('/')
         lb[lb.length - 1] = lcp
         args.splice(idx, 1, lb.join('/'))
         v.line = cmdbefore + args.join(' ') + cmdafter
@@ -181,52 +138,55 @@ class Shell {
     }
     return ret
   }
+
   showSuggestions (list, highlights) {
     this.vt.showSuggestions(list, highlights)
     this.emit(['SuggestionUpdate'])
   }
+
   hideSuggestions () {
     this.vt.hideSuggestions()
   }
+
   historize (l) {
-    let v = this
+    const v = this
     if (v.history.length > 0 && l == v.history[-1]) {
       return
     }
-    if (l.length > 0 && l.charAt(0) != ' '){
+    if (l.length > 0 && l.charAt(0) != ' ') {
       v.histindex = 0
       v.history = v.history.filter(a => a.length)
       v.history.push(l)
     }
   }
-  execCmdLine (line, io, endline) {  // INSTR; INSTR | INSTR
-    // only manage pipe; FIXME: < > || &&
-    let v = this
-    if (v.isEmpty(line)) return
-    let lines = new Seq(v.splitCommands(line)) // shall manage INSTR ; INSTR
 
-    let execInstr = function (lo, end) {
-      let piped = v.splitPipe(lo) // --> ['INSTR', '|', 'INSTR']
-      if (piped[piped.length-1] == '|') { endline(); return 1}
+  execCmdLine (line, io, endline) { // INSTR; INSTR | INSTR
+    // only manage pipe; FIXME: < > || &&
+    const v = this
+    if (v.isEmpty(line)) return
+    const lines = new Seq(v.splitCommands(line)) // shall manage INSTR ; INSTR
+
+    const execInstr = function (lo, end) {
+      const piped = v.splitPipe(lo) // --> ['INSTR', '|', 'INSTR']
+      if (piped[piped.length - 1] == '|') { endline(); return 1 }
       // TODO: erreur symbole inattendu
       if (piped.length > 1) {
-        let cmds = []
+        const cmds = []
         let prev = ''
-        for (let c of piped) {
-          if (c === '|') { if (prev === '|') {endline(); return 1} }
-          else cmds.push(c.trim())
+        for (const c of piped) {
+          if (c === '|') { if (prev === '|') { endline(); return 1 } } else cmds.push(c.trim())
           prev = c
         }
         let ntio = new NestedTextIO(io.stdin, new TextIO(), io.stderr)
         let prev_io = ntio
-        let io_list = [ntio]
-        for (let i=1; i < cmds.length-1; i++){
+        const io_list = [ntio]
+        for (let i = 1; i < cmds.length - 1; i++) {
           ntio = new NestedTextIO(prev_io.stdout, new TextIO(), prev_io.stderr)
           prev_io = ntio
           io_list.push(ntio)
         }
         io_list.push(new NestedTextIO(prev_io.stdout, io.stdout, prev_io.stderr))
-        for (let i=0; i < cmds.length; i++){
+        for (let i = 0; i < cmds.length; i++) {
           // console.log(cmds[i],'take', io_list[i])
           v.execInstr(cmds[i], io_list[i], end)
         }
@@ -242,36 +202,56 @@ class Shell {
     }, endline)
     return v.returncode
   }
+
   execInstr (line, io, returncode) { // INSTR -- does print to stderr stdout
-    let sh = this
-    let env = this.env
-    let arrs = sh.splitArgs(line)
+    const sh = this
+    const env = this.env
+    const arrs = sh.splitArgs(line)
     let cmdname = arrs[0]
     if (env.guessCmd) cmdname = env.guessCmd(cmdname, this)
-    let r = env.cwd
+    const r = env.cwd
     let ret = null
     // console.log('parse and execute : ', arrs, io)
-    let args = sh.expandArgs(arrs.slice(1))
+    const args = sh.expandArgs(arrs.slice(1))
     // find the program to launch
-    let cmd = env.getCommand(cmdname)
-
+    const cmd = env.getCommand(cmdname)
+    let function_name = (cmd ? cmd.function_name: cmdname)
+ 
+    io.fire = (fireables, evt) => {
+      fireables.forEach((f) => {
+        f[0].fire(evt ? cmdname + '_' + evt : cmdname, args, env,  io, f[1])
+        if (cmdname != function_name){
+          f[0].fire(evt ? function_name + '_' + evt : function_name, args, env, io, f[1])
+        }
+      })
+    }
     io.push = (re) => {
+      let cb;
+      if (re.fireables) {
+        cb = () => {
+          io.fire(re.fireables, 'done')
+        }
+      }
       if (re.render) sh.emit(['Render'], re)
       if (re.stderr) io.stdout.write(re.stderr)
-      if (re.stdout) io.stdout.write(re.stdout)
+      if (re.stdout) io.stdout.write(re.stdout, {}, cb)
+      else if (cb) cb()
     }
     io.exec = (line) => {
-      let l = trim(line)
+      const l = trim(line)
 
       if (l.length > 0) {
-        let nio = new NestedTextIO(io.stdin, io.stdout, io.stderr)
-        sh.execCmdLine(l, nio, 
+        const nio = new NestedTextIO(io.stdin, io.stdout, io.stderr)
+        sh.execCmdLine(l, nio,
           () => { console.log('TODO SUB COMMAND ENDING???') }
         )
       }
     }
+    io.askpass = (pass, opt) => {
+      // TODO : VTERM ---
+    }
 
-    let task = new Task(sh.task, returncode, line, cmd, args, env, io)
+    const task = new Task(sh.task, returncode, line, cmd, args, env, io)
 
     if (!cmd) { // test if there is a hook for the command name
       if (cmdname in r.cmd_hook) {
@@ -282,7 +262,7 @@ class Shell {
         r.fire(this, 'cmd_not_found', args, 0)
         r.fire(this, cmdname + '_cmd_not_found', args, 0)
         ret = sh.psychologist(cmdname, args, line) || _('cmd_not_found', [cmdname, env.cwd.name])
-        if ('string' === typeof ret) ret = {stdout: ret}
+        if (typeof ret === 'string') ret = { stdout: ret }
       }
     // } else {
     //   let hret
@@ -302,46 +282,50 @@ class Shell {
         return
       }
       ret = new Seq(ret)
-        // console.log(ret)
+      // console.log(ret)
       ret.run((re, next) => {
-        if (re.returncode) retcode = re.returncode
+        // FIXME : use io.push(re) instead
+        // FIXME : make task exit use next()
+
+        if (re.code) retcode = re.code
         if (re.stdout) (io.stdout.write(re.stdout, re, next))
         if (re.stderr) (io.stderr.write(re.stderr, re, next))
         if (re.fireables) {
           ret.cb = () => {
-            re.fireables.forEach((f) => {
-              f[0].fire(vt, cmdname + '_done', args, f[1])
-              globalFireDone()
-            })
+            io.fire(re.fireables, 'done')
           }
           // ret.cb()
         }
         sh.emit(['ReturnStatement'], re)
-      }, () => {returncode(retcode, ret)})
+      }, () => { returncode(retcode, ret) })
     } else { returncode(retcode) }
   }
+
   psychologist (cmd, args, line) {
-    let c = this.getSimilarCommands(cmd)
+    const c = this.getSimilarCommands(cmd)
     if (c.length) {
       return _('did_you_mean', c)
     }
   }
+
   getSimilarCommands (cmd, s) {
     s = s || this.similar_score_min
     return this.env.getCommands().filter(i => similarity(cmd, i) >= s)
   }
+
   enter () {
     // Enter -> parse and execute command
-    let v = this
-    let l = trim(v.line)
+    const v = this
+    const l = trim(v.line)
     v.historize(v.line)
     v.terminateLine()
 
     if (l.length > 0) {
-      let io = new NestedTextIO(this.stdin, this.stdout, this.stderr)
+      const io = new NestedTextIO(this.stdin, this.stdout, this.stderr)
       v.busy = true
-      v.execCmdLine(l, io, 
+      v.execCmdLine(l, io,
         () => {
+          v.emit(['CmdLineDone'], v)
           v.busy = false
           v.renewLine()
         }
@@ -350,14 +334,16 @@ class Shell {
       v.renewLine()
     }
   }
+
   /*****************/
   /** Prompt behavior part **/
   /*****************/
-  SIGINT() {
+  SIGINT () {
     this.vt.show_sigint(KEYMAP.break.show)
   }
-  validateInput() {
-    let v = this
+
+  validateInput () {
+    const v = this
     if (v.suggestion_selected) {
       v.line += v.suggestion_selected
       v.suggestion_selected = 0
@@ -368,16 +354,18 @@ class Shell {
     v.enter()
     return true
   }
-  nextSuggestion(){
-    let v = this
+
+  nextSuggestion () {
+    const v = this
     if (!v.makeSuggestions(v.lastkey_cnt - 1)) v.lastkey_cnt = 0
   }
-  histRewind(){
-    let v = this
+
+  histRewind () {
+    const v = this
     if (v.histindex < v.history.length) {
-      let prev = v.history[v.history.length - 1 - v.histindex]
+      const prev = v.history[v.history.length - 1 - v.histindex]
       if (v.histindex === 0) {
-        let txt = v.line
+        const txt = v.line
         if (txt !== prev) {
           v.history.push(txt)
         }
@@ -386,26 +374,30 @@ class Shell {
       v.histindex++
     }
   }
-  histForward(){
-    let v = this
+
+  histForward () {
+    const v = this
     if (v.histindex > 0) {
       v.histindex--
       v.line = v.history[v.history.length - 1 - v.histindex]
     }
   }
-  keydown(k) {
+
+  keydown (k) {
   }
-  validateRead() {
+
+  validateRead () {
     this.vt.validateRead()
   }
-  keyup(k, readline) {
-    let v = this
+
+  keyup (k, readline) {
+    const v = this
     v.hideSuggestions()
     if (k.is(KEYMAP.enter)) {
       if (readline) v.validateRead()
       else v.validateInput()
     } else if (k.is(KEYMAP.tab)) {
-      if (readline) v.line += "\t"
+      if (readline) v.line += '\t'
       else v.nextSuggestion()
     } else if (k.is(KEYMAP.break)) {
       if (readline) v.vt.readEnd(KEYMAP.break)
@@ -426,19 +418,20 @@ class Shell {
       v.histRewind()
     }
   }
+
   expandArgs (args) {
     var newargs = []
-    let env = this.env
+    const env = this.env
     args.forEach((arg) => {
       // manage simple 'quote'
       if (re.str.test(arg)) return newargs.push(arg.slice(1, arg.length - 1))
 
       // manage \ (escape char)
-      let escaped = (arg.match(re.escaped) || []).map((a) => a.replace(/^\\/, ''))
-      let escword = (
+      const escaped = (arg.match(re.escaped) || []).map((a) => a.replace(/^\\/, ''))
+      const escword = (
         '#' + '‡†‰©š®²³µ¶¸¾½¼¿<ESCAPED;>'.repeat(5).split('').sort(randomSort).join('') + '#'
       ) // ugly way to escape chars -> we store escaped chars; replace by ESCWORD; and reset at end
-      let unesc = (s) => {
+      const unesc = (s) => {
         let escidx = 0
         return s.replace(
           new RegExp(escword, 'g'),
@@ -458,18 +451,18 @@ class Shell {
 
       arg = unesc(arg)
 
-      let xargs = []
+      const xargs = []
       if (re.star.test(arg)) {
         if (re.pathstar.test(arg)) {
-          let regexpArg = new RegExp(arg.replace(/\./g, '.').replace(/\*/g, '.*'))
-          let room = (arg[0] == '/') ? env.cwd.root : env.cwd
-          for (let f of room.find(regexpArg, 0, 1)){
-              xargs.push(f.relativepath(room))
+          const regexpArg = new RegExp(arg.replace(/\./g, '.').replace(/\*/g, '.*'))
+          const room = (arg[0] == '/') ? env.cwd.root : env.cwd
+          for (const f of room.find(regexpArg, 0, 1)) {
+            xargs.push(f.relativepath(room))
           }
         } else {
-          let [room, lastcomponent, path] = env.cwd.pathToRoom(arg)
-          let regexpArg = new RegExp(lastcomponent.replace(/\./g, '.').replace(/\*/g, '.*'))
+          const [room, lastcomponent, path] = env.cwd.pathToRoom(arg)
           if (room && lastcomponent) {
+            const regexpArg = new RegExp(lastcomponent.replace(/\./g, '.').replace(/\*/g, '.*'))
             room.items.map(objToStr).filter((a) => regexpArg.test(a)).forEach((it) => {
               xargs.push((path + (path.length ? '/' : '') + it))
             })
@@ -482,23 +475,24 @@ class Shell {
     // console.log(newargs)
     return newargs
   }
+
   completeArgs (args, idx, cword) { // return completion matches
-    let v = this
-    let env = v.env
+    const v = this
+    const env = v.env
     var comreply = []
     // console.log(args, idx, cword)
     cword = shRx(cword)
 
-    let trymatch = (potential, cword) => {
-        if (!potential) return ''
-        let tocompleterx = new RegExp('^' + v.complete_opts.normalize(cword), v.complete_opts.case)
-        return v.complete_opts.normalize(potential).match(tocompleterx)
+    const trymatch = (potential, cword) => {
+      if (!potential) return ''
+      const tocompleterx = new RegExp('^' + v.complete_opts.normalize(cword), v.complete_opts.case)
+      return v.complete_opts.normalize(potential).match(tocompleterx)
     }
 
     // console.log(args)
     let argtype = 'cmdname'
     if (idx) {
-      let cmd = env.getCommand(args[0])
+      const cmd = env.getCommand(args[0])
       if (cmd) {
         argtype = cmd.getSyntax(idx - 1)
       } else {
@@ -511,7 +505,7 @@ class Shell {
       // console.log(cmds)
       cmds.forEach((i) => {
         if (trymatch(i, cword)) {
-          comreply.push(i + ((i === cword) ? ' ' : ''))// if uniq, then go to next arg
+          comreply.push(i + ((i === cword) ? ' ' : '')) // if uniq, then go to next arg
         }
       })
       return comreply
@@ -523,7 +517,7 @@ class Shell {
       // Iterate through each room
       let roomNext
       let roomCurrent = cword.substring(0, 1) === '~' ? env.HOME : env.cwd
-      let path = cword.split('/')
+      const path = cword.split('/')
       if (argtype === 'dir' && path.length === 1 && path[0].length === 0) {
         comreply.push('..')
       }
@@ -539,16 +533,16 @@ class Shell {
           // so we should look for things to complete our journey
           // Compare to this room's children
           if (['strictfile', 'file', 'dir'].indexOf(argtype) !== -1) {
-            roomCurrent.children.forEach((env) => {
-              if (trymatch(env.name, path[i])) {
-                comreply.push(env.name + '/')
+            for (const r of roomCurrent.children) {
+              if (trymatch(r.name, path[i])) {
+                comreply.push(r.name + '/')
               }
-            })
+            }
             // Compare to this room's items
             if (argtype !== 'dir') {
-              roomCurrent.items.forEach((it) => {
+              for (const it of roomCurrent.items) {
                 if (trymatch(it.name, path[i])) { comreply.push(it.name) }
-              })
+              }
             }
           }
         }
@@ -556,30 +550,36 @@ class Shell {
     }
     return comreply
   }
-  stripComment (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
-    let comment = (line.match(/((('[^']*')|("[^"]*")))|#.*/g) || []).pop()
-    return (comment && comment.startsWith('#')) ? line.replace(comment, '') : line
-  }
+
   isEmpty (line) {
     line = line.replace(/\s*/, '')
     if (line.length === 0 || line.startsWith('#')) return true
   }
+
+  stripComment (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
+    const comment = (line.match(/((('[^']*')|("[^"]*")))|#.*/g) || []).pop()
+    return (comment && comment.startsWith('#')) ? line.replace(comment, '') : line
+  }
+
   splitCommands (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
     return this.isEmpty(line) ? [] : this.stripComment(line).match(/([^;'"]*(('[^']*')|("[^"]*"))[^;'"]*)+|[^;'"]+/g).filter(s => s.length)
   }
+
   splitArgs (line) { // FIXME: js regexp confuse \' with ' and \\' -> char by char ?
     return line.replace(/\s+$/, '').match(/(('[^']*')|("[^"]*"))|[^'" ]*/g).filter(s => s.length)
   }
+
   splitPipe (line) {
     return line.match(/((".*?"|[^"|]+)+)|(\s*\||\s+)/g)
   }
+
   isValidInput (line) {
-    let lines = this.splitCommands(line)
+    const lines = this.splitCommands(line)
     // console.log(commands)
-    for (let l of lines) {
-      let args = this.splitArgs(l)
+    for (const l of lines) {
+      const args = this.splitArgs(l)
       if (!args.length) return false
-      let cmd = this.getCommand(args.shift())
+      const cmd = this.getCommand(args.shift())
       if (!cmd) return false
       for (let i = 0; i < args.length; i++) {
         if (!ARGT._test(this, args[i], cmd.syntax[i])) return false
@@ -587,23 +587,5 @@ class Shell {
     }
     return true
   }
-  /** extra programs  // curse ???? **/
-  // exec (fu, cb) {
-  //   let v = this
-  //   v.line = ''
-  //   let m = v.monitor
-  //   //    var m = document.body;
-  //   let cont = addEl(m, 'div', 'app-container')
-  //   v.overapp = addEl(cont, 'div', 'app')
-  //   v.disableInput()
-  //   let endapp = () => {
-  //     v.overapp.setAttribute('disabled', true)
-  //     m.removeChild(cont)
-  //     v.overapp = undefined
-  //     if (cb) cb()
-  //   }
-  //   v.enterKey = function () { console.log('what is an overapp ?') }
-  //   return fu(v, v.overapp, endapp)
-  // }
 }
 Object.assign(Shell.prototype, waiterMixin)
