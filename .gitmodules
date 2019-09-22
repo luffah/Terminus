@@ -1,3 +1,3 @@
 [submodule "ogaget"]
 	path = tools/lib/python3/ogaget
-	url = https://github.com/luffah/ogaget
+	url = github.com:luffah/ogaget

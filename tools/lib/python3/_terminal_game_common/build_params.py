@@ -8,7 +8,7 @@ import os
 from os.path import split, join, isfile, isdir, dirname, realpath
 import sys
 from .logging import print_err
-from ogaget.common.credit_file import parse
+from ogaget.credit_file import parse
 TOOLS = dirname(dirname(sys.argv[0]))
 BUILD_TOOLS = join(TOOLS, 'build')
 

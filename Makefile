@@ -6,7 +6,6 @@ NODEBIN=${TOOLS}/node_modules/.bin
 
 LANG_REGEX=\(.*\.dialog\.\).*\(\.js\)
 LANGS=fr en
-GAME?=terminus
 SRC=./engine
 
 default: help
