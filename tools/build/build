@@ -47,7 +47,7 @@ def _main(gamedir, tgt, opts):
     if not isdir(tgt):
         makedirs(tgt)
     params = get_project_parameters(gamedir, tgt)
-    _link_dirs_in_project(params, ['js', 'img', 'sound', 'music'])
+    _link_dirs_in_project(params, ['js', 'img', 'sound', 'music', 'engine'])
     only = '-only' in opts
     if not only:
         _install_deps()

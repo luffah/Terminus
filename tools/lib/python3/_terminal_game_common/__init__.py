@@ -22,7 +22,7 @@ else:  # python
         return matched
 
 
-def get_content(fname, ext='', rec=False, lvl=0):
+def get_content(fname, ext='', rec=False, lvl=0, join=None):
     """ get content of file(s) with name ending with ext """
     ret = []
     if isfile(fname):
@@ -37,6 +37,8 @@ def get_content(fname, ext='', rec=False, lvl=0):
                 rec=rec,
                 lvl=lvl+1
             )
+    if join:
+        ret = join.join(ret)
     return ret
 
 
@@ -62,7 +64,7 @@ def concatenated(files):
     ftgt = join(dirname(files[0]), "_concatenated_%s_" % basename(files[0]))
 
     with open(ftgt, "w") as tgt:
-        for fpath in files:
+        for fpath in [f for f in files if isfile(f)]:
             with open(fpath, "r") as buf:
                 tgt.writelines(buf.readlines())
     return ftgt

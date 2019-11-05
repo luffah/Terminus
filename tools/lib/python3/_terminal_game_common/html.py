@@ -3,6 +3,7 @@
 from html.parser import HTMLParser
 from os.path import isfile, join, dirname, realpath
 import re
+from . import get_content
 from .logging import print_err, print_info
 
 
@@ -51,26 +52,25 @@ def fetch_css_src(htmlfile):
 def inject(htmlfile, cssfile, jsfile, targetfile):
     """ put js and css content in html file """
     print_info("%14s > %s", 'Inject all in html', targetfile)
-    js_txt = ""
-    css_txt = ""
+
+    js_injected = False
+    css_injected = False
+
+    css_txt = "<style>%s</style>" % get_content(cssfile, join="\n")
+    js_txt = "<script>%s</script>" % get_content(jsfile, join="\n")
+    html_lines = get_content(htmlfile)
+
     with open(targetfile, "w") as buf:
-        with open(cssfile, "r") as cssbuf:
-            css_txt = "<style>%s</style>" % cssbuf.read()
-        with open(jsfile, "r") as jsbuf:
-            js_txt = "<script>%s</script>" % jsbuf.read()
-        with open(htmlfile, "r") as htmlbuf:
-            js_injected = False
-            css_injected = False
-            lines = [line.strip() for line in htmlbuf.readlines()
-                     if not re.match(r"\s*<!--.*-->\s*", line)]
-            for line in lines:
-                if re.match(r"<script.*src=.*</script>", line):
-                    if not js_injected:
-                        buf.write(js_txt)
-                        js_injected = True
-                elif re.match(r"<link.*rel=\"stylesheet\".*/>", line):
-                    if not css_injected:
-                        buf.write(css_txt)
-                        css_injected = True
-                else:
-                    buf.write(line)
+        lines = [line.strip() for line in html_lines
+                 if not re.match(r"\s*<!--.*-->\s*", line)]
+        for line in lines:
+            if re.match(r"<script.*src=.*</script>", line):
+                if not js_injected:
+                    buf.write(js_txt)
+                    js_injected = True
+            elif re.match(r"<link.*rel=\"stylesheet\".*/>", line):
+                if not css_injected:
+                    buf.write(css_txt)
+                    css_injected = True
+            else:
+                buf.write(line)

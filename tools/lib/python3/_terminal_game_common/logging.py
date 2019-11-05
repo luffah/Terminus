@@ -16,7 +16,7 @@ try:
             colorama.Fore.RESET
             )
 except:
-    RED, ORANGE, RESET = ['']*3
+    RED, ORANGE, GREY, RESET = ['']*4
 
 ERROR_REDIR = sys.stderr
 WARNING_REDIR = sys.stderr

@@ -4,12 +4,12 @@
 }
 .ghost-monitor {
   color:grey;
-  text-transform:uppercase;
   font-family:mono;
   font-size:0.5em;
-  width:50%;
   position:absolute;
   right:0;
+  text-transform:uppercase;
+  width:50%;
   z-index:-99;
 }
-.
+

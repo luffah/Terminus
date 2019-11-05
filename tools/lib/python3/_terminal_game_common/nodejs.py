@@ -10,9 +10,11 @@ from shutil import which
 import subprocess
 from . import concatenated
 from .build_params import BUILD_TOOLS
-from .logging import print_info
+from .logging import print_info, print_err
 
 NODEJS = which("nodejs") or which("node")
+CSSLINT = which("csslint")
+
 NODEJS_INIT_OK = False
 if NODEJS:
     NODEJS_VERSION = subprocess.getoutput(NODEJS + ' --version')
@@ -59,5 +61,14 @@ def minify(src, target):
 def postcss(files, target):
     """ Autoprefix """
     print_info("%14s > %s", 'Autoprefix CSS', target)
+
+    if CSSLINT:
+        for f in files:
+           p = subprocess.Popen([CSSLINT, f],
+                                stdout=subprocess.PIPE)
+           p.communicate()
+           if p.returncode != 0:
+               print_err('CSS LINT failed for %s', f)
+
     complete = concatenated(files)
     return _nodebin(join(BUILD_TOOLS, 'postcss.js'), complete, target)
