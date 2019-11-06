@@ -24,7 +24,7 @@ def parse_info(fpath):
     return ret
 
 
-def get_project_parameters(gamedir, tgt):
+def get_project_parameters(gamedir, tgt=''):
     """ get all project paramets (prepare most of things) """
     app_name = split(gamedir[:-1] if gamedir.endswith('/') else gamedir)[-1]
     params = {
@@ -43,63 +43,69 @@ def get_project_parameters(gamedir, tgt):
         'ui_dir': 'ui',
         # dir  source_engine_dir (from git root)
         'source_engine_dir': realpath('engine'),
-        # TARGET
-        'target_dir': realpath(tgt),
-        # dirs project_dir/webroot_dir/{css,img,js,engine}
-        'target_engine_subdir': 'engine',
-        'target_css_subdir': 'css',
-        'target_img_subdir': 'img',
-        'target_sound_subdir': 'snd',
-        'target_music_subdir': 'snd',
-        'target_js_subdir': 'js',
-        'target_engine_subdir': 'engine',
-        # files in  target_dir/js/
-        'game.js': 'game.js',
-        # %s = lang
-        'dialog.%s.js': 'dialog.%s.js',
-        'dialog.%s.po': '%s.po',
-        # minified targets
-        'game.min.%s.js': 'game.min.%s.js',
-        'min.css':  'game.min.css',
-        'all_transpiled.%s.js': 'game.es5.%s.js',
-        'game.min.%s.html': '%s.%s.html' % (app_name, '%s')
     }
+    if tgt:
+        params.update({
+            # TARGET
+            'target_dir': realpath(tgt),
+            # dirs project_dir/webroot_dir/{css,img,js,engine}
+            'target_engine_subdir': 'engine',
+            'target_css_subdir': 'css',
+            'target_img_subdir': 'img',
+            'target_sound_subdir': 'snd',
+            'target_music_subdir': 'snd',
+            'target_js_subdir': 'js',
+            'target_engine_subdir': 'engine',
+            # files in  target_dir/js/
+            'game.js': 'game.js',
+            # %s = lang
+            'dialog.%s.js': 'dialog.%s.js',
+            'dialog.%s.po': '%s.po',
+            # minified targets
+            'game.min.%s.js': 'game.min.%s.js',
+            'min.css':  'game.min.css',
+            'all_transpiled.%s.js': 'game.es5.%s.js',
+            'game.min.%s.html': '%s.%s.html' % (app_name, '%s')
+        })
 
-    params['target_engine_dir'] = params['source_engine_dir']
+        params['target_engine_dir'] = params['source_engine_dir']
 
     # load project settings
     game_infos = parse_info(join(params['project_dir'],
                                  params['game_info_file']))
     params.update(game_infos)
     params['root_dir'] = join(gamedir, params['root_dir'])
-    params['webroot_dir'] = join(gamedir, params['webroot_dir'])
     params['ui_dir'] = join(gamedir, params['ui_dir'])
-    params['engine_dir'] = join(params['webroot_dir'],
-                                params['target_engine_subdir'])
-    for a in ['css', 'img', 'js', 'sound', 'music']:
-        params[a + '_dir'] = join(
-            params['webroot_dir'],
-            params['target_' + a + '_subdir'])
-        params['target_' + a + '_dir'] = join(
-            params['target_dir'],
-            params['target_' + a + '_subdir'])
-
     for key in list(params.keys()):
         if key.endswith('_file'):
             params['./'+key] = join(params['project_dir'], params[key])
-        if key.endswith('.js') or key.endswith('.po'):
-            params['./'+key] = join(params['target_js_dir'], params[key])
-        if key.endswith('.css'):
-            params['./'+key] = join(params['target_css_dir'], params[key])
-        elif key == 'index.html':
-            params['./'+key] = join(params['webroot_dir'], params[key])
-        elif key.endswith('.html'):
-            params['./'+key] = join(params['target_dir'], params[key])
+    if tgt:
+        params['webroot_dir'] = join(gamedir, params['webroot_dir'])
+        params['engine_dir'] = join(params['webroot_dir'],
+                                    params['target_engine_subdir'])
+        for a in ['css', 'img', 'js', 'sound', 'music']:
+            params[a + '_dir'] = join(
+                params['webroot_dir'],
+                params['target_' + a + '_subdir'])
+            params['target_' + a + '_dir'] = join(
+                params['target_dir'],
+                params['target_' + a + '_subdir'])
+
+        for key in list(params.keys()):
+            if key.endswith('.js') or key.endswith('.po'):
+                params['./'+key] = join(params['target_js_dir'], params[key])
+            if key.endswith('.css'):
+                params['./'+key] = join(params['target_css_dir'], params[key])
+            elif key == 'index.html':
+                params['./'+key] = join(params['webroot_dir'], params[key])
+            elif key.endswith('.html'):
+                params['./'+key] = join(params['target_dir'], params[key])
+
+        assert test_param(params, 'target_dir')
+        assert test_param(params, 'source_engine_dir')
 
     assert test_param(params, 'project_dir')
-    assert test_param(params, 'target_dir')
     assert test_param(params, 'root_dir')
-    assert test_param(params, 'source_engine_dir')
 
     return params
 

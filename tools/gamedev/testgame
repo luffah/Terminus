@@ -1,0 +1,375 @@
+#!/usr/bin/env python3
+"""
+    Simplified engine to explore games
+    License : GPL
+    Author: luffah
+    Date: 10.11.2019
+"""
+from cmd import Cmd
+from os import listdir, environ, mkdir, system, getppid
+from os.path import (
+    isdir, isfile, islink, join, basename, dirname, relpath,
+    split, realpath
+)
+import signal
+import argparse
+import re
+import subprocess
+
+import sys
+sys.path.append(
+    join(dirname(dirname(realpath(__file__))), 'lib', 'python3')
+)
+from _terminal_game_common.build_params import get_project_parameters
+from _terminal_game_common.jspart import get_attrs_content
+from _terminal_game_common.po import po_get, po_list_msgids, fetch_langs
+from _terminal_game_common.logging import print_warn
+
+HISTORY_FILE='.testgame_history'
+DEFAULT_LANG='fr'
+
+CURRENT={}
+
+def _(msgid, default=None):
+    msg = po_get(CURRENT['gamedir'], CURRENT['lang'], msgid)
+    return msg.msgstr if msg and msg.msgstr else default
+
+node_acces_cache = {}  # FIXME on file move delete key self.path
+class Node:
+
+    def __init__(self, path, parent=None, root=None):
+        self.parent = parent
+        self.root = root or self
+        self.childs = None
+        parent, fname = split(path)
+        self._path = path
+        self.path = '/' if not root else join('/',
+                                              relpath(path, self.root._path))
+
+        node_acces_cache[self.path] = self
+        self.name = root and fname.split(':')[-1] or ''
+
+        self.isroot = not root
+        self.isdir = isdir(path)
+        self.isfile = isfile(path)
+        self.ispeople = fname.startswith('people:')
+        self.isitem = fname.startswith('item:')
+        self.attrs = {}
+        self.ishidden = False
+        poprefix = 'room_'
+        if self.isdir:
+            self.childs = []
+            self.ishidden = fname.startswith('hidden:')
+            for f in listdir(path):
+                if f == '_attributes.js':
+                    self.attrs = get_attrs_content(join(path, f),
+                                                   as_dict=True)
+                if (
+                        f.startswith('people:') or f.startswith('item:') or
+                        isdir(join(path, f))
+                ):
+                    n = Node(join(path, f), parent=self, root=self.root)
+                    self.childs.append(n)
+            
+        elif fname.startswith('people:') or fname.startswith('item:'):
+            self.name = self.name.replace('.js', '')
+            self.attrs = get_attrs_content(path, as_dict=True)
+            poprefix = fname.split(':')[0] + '_'
+
+        self.poid = self.name if self.attrs.get('nopo', False) else poprefix + self.name
+
+    def _get(self, path=None, tpath=None, dirs={}):
+        if not (path or tpath):
+            return self
+        if path:
+            if path.startswith('/'):
+                return self.root.get(path=path[1:], dirs=dirs)
+            if path.endswith('/'):
+                return self.get(path=path[:-1], dirs=dirs)
+        tpath = tpath or path.split('/')
+        if not tpath:
+            return dirs.get('~')
+        if self.ishidden:
+            return None
+        first = tpath.pop(0)
+        if first == '.':
+            return self.get(tpath=tpath, dirs=dirs)
+        if first == '..':
+            return self.parent.get(tpath=tpath, dirs=dirs)
+        if first in dirs:
+            return dirs[first].get(tpath=tpath, dirs=dirs)
+        for i in [c for c in self.childs if c.get_display_name() == first]:
+            return i.get(tpath=tpath, dirs=dirs) if i.childs else i
+        return None
+
+    def get(self, path=None, tpath=None, dirs={}):
+        if not path:
+            return self._get(path=path,
+                    tpath=tpath, dirs=dirs)
+        abspath = path
+        if not path.startswith('/'):
+            abspath = self.path + '/' + path
+        if not abspath in node_acces_cache:
+            node_acces_cache[abspath] = self._get(path=path,
+                    tpath=tpath, dirs=dirs)
+        return node_acces_cache[abspath]
+
+
+    def get_childs(self):
+        return [c for c in self.childs if not c.ishidden]
+
+    def get_display_name(self):
+        return _(self.poid, default=self.name)
+
+    def __str__(self):
+        return self.get_display_name() + ('/' if self.isdir else '')
+
+    def get_content(self):
+        return _(self.poid + '_text', default=self.name)
+
+    def get_attr(self, name):
+        return self.attrs.get(name, None)
+
+
+class Game:
+    filesystem = None
+    intro = '....'
+
+    def __init__(self, path):
+        self.filesystem = Node(path)
+        self.dirs = {
+                '~': self.filesystem,
+                '$PATH':'/bin'
+                }
+        self.processing = {}
+
+        from shutil import which, get_terminal_size
+        tt = get_terminal_size((80, 20))
+        def getSixelSupport(ppid):
+            o = subprocess.check_output('ps -p %s -o command' % ppid, shell=True, text=True).split()[1:]
+            if o[0].startswith('bash'):
+                ppid = subprocess.check_output('ps -p %s -o ppid' % ppid, shell=True).split()[-1]
+                return getSixelSupport(int(ppid))
+            if 'vt340' in o:
+                return True
+            return False
+        sixel = getSixelSupport(getppid())
+        img_player = None
+        if which('convert'):
+            if which('montage') and sixel:
+                img_player = 'montage -tile 7x1 -background black -fill white %s gif:- | convert - -colors 16 sixel:-'
+            elif which('tiv'):
+                img_player = 'tiv %s -h ' + str(int(tt.lines / 2))
+        elif which('caca_view'):
+            img_player = 'caca_view'
+        self.img_player = img_player
+
+        music_player = None
+        self.music_player = 'mplayer'
+
+    def exit(self):
+        pass
+
+    def get_media(self, o, typ):
+        ret = None
+        key = o.get_attr(typ)
+        path = o._path
+        if o.isfile:
+            path, _ = split(path)
+        identifier = '^%s:%s[:.]' % (typ, key)
+        for f in [f for f in listdir(path)
+                if re.match(identifier, f)]:
+                     ret = join(path, f)
+        return ret
+
+    def play_music(self, path):
+        if path and self.music_player:
+            if 'music' in self.processing:
+                self.processing['music'].kill()
+            self.processing['music'] = subprocess.Popen([self.music_player, path], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+    def show_img(self, path):
+        if path and self.img_player:
+            system(self.img_player % path)
+
+    def cd(self, path):
+        d = self.filesystem.get(path, dirs=self.dirs)
+        if d and d.isdir:
+            self.play_music(self.get_media(d, 'music'))
+                
+            self.filesystem = d
+        else:
+            print_warn(path)
+
+    def getfile(self, path):
+        return self.filesystem.get(path, dirs=self.dirs)
+
+    def pwd(self):
+        return self.filesystem.path
+
+    def _get_commands(self):
+        ret = {}
+        for d in self.dirs['$PATH'].split(':'):
+            dt = self.getfile(d)
+            if dt and dt.isdir:
+                for f in [f for f in dt.childs if f.isfile
+                        and 'cmd' in f.attrs]:
+                    # FIXME shall be exec too
+                    ret[str(f)] = f.attrs['cmd'] or f.name
+        return ret
+
+    def get_commands(self):
+        return self._get_commands().keys()
+
+    def get_cmd(self, name):
+        return self._get_commands().get(name)
+
+    def get_complete_cmd(self, name):
+        return self._get_commands().get(name)
+
+
+class ShellPrompt(Cmd):
+    prompt = '$ '
+
+    def set_game(self, game):
+        self.context = game
+        self.intro = game.intro
+        self.set_handler()
+
+    def _complete_path(self, *args):
+        arglist = args[1].split()
+        arglist.pop(0)
+        arg = ''
+        if arglist:
+            arg = arglist.pop()
+        arg, tocomplete = split(arg)
+        tgt = self.context.getfile(arg)
+        if tgt.isdir:
+            terms = [str(l) for l in tgt.childs]
+            return [l for l in terms if l.startswith(tocomplete)]
+        return [str(tgt)]
+
+    def set_history(self, history_file=HISTORY_FILE):
+        try:
+            import readline
+            open(history_file, 'a').close()
+            readline.read_history_file(history_file)
+            _postcmd = getattr(self, 'postcmd')
+            def reg_hist(stop, line):
+                readline.write_history_file(history_file)
+                return _postcmd(stop, line)
+                
+            setattr(self, 'postcmd', reg_hist)
+        except ImportError:
+            pass
+
+    def set_handler(self):
+        def signal_handler(signal, frame):
+            print()
+            self.do_exit(None)
+            exit(0)
+
+        signal.signal(signal.SIGINT, signal_handler)
+
+
+    def do_exit(self, inp):
+        self.context.exit()
+        print('exit...')
+        return True
+
+    def complete_cd(self, *args):
+        return self._complete_path(*args)
+    def do_cd(self, inp):
+        self.context.cd(inp)
+
+    def complete_ls(self, *args):
+        return self._complete_path(*args)
+    def do_ls(self, inp):
+        tgt = self.context.getfile(inp)
+        if not tgt:
+            return
+        if tgt.isfile:
+            self.context.show_img(self.context.get_media(tgt, 'img'))
+            print(tgt.name)
+        else:
+            self.context.show_img(self.context.get_media(tgt, 'img'))
+            def prt(title, l):
+                if not l:
+                    return
+                print('%s :' % title)
+                for i in l:
+                    print('    ' + str(i))
+
+            prt('dirs', [l for l in tgt.get_childs() if l.isdir])
+            prt('peoples', [l for l in tgt.get_childs() if l.ispeople])
+            prt('items', [l for l in tgt.get_childs() if l.isitem])
+
+    def do_pwd(self, inp):
+        print(self.context.pwd())
+
+    def do_alias(self, inp):
+        print(self.context.alias(inp))
+
+    def do_echo(self, inp):
+        print(inp)
+
+    def complete_less(self, *args):
+        return self._complete_path(*args)
+    def do_less(self, inp):
+        tgt = self.context.getfile(inp)
+        if not tgt or not tgt.isfile:
+            return
+        print(tgt.get_content())
+
+    def get_names(self):
+        cmds = self.context.get_commands()
+        return list(
+                set(dir(self.__class__)) |
+                set(['do_' + c for c in cmds]) |
+                set(['complete_' + c for c in cmds]))
+
+    def __getattr__(self, name):
+        _cmd_ = None
+
+        if name.startswith('do_'):
+            cmd = self.context.get_cmd(name[3:])
+            if cmd:
+                _cmd_ = getattr(self, 'do_' + cmd, False)
+        elif name.startswith('complete_'):
+            cmd = self.context.get_complete_cmd(name[9:])
+            if cmd:
+                _cmd_ = getattr(self, 'complete_' + cmd, False)
+
+        return _cmd_
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+            description='Preview a game in a simplified shell'
+            )
+    parser.add_argument(
+            'gamedir',
+            help="(project) contains copied files for purpose"
+            )
+    parser.add_argument(
+            '-l', '--lang', action='store', dest='lang', default=''
+            )
+    args = parser.parse_args()
+    gamedir = args.gamedir
+    lang = args.lang
+
+    params = get_project_parameters(gamedir)
+    rootdir = params.get('root_dir')
+    lang = lang or fetch_langs(rootdir)[0]
+
+    CURRENT['lang'] = lang
+    CURRENT['gamedir'] = gamedir
+
+    p = ShellPrompt()
+    game = Game(rootdir)
+    
+
+    p.set_game(game) 
+    p.set_history()
+
+    p.cmdloop()

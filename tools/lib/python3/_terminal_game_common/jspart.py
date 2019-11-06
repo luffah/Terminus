@@ -47,7 +47,7 @@ def quoted(var):
     return var if var.startswith('"') or var.startswith("'") else "'%s'" % var
 
 
-def get_attrs_content(fname, indent):
+def get_attrs_content(fname, indent="", as_dict=False):
     """ read lines of an attribute.js file """
     lines = get_content(fname)
     if not lines:
@@ -79,12 +79,16 @@ def get_attrs_content(fname, indent):
         print_err("%s : first line shall be '({'", fname)
         print_err("%s : last line  shall be ')}'", fname)
 
+    if as_dict:
+        return parse_attrs_lines(attrlines)
+
     return [indent + s for s in add_comma(attrlines)]
 
 
-RE_JS_VALUE_F = r"(.*,\s*)?([\"']?)(%s)\2:\s*%s(\s*,.*)"
-RE_JS_VALUE_F_INT = r"(\d+)"
-RE_JS_VALUE_F_STR = r"([\"']?)([^\"'?]+)\4"
+RE_JS_VALUE_F = r"(.*,\s*)?([\"']?)(%s)\2:\s*%s(\s*(,.*)?)"
+RE_JS_VALUE_F_INT = r"(\d+),?"
+RE_JS_VALUE_F_STR = r"([\"']?)([^\"'?]+)\4,?"
+RE_JS_VALUE_F_KEY = r"[^\"'?]+"
 
 
 def find_js_value(lines, k):
@@ -101,6 +105,22 @@ def find_js_value(lines, k):
         if matched:
             return matched.group(5)
     return None
+
+def parse_attrs_lines(lines):
+    ret = {}
+    for line in [l.strip() for l in lines]:
+        matched = re.match(RE_JS_VALUE_F % (
+            RE_JS_VALUE_F_KEY, RE_JS_VALUE_F_INT
+        ), line)
+        if matched:
+            ret[matched.group(3)] = int(matched.group(4))
+        matched = re.match(RE_JS_VALUE_F % (
+            RE_JS_VALUE_F_KEY, RE_JS_VALUE_F_STR
+        ), line)
+        if matched:
+            ret[matched.group(3)] = matched.group(5)
+    return ret
+
 
 
 def get_related_var(fpath, lines=False):
