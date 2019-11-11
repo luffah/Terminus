@@ -37,7 +37,7 @@ function credits (room) {
           })
           Object.keys(tcredit).sort().forEach(author => {
             ret.push(_span(_(author), 'by-author'))
-            ret.push(ul(tcredit[author], 'ul-credit'))
+            ret.push(_ul(tcredit[author], 'ul-credit'))
           })
           if (!full) {
             ret.push(_span(_(poid + '_incomplete'), cls + ' t-credit-missing'))
@@ -49,10 +49,11 @@ function credits (room) {
       const cls = overclass(poid)
       if (t === 'translation') {
         ret.push(_span(_(poid), cls))
-        ret.push(ul(LANG_CREDITS[t].map(name => _(name)), 'ul-credit'))
+        ret.push(_ul(LANG_CREDITS[t].map(name => _(name)), 'ul-credit'))
       } else if (CREDITS[t] instanceof Array) {
         ret.push(_span(_(poid), cls))
-        ret.push(ul(CREDITS[t].map(name => _(name)), 'ul-credit'))
+        ret.push(_ul(CREDITS[t].map(name => _(name)), 'ul-credit'))
+        // FIXME _ul() deprecated
       } else if (CREDITS[t] instanceof Object) {
         ret.push(_span(_(poid, CREDITS[t]), cls))
       } else {

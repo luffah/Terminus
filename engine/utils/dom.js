@@ -47,10 +47,10 @@ function _span (content, cls) {
 //     ).join('') + '</tr>').join('') + '</table>'
 // }
 
-// function _ul (tab, cls) {
-//   return '<ul' + (cls ? " class='" + cls + "'" : '') + '>' + tab.map(
-//     i => '<li>' + i + '</li>').join('') + '</ul>'
-// }
+function _ul (tab, cls) {
+  return '<ul' + (cls ? " class='" + cls + "'" : '') + '>' + tab.map(
+    i => '<li>' + i + '</li>').join('') + '</ul>'
+}
 
 function _img (src, title, legend) {
   const i = '<img src="' + src + '" title="' + title + '"/>'

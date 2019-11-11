@@ -30,7 +30,7 @@ function Game () {
     if (useCookies === 0) vt.env = state.loadEnv()
     else if (useCookies === 2)  state.stopCookie()
 
-    if (vt.env.r) {
+    if (vt.env.cwd) {
       state.loadActions()
       vt.enableInput()
     } else {
@@ -39,12 +39,16 @@ function Game () {
         me: 'test', // current user
         r: $fs, // current working dir
         users: {
-          test: { password: 'test', groups: ['user'], v: { HOME: $test.path, PATH: '/bin' } }
+          test: {
+            password: 'test', groups: ['user'],
+            v: { HOME: $test.path, PATH: '/bin' }
+          }
         }
       })
       vt.mute = 0
       vt.enableInput()
     }
+    console.log(vt.env.cwd)
   }
   vt.askChoose(cookie_question, cookie_choices, cookie_parse_answer,
     { direct: true, disabled_choices: cookie_disabled_choices })

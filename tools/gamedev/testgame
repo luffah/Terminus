@@ -4,7 +4,15 @@
     License : GPL
     Author: luffah
     Date: 10.11.2019
+
+    TIPS:
+     if you want to display images
+    you need to install ImageMagick
+    and either run this script in 'xterm -ti vt340'
+    or install 'tiv' (TerminalImageViewer)
+    or 'caca-utils'
 """
+
 from cmd import Cmd
 from os import listdir, environ, mkdir, system, getppid
 from os.path import (

@@ -299,7 +299,7 @@ class VTerm extends Window {
   /* */
   keyEffect (k) {
     const v = this
-    if (v.env && k in v.env.cwd.effects.key) {
+    if (v.env && v.env.cwd && k in v.env.cwd.effects.key) {
       v.env.cwd.effects.key[k](v)
     } else if (k in v.effects.key) {
       v.effects.key[k](v)
@@ -407,6 +407,7 @@ class VTerm extends Window {
     v.btn_tab.removeAttribute('disabled')
     v.enterKey = v.enter
     v.input.focus()
+    v.focus(v.input)
     v.emit(['InputFocused'])
     CursorListener.fire()
     return true
@@ -445,20 +446,11 @@ class VTerm extends Window {
 
     v.line = ''
     v.choose_input = addEl(choicebox, 'fieldset', 'choices')
+
+    v.focus(v.choose_input)
     const reenable = v.disableInput()
 
-    const click = function (e) {
-      console.log('click')
-      const i = e.target.getAttribute('idx')
-      addAttrs(buttons[curidx], { checked: '' })
-      addAttrs(buttons[i], { checked: 'checked' })
-      curidx = i
-      return v.enterKey()
-    }
-    const onkeydown = (e) => {
-      v._keyChoose(e)
-    }
-    v.enterKey = function (e) {
+    var enterKey = function () {
       console.log('enter')
       v.playSound('choiceselect')
       v.choose_input.value = choices[curidx]
@@ -468,7 +460,15 @@ class VTerm extends Window {
       if (reenable) { v.enableInput() }
       setTimeout(() => v.echo(cb(v, curidx), { direct: direct }), v.timeout.ask)
     }
-    v._keyChoose = function (e) {
+    const click = function (e) {
+      console.log('click')
+      const i = e.target.getAttribute('idx')
+      addAttrs(buttons[curidx], { checked: '' })
+      addAttrs(buttons[i], { checked: 'checked' })
+      curidx = i
+      enterKey()
+    }
+    var _keyChoose = function (e) {
       console.log('key choose')
       const k = e.code
       if (k === 'ArrowDown' || k === 'ArrowUp' || k === 'Tab') {
@@ -489,7 +489,7 @@ class VTerm extends Window {
         buttons[curidx].focus()
         v.ghostel.innerHTML = choices[curidx]
       } else if (k === 'Enter') {
-        v.enterKey()
+        enterKey()
       }
       e.preventDefault()
     }
@@ -508,7 +508,7 @@ class VTerm extends Window {
             'aria-live': 'polite',
             'aria-relevant': 'all',
             onclick: click,
-            onkeydown: onkeydown
+            // keydown: onkeydown
           })
         )
 
@@ -520,7 +520,8 @@ class VTerm extends Window {
         buttons.push(null)
       }
     }
-    v.choose_input.onkeydown = onkeydown
+    v.choose_input.keydown = _keyChoose
+    v.choose_input.keyup = () => null
     addAttrs(v.choose_input, { value: choices[curidx] })
     addAttrs(buttons[curidx], { checked: 'checked' })
     //    buttons[0].focus();

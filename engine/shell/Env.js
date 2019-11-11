@@ -1,23 +1,32 @@
 
 class Env {
-  /* Contains dict h with (raw properties) :
-   *   me       : current user name (whoami)
-   *   users    : properties for each user => { km : keymap, v: vars, groups: groups }
-   *                                      you can add any key as password: pwd
+  /*
+   * Defined with dict h with (raw properties) :
    *   r        : current working directory
+   *   me       : current user name (whoami)
+   *   users    : properties for each user => {
+   *                  km : { keymap.. }, // cf ../keymap.js
+   *                  v: { vars.. },
+   *                  groups: [ str.. ],
+   *                  password: str
+   *                  }
+   *
    * Give getter and setter for current user:
-   *   me       : user username
-   *   cwd      : current working directory
-   *   user     : current user
-   *   groups   : current group
-   *   km       : keymap to use
-   *   v        : vars
-   *   PS1      : prompt
-   *   PATH     : var path
-   *   HOME     : home dir
+   *   me       : user name as str
+   *   cwd      : GET/SET current working directory
+   *   user     : GET { user properties .. }
+   *              SET user with name
+   *   groups   : GET [ group as str.. ]
+   *   km       : GET { keymap to use.. }
+   *   v        : GET { current user vars.. }
+   *   PS1      : GET prompt
+   *   HOME     : GET variable HOME as dir
+   *   PATH     : GET variable PATH as dir list
+   *
    * */
   constructor (h) {
     // h = {users:{$name: {groups:[]}}, me:$name, r:$room,  v:{PATH:[],HOME:$room} }
+    console.log(h);
     h = h || {}
     this.h = h
   }

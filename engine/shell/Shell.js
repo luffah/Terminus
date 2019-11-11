@@ -35,7 +35,6 @@ class Shell {
     v.lastkey_cnt = 0
     v.timeout = { scrl: 100, ask: 600 }
     v.busy = false
-    v.enterKey = v.enter
     v.complete_opts = { case: 'i', normalize: noAccents, humanized: true }
     v.cmdoutput = true
     v.suggestion_selected = null
@@ -579,7 +578,7 @@ class Shell {
     for (const l of lines) {
       const args = this.splitArgs(l)
       if (!args.length) return false
-      const cmd = this.getCommand(args.shift())
+      const cmd = this.env.getCommand(args.shift())
       if (!cmd) return false
       for (let i = 0; i < args.length; i++) {
         if (!ARGT._test(this, args[i], cmd.syntax[i])) return false
