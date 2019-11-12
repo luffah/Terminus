@@ -10,6 +10,7 @@
     you need to install ImageMagick
     and either run this script in 'xterm -ti vt340'
     or install 'tiv' (TerminalImageViewer)
+    or 'catimg'
     or 'caca-utils'
 """
 
@@ -168,8 +169,10 @@ class Game:
                 img_player = 'montage -tile 7x1 -background black -fill white %s gif:- | convert - -colors 16 sixel:-'
             elif which('tiv'):
                 img_player = 'tiv %s -h ' + str(int(tt.lines / 2))
+        elif which('catimg'):
+            img_player = 'catimg %s -w' + str(int(tt.lines / 2))  # fallback on width cause no heigth ctl
         elif which('caca_view'):
-            img_player = 'caca_view'
+            img_player = 'caca_view %s'
         self.img_player = img_player
 
         music_player = None
