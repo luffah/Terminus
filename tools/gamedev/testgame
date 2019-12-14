@@ -35,6 +35,11 @@ from _terminal_game_common.jspart import get_attrs_content
 from _terminal_game_common.po import po_get, po_list_msgids, fetch_langs
 from _terminal_game_common.logging import print_warn
 
+try:
+    import readline
+except ImportError:
+    pass
+
 HISTORY_FILE='.testgame_history'
 DEFAULT_LANG='fr'
 
@@ -235,7 +240,7 @@ class Game:
                 
             self.filesystem = d
         else:
-            print_warn(path)
+            print_warn('%s : directory not found', path)
 
     def getfile(self, path):
         return self.filesystem.get(path, variables=self.get_vars())
@@ -266,11 +271,11 @@ class Game:
 
 class ShellPrompt(Cmd):
     prompt = '$ '
+    wait_EOF = False
 
     def set_game(self, game):
         self.context = game
-        self.intro = game.intro
-        self.set_handler()
+        print(game.intro)
 
     def _complete_path(self, *args):
         arglist = args[1].split()
@@ -286,27 +291,14 @@ class ShellPrompt(Cmd):
         return [str(tgt)]
 
     def set_history(self, history_file=HISTORY_FILE):
-        try:
-            import readline
+        if readline:
             open(history_file, 'a').close()
             readline.read_history_file(history_file)
             _postcmd = getattr(self, 'postcmd')
             def reg_hist(stop, line):
                 readline.write_history_file(history_file)
                 return _postcmd(stop, line)
-                
             setattr(self, 'postcmd', reg_hist)
-        except ImportError:
-            pass
-
-    def set_handler(self):
-        def signal_handler(signal, frame):
-            print()
-            self.do_exit(None)
-            exit(0)
-
-        signal.signal(signal.SIGINT, signal_handler)
-
 
     def do_exit(self, inp):
         self.context.exit()
@@ -377,6 +369,32 @@ class ShellPrompt(Cmd):
                 _cmd_ = getattr(self, 'complete_' + cmd, False)
 
         return _cmd_
+
+    def cmdloop(self):
+        signal.signal(signal.SIGINT, lambda *a: 0)
+        signal.signal(signal.SIGQUIT, lambda *a: 0)
+
+        if readline:
+            readline.set_completer(self.complete)
+            readline.parse_and_bind(self.completekey+": complete")
+        stop = None
+        while not stop:
+            if self.cmdqueue:
+                line = self.cmdqueue.pop(0)
+            else:
+                line = ''
+                try:
+                    line = input(self.prompt)
+                except EOFError:  # Ctrl-d 
+                    if self.wait_EOF:
+                        line = 'EOF'
+                    else:
+                        self.do_exit(None)
+                        exit(1)
+                except KeyboardInterrupt: # Ctrl-c 
+                    print('^C')
+            stop = self.onecmd(line)
+            stop = self.postcmd(stop, line)
 
 
 
