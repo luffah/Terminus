@@ -10,6 +10,7 @@
     you need to install ImageMagick
     and either run this script in 'xterm -ti vt340'
     or install 'tiv' (TerminalImageViewer)
+    or 'catimg'
     or 'caca-utils'
 """
 
@@ -23,6 +24,7 @@ import signal
 import argparse
 import re
 import subprocess
+from shutil import which, get_terminal_size
 
 import sys
 sys.path.append(
@@ -86,40 +88,43 @@ class Node:
 
         self.poid = self.name if self.attrs.get('nopo', False) else poprefix + self.name
 
-    def _get(self, path=None, tpath=None, dirs={}):
+    def _get(self, path=None, tpath=None, variables={}):
         if not (path or tpath):
             return self
         if path:
             if path.startswith('/'):
-                return self.root.get(path=path[1:], dirs=dirs)
+                return self.root.get(path=path[1:], variables=variables)
             if path.endswith('/'):
-                return self.get(path=path[:-1], dirs=dirs)
+                return self.get(path=path[:-1], variables=variables)
         tpath = tpath or path.split('/')
         if not tpath:
-            return dirs.get('~')
+            return self.get(variables.get('HOME', '/'))
         if self.ishidden:
             return None
         first = tpath.pop(0)
+        if first == '~':
+            home = self.get(variables['HOME']) if  variables.get('HOME') else self.root
+            return home.get(tpath=tpath, variables=variables)
         if first == '.':
-            return self.get(tpath=tpath, dirs=dirs)
+            return self.get(tpath=tpath, variables=variables)
         if first == '..':
-            return self.parent.get(tpath=tpath, dirs=dirs)
-        if first in dirs:
-            return dirs[first].get(tpath=tpath, dirs=dirs)
+            return self.parent.get(tpath=tpath, variables=variables)
+        if first.startswith('$') and first[1:] in variables:
+            return variables[first[1:]].get(tpath=tpath, variables=variables)
         for i in [c for c in self.childs if c.get_display_name() == first]:
-            return i.get(tpath=tpath, dirs=dirs) if i.childs else i
+            return i.get(tpath=tpath, variables=variables) if i.childs else i
         return None
 
-    def get(self, path=None, tpath=None, dirs={}):
+    def get(self, path=None, tpath=None, variables={}):
         if not path:
             return self._get(path=path,
-                    tpath=tpath, dirs=dirs)
+                    tpath=tpath, variables=variables)
         abspath = path
-        if not path.startswith('/'):
+        if path[0] not in ('/', '~', '$'):
             abspath = self.path + '/' + path
         if not abspath in node_acces_cache:
             node_acces_cache[abspath] = self._get(path=path,
-                    tpath=tpath, dirs=dirs)
+                    tpath=tpath, variables=variables)
         return node_acces_cache[abspath]
 
 
@@ -143,37 +148,60 @@ class Game:
     filesystem = None
     intro = '....'
 
-    def __init__(self, path):
+    def switch_user(self, username):
+        self.username = 'username'
+        self.user = self.users.get(username, {})
+
+    def get_vars(self):
+        if 'variables' in self.user:
+            return self.user['variables']
+        return {}
+
+    def get_var(self, varname, default=''):
+        if 'variables' in self.user:
+            return self.user['variables'].get(varname, default)
+        return default 
+
+    def __init__(self, path, game_settings):
+
+        self.users = game_settings.get('users',{})
+        self.switch_user(self.users.get('default', 'root'))
+
+
         self.filesystem = Node(path)
-        self.dirs = {
-                '~': self.filesystem,
-                '$PATH':'/bin'
-                }
         self.processing = {}
 
-        from shutil import which, get_terminal_size
         tt = get_terminal_size((80, 20))
-        def getSixelSupport(ppid):
+        def _getSixelSupport(ppid):
             o = subprocess.check_output('ps -p %s -o command' % ppid, shell=True, text=True).split()[1:]
             if o[0].startswith('bash'):
                 ppid = subprocess.check_output('ps -p %s -o ppid' % ppid, shell=True).split()[-1]
-                return getSixelSupport(int(ppid))
+                return _getSixelSupport(int(ppid))
             if 'vt340' in o:
                 return True
             return False
-        sixel = getSixelSupport(getppid())
+
+        sixel = _getSixelSupport(getppid())
+
         img_player = None
         if which('convert'):
             if which('montage') and sixel:
                 img_player = 'montage -tile 7x1 -background black -fill white %s gif:- | convert - -colors 16 sixel:-'
             elif which('tiv'):
                 img_player = 'tiv %s -h ' + str(int(tt.lines / 2))
+        elif which('catimg'):
+            img_player = 'catimg %s -w' + str(int(tt.lines / 2))  # fallback on width cause no heigth ctl
         elif which('caca_view'):
-            img_player = 'caca_view'
+            img_player = 'caca_view %s'
         self.img_player = img_player
 
         music_player = None
         self.music_player = 'mplayer'
+
+        start_dir = game_settings.get('start_dir', self.get_var('HOME'))
+        if start_dir:
+            d = self.cd(start_dir)
+
 
     def exit(self):
         pass
@@ -201,7 +229,7 @@ class Game:
             system(self.img_player % path)
 
     def cd(self, path):
-        d = self.filesystem.get(path, dirs=self.dirs)
+        d = self.filesystem.get(path, variables=self.get_vars())
         if d and d.isdir:
             self.play_music(self.get_media(d, 'music'))
                 
@@ -210,14 +238,14 @@ class Game:
             print_warn(path)
 
     def getfile(self, path):
-        return self.filesystem.get(path, dirs=self.dirs)
+        return self.filesystem.get(path, variables=self.get_vars())
 
     def pwd(self):
         return self.filesystem.path
 
     def _get_commands(self):
         ret = {}
-        for d in self.dirs['$PATH'].split(':'):
+        for d in self.get_var('PATH').split(':'):
             dt = self.getfile(d)
             if dt and dt.isdir:
                 for f in [f for f in dt.childs if f.isfile
@@ -351,6 +379,8 @@ class ShellPrompt(Cmd):
         return _cmd_
 
 
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
             description='Preview a game in a simplified shell'
@@ -362,11 +392,22 @@ if __name__ == '__main__':
     parser.add_argument(
             '-l', '--lang', action='store', dest='lang', default=''
             )
+    parser.add_argument(
+            '-d', '--debug', action='store_true', dest='debug', default=False
+            )
     args = parser.parse_args()
     gamedir = args.gamedir
     lang = args.lang
 
     params = get_project_parameters(gamedir)
+
+    if args.debug:
+        from pprint import pprint
+        print('------------')
+        pprint(params)
+        print('------------')
+
+    game_settings = params.get('game',{})
     rootdir = params.get('root_dir')
     lang = lang or fetch_langs(rootdir)[0]
 
@@ -374,8 +415,7 @@ if __name__ == '__main__':
     CURRENT['gamedir'] = gamedir
 
     p = ShellPrompt()
-    game = Game(rootdir)
-    
+    game = Game(rootdir, game_settings)
 
     p.set_game(game) 
     p.set_history()
