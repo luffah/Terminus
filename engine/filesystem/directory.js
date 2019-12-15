@@ -120,12 +120,15 @@ class Room extends File {
 
   next (arg, env) { /* Resolve a path step */
     let r = null
-
-    if (arg === '~') r = env.v.HOME || env.cwd.root
-    else if (arg === '..') r = this.room
-    else if (arg === '.') r = this
-    else if (arg && !arg.includes('/')) r = this.tgt.children.find((i) => arg === i.toString())
-
+    if (!arg) return r
+    if (env) {
+      if (arg === '~') r = env.v.HOME || env.cwd.root
+      else if (arg === '..') r = this.room
+      else if (arg === '.') r = this
+      else if (!arg.includes('/')) r = this.tgt.children.find((i) => arg === i.toString())
+    } else {
+      r = this.tgt.children.find((i) => arg === i.id)
+    }
     return r || null
   }
 

@@ -3,6 +3,7 @@
 """
    Generate javascript and move assets
 """
+import os
 from os.path import basename, join
 from re import match
 from . import copy, copy_dir, ensure_dir, onlydirs, onlyfiles, write
@@ -13,7 +14,7 @@ from .build_params import (
     RE_CONTENT, ROOM_ATTR_FILE
 )
 from .html import fetch_javascript_src, fetch_css_src, inject as htmlinject
-from .jspart import protect_js_property_key, quoted, jsdeclare_var
+from .jspart import protect_js_property_key, quoted, jsdeclare_var, jsonize
 from .nodejs import transpile, minify, postcss as _postcss
 from .po import POLines, lang_from_fname, po2json
 from .trace import (LineFollower, follow_as, get_attrs_content,
@@ -148,9 +149,12 @@ def _dir2js(params):
 
     assets_builder = params.get('assets_builder', default_assets_builder)
     licenses_builder = params.get('licenses_builder', default_licenses_builder)
+    game_defaults_builder = params.get('game_defaults_builder',
+                                       default_game_defaults_builder)
     credits_builder = params.get('credits_builder', default_credits_builder)
 
     jslines = {
+        'game_defaults': game_defaults_builder(params),
         'license': licenses_builder(params),
         'contamination': [
             ('CONTAMINATION_NOTE',
@@ -233,6 +237,11 @@ def default_credits_builder(dicparam):
 
     (credits_, keys_) = parse_credit(dicparam['./game_info_file'])
 
+    if os.environ.get('DEBUG', False):
+        from pprint import pprint
+        pprint(credits_)
+        pprint(keys_)
+
     return follow_as(
         'default_credits_builder',
         jsdeclare_var('CREDITS', credits_) +
@@ -246,6 +255,40 @@ def default_credits_builder(dicparam):
             # TODO append here code block to refill RES and CREDITS dict
             if CREDITS_DATA else []
         )
+    )
+
+
+def default_game_defaults_builder(params):
+    """ propagate params file as defaults """
+    game_settings = params.get('game',{})
+
+    users = game_settings.get('users',{})
+
+    default_user = users.get('default', '')
+    user = users.get(default_user, {})
+
+    start_dir = game_settings.get(
+        'start_dir', user.get(
+            'variables',{}).get(
+                'HOME','/'))
+
+    users = { k:v for k, v in users.items() if k != 'default' }
+    for u in users:
+        users[u]['v'] = users[u].pop('variables')
+
+    return follow_as(
+        'default_game_defaults_builder',"""
+GameDefaults = { env: function (){
+      return new Env({
+        me: %s, // current user
+        r: %s, // current working dir
+        users: %s,
+        fs: $rootfs,
+        fixpaths: 1
+        })
+    }
+}
+""" % (jsonize(default_user), jsonize(start_dir), jsonize(users))
     )
 
 

@@ -45,6 +45,7 @@ function Game () {
   // g.menu()
   // new Seq([g.demo_note, g.menu]).next()
 }
+
 Game.prototype = {
   demo_note (next) {
     vt.askChoose(_('demo_note'), [_('demo_note_continue')], next,
@@ -59,14 +60,14 @@ Game.prototype = {
     // TODO : add checkbox for snd and textspeed
     if (g.state.getopt('snd', true)) loadSoundBank(vt)
     vt.mute = 1
+    const choices = ['load', 'new', 'no'];
     setTimeout(() => {
       showEpicImg(vt, 'title', 'epic', 1500,
         () => {
-          console.log('to')
           vt.mute = 0
           //        vt.playMusic('title',{loop:true});
           vt.askChoose(_('cookie'),
-            [_('cookie_yes_load'), _('cookie_yes'), _('cookie_no')],
+            choices.map(v => _('cookie_' + v)),
             g.start, {
               direct: true,
               disabled_choices: g.hasSave ? [] : [0]
@@ -78,6 +79,20 @@ Game.prototype = {
       vt.echo('version : ' + g.version, { unbreakable: true })
     }, 1200)
   },
+  loadEnv(useCookies){
+    const g = this
+    if (useCookies !== 'no') { // yes new game or load
+      g.state.setCookieDuration(7 * 24 * 60) // in minutes
+      if (useCookies === 'load') vt.env = this.state.loadEnv()
+    } else g.state.stopCookie() // do not use cookie
+
+    if (vt.env.r) return true
+    vt.env = GameDefaults.env()
+    return false
+  },
+  finalizeFS(){
+    $bin.newLink('grep', { nopo: ['name'], tgt: $backroom.items[0] })
+  },
   start (useCookies) {
     const g = this
     vt.clear()
@@ -85,27 +100,14 @@ Game.prototype = {
     loadBackgroud('game')
     if (g.state.getopt('snd', true)) loadSoundBank(vt)
     if (pogencnt > 0) vt.echo(_('pogen_alert', pogencnt), { direct: 1, cls: 'logging' })
-    if (useCookies < 2) { // yes new game or load
-      g.state.setCookieDuration(7 * 24 * 60) // in minutes
-      if (useCookies === 0) vt.env = g.state.loadEnv()
-    } else g.state.stopCookie() // do not use cookie
-
-    $bin.newLink('grep', { nopo: ['name'], tgt: $backroom.items[0] })
-    if (vt.env.r) {
+    g.finalizeFS();
+    if (g.loadEnv(useCookies)){
       g.state.loadActions()
       vt.mute = 0
       notification(_('game_loaded'))
       vt.echo(_('welcome_msg', vt.env.me) + '\n' + vt.env.r.starterMsg)
       vt.enableInput()
     } else {
-      vt.env = new Env({
-        me: 'sure', // current user
-        r: $sure, // current working dir
-        users: {
-          sure: { password: 'ifhtp', groups: [], v: { HOME: $sure.path, PATH: $bin.path } }
-        }
-      })
-      vt.env.addGroup('user')
       vt.mute = 0
       new Seq([
         // (next) => {

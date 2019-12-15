@@ -78,6 +78,7 @@ def get_project_parameters(gamedir, tgt=''):
         'game/users/default': str,
         'game/users': dict,
         'game/users/*/groups': list,
+        'game/users/*/password': str,
         'game/users/*/variables': dict,
         'game/users/*/variables/*': str,
     }
@@ -151,6 +152,7 @@ CONTENT_POSITION = [
     'engine',         # ( engine specified for linting only )
     'assets',         # -> assets to load
     'credits',        # -> credits (that are not contained in assets)
+    'game_defaults',  # -> define game object defaults
     'ui',             # -> functions in ui dir
     '_init',
     '_background',

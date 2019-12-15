@@ -13,7 +13,7 @@ msgstr "Manger un cookie ?"
 msgid "gameintro_text_initrd"
 msgstr "Chargement de initrd.img [{{progress}}]"
 
-msgid "cookie_yes"
+msgid "cookie_new"
 msgstr "oui (utiliser une nouvelle sauvegarde)"
 
 # Pas de visuel de la touche TAB ici ?
@@ -83,7 +83,7 @@ msgstr ""
 msgid "demo_note_continue"
 msgstr "Continuer"
 
-msgid "cookie_yes_load"
+msgid "cookie_load"
 msgstr "oui (reprendre la partie en cours%s)"
 
 msgid "username_prompt"

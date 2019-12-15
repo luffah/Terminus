@@ -14,6 +14,7 @@ var re = {
   strr: /("[^"]*"|'[^']*')/g,
   escaped: /\\(.)/g,
   escapend: /\\$/g,
+  dir: /^(\/\w+)+$/,
   varr: /\$({\w+}|\w+)/g,
   star: /\*/,
   pathstar: /(^|\/)\*\*\//,

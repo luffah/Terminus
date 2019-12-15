@@ -3,6 +3,7 @@
    Generate javascript and move assets
 """
 import sys
+import os
 from os import makedirs, symlink, remove
 from os.path import join, dirname, realpath, isdir, relpath, islink
 sys.path.append(
@@ -49,6 +50,9 @@ def _main(gamedir, tgt, opts):
     params = get_project_parameters(gamedir, tgt)
     _link_dirs_in_project(params, ['js', 'img', 'sound', 'music', 'engine'])
     only = '-only' in opts
+    if os.environ.get('DEBUG', False):
+        from pprint import pprint
+        pprint(params)
     if not only:
         _install_deps()
         build_data = build(params)
