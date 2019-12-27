@@ -22,6 +22,9 @@ devenv: ## Source .bash_profile in order to use dev tools
 server:
 	./tools/start_game_server.sh ${GAME}
 
+test_game:
+	./tools/run_game_cli.sh ${GAME}
+
 build: ## Fully build
 	for _GAME in $$(ls -d game/$${GAME}*);do \
 		echo "BUILD $${_GAME}"; \
