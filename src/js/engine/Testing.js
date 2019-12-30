@@ -1,5 +1,3 @@
-
-var TESTING=false;
 var test_sequence=new Seq();
 function do_test(){
   test_sequence.next();

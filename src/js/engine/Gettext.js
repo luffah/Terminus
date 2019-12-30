@@ -1,3 +1,4 @@
+var pogencnt=0;
 if (!dialog){
   console.log('Before this script, you have to load the script defining the dialog table.');
 }

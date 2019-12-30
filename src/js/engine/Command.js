@@ -1,3 +1,5 @@
+var TESTING=false;
+
 var ARGT={dir:[0],file:[1],opt:[2],instr:[3],var:[4],strictfile:[5],cmdname:[6],filename:[7],filenew:[8],dirnew:[9],pattern:[10],msgid:[12]};
 
 function Command(group,syntax,fu){

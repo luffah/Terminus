@@ -304,4 +304,3 @@ add_test(function(next){
   });
   vt.loop_waiting();
 });
-TESTING=true;

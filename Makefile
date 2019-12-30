@@ -1,8 +1,12 @@
-# Use `gulp` after installing gulp-concat gulp-cli gulp-autoprefixer gulp-html-replace.
-all: .npm 
-	./node_modules/.bin/gulp
+NODEJS=nodejs
+LANGS=fr en
+
+all: .npm
+	python3 Makefile.py fr
 
 .npm:
 	npm install && touch .npm
 
-
+clean:
+	rm -rf webroot
+	rm -rf .build

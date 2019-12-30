@@ -396,7 +396,14 @@ $kernel. addPath(
   newRoom("morekernel")
   .addCommand("grep")
 );
-$morekernel.newItemBatch("bigfile",['L','M','Q','R','S','T','U','V','W']);
+
+var $bigfiles = $morekernel.newItemBatch("bigfile",['L','M','Q','R','S','T','U','V','W']);
+$bigfiles.filter(function(f){
+  f.setCmdText('grep_overflow', _('grep_long'));
+})
+$bigfiles[ Math.floor(Math.random()*9)
+].setCmdText('grep', 'password = IHTFP');
+
 
 //PARADISE (end game screen)
 newRoom("paradise", "loc_theend.gif")

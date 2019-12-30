@@ -312,15 +312,40 @@ _setupCommand('grep',null,[ARGT.pattern,ARGT.strictfile],function(args,vt){
   var t=vt.getContext();
   var word_to_find = args[0];
   //      var item=t.getItemFromName(args[1]);
-  var tgt=t.traversee(args[1]);
-  if (tgt.item){
-    var item_to_find_in_text = tgt.item.cmd_text.less;
-    var line_array = item_to_find_in_text.split("\n");
-    var return_arr = line_array.filter(function(line){ return (line.indexOf(word_to_find) > 0);});
-    return return_arr.join("\n");
-  } else {
-    return _('item_not_exists', args);
+  var filelist = args.slice(1);
+  var ret = [];
+  for (var i = 0; i < filelist.length; i++){
+    var fname = filelist[i];
+    var tgt=t.traversee(fname);
+    if (tgt.item){
+      var item_to_find_in_text = tgt.item.cmd_text.less;
+      var line_array = [];
+      var found = false;
+      if (tgt.item.cmd_text.grep) {
+         var longest_word =  '';
+         if ( word_to_find.length > 2) {
+           word_to_find.split(' ').filter(function(w){ if (longest_word.length < w.length) longest_word = w; });
+           line_array = tgt.item.cmd_text.grep.split(/( |\n)/).filter(function(w){
+              return (w.length > 1 && w.indexOf(longest_word) >= 0 && longest_word.length > w.length / 2);
+           });
+           if (line_array.length > 0) {
+             item_to_find_in_text = tgt.item.cmd_text.grep;
+             found = true;
+           }
+        }
+        if (tgt.item.cmd_text.grep_overflow && !found && longest_word.length < 6) {
+          ret.push(tgt.item.cmd_text.grep_overflow);
+          continue;
+        }
+      }
+      line_array = item_to_find_in_text.split("\n");
+      var return_arr = line_array.filter(function(line){ return (line.indexOf(word_to_find) >= 0);});
+      if (return_arr.length > 0) ret.push(return_arr.join("\n"));
+    } else {
+      ret.push(_('item_not_exists', [tgt.toString()]));
+    }
   }
+  return ret.join("\n");
 });
 _setupCommand('touch',null,[ARGT.filenew],function(args,vt){
   var t=vt.getContext();
@@ -376,7 +401,7 @@ _setupCommand('unzip',null,[ARGT.file.concat(['*.zip'])], function(args,vt){
 });
 _setupCommand('sudo',null,[ARGT.cmd], function(args,vt){
   var t=vt.getContext();
-  if (args[0] === "less" && args[1] === "Certificate"){
+  if (['cat', 'less'].indexOf(args[0]) && args[1] === "Certificate"){
     t.ev.fire("tryEnterSudo");
     return;
   } else {

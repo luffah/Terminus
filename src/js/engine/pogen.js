@@ -1,4 +1,3 @@
-var pogencnt=0;
 function pogen(str){
   pogencnt++;
   console.log('POgen new : '+str)
