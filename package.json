@@ -2,9 +2,9 @@
   "private": true,
   "dependencies": {},
   "devDependencies": {
-    "postcss": "^7.*",
     "autoprefixer": "*",
-    "cssnano": "^3.*",
+    "cssnano": "^4.1.10",
+    "postcss": "^7.*",
     "uglify-js": "*"
   }
 }
