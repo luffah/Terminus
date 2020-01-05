@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import os
+import sys
 import re
 from shutil import which
 import subprocess
@@ -122,44 +123,47 @@ def make_all(lang):
     os.makedirs(CSSDIR, exist_ok=True)
 
     jssrc = [
-            'src/js/engine/howler.core.js',
-            'src/js/engine/js.js',
-            'src/js/engine/Gettext.js',
-            'src/js/engine/Cookie.js',
-            'src/js/engine/GameState.js',
-            'src/js/engine/EventTarget.js',
-            'src/js/engine/Sound.js',
-            'src/js/engine/Music.js',
-            'src/js/engine/ReturnSequence.js',
-            'src/js/engine/VTerm.js',
-            'src/js/engine/User.js',
-            'src/js/engine/Parse.js',
-            'src/js/engine/Command.js',
-            'src/js/engine/Commands.js',
-            'src/js/engine/Pic.js',
-            'src/js/engine/Item.js',
-            'src/js/engine/Room.js',
-            'src/js/terminus.init.js',
-            'src/js/terminus.assets.js',
-            'src/js/terminus.utils.js',
-            'src/js/terminus.gamestart.js',
-            'src/js/terminus.level1.js',
-            'src/js/terminus.level2.js',
-            'src/js/terminus.run.js',
-            ]
+        'src/js/engine/howler.core.js',
+        'src/js/engine/js.js',
+        'src/js/engine/Gettext.js',
+        'src/js/engine/Cookie.js',
+        'src/js/engine/GameState.js',
+        'src/js/engine/EventTarget.js',
+        'src/js/engine/Sound.js',
+        'src/js/engine/Music.js',
+        'src/js/engine/ReturnSequence.js',
+        'src/js/engine/VTerm.js',
+        'src/js/engine/User.js',
+        'src/js/engine/Parse.js',
+        'src/js/engine/Command.js',
+        'src/js/engine/Commands.js',
+        'src/js/engine/Pic.js',
+        'src/js/engine/Item.js',
+        'src/js/engine/Room.js',
+        'src/js/terminus.init.js',
+        'src/js/terminus.assets.js',
+        'src/js/terminus.utils.js',
+        'src/js/terminus.gamestart.js',
+        'src/js/terminus.level1.js',
+        'src/js/terminus.level2.js',
+        'src/js/terminus.run.js',
+    ]
 
     htmlinject(
-            'src/index.html',
-            WEBROOT + '/index.html',
-            jscontent=unifyjs(
-                TMPDIR + '/min.js',
-                lines=po2json('src/lang/terminus.%s.po' % lang),
-                jssrc=jssrc),
-            csscontent=postcss('src/css/terminus.css')
-            )
+        'src/index.html',
+        WEBROOT + '/index.html',
+        jscontent=unifyjs(
+            TMPDIR + '/min.js',
+            lines=po2json('src/lang/terminus.%s.po' % lang),
+            jssrc=jssrc),
+        csscontent=postcss('src/css/terminus.css')
+    )
 
     os.system('cp src/img/* %s/' % IMAGEDIR)
     os.system('cp src/css/*webfont*.* %s/' % CSSDIR)
     os.system('cp src/snd/* %s/' % SOUNDDIR)
 
-make_all('fr')
+
+if __name__ == '__main__':
+    for l in sys.argv[1:]:
+        make_all(l)

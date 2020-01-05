@@ -376,7 +376,7 @@ _setupCommand('mkdir',null,[ARGT.dirnew],function(args,vt){//event arg -> create
     var tr=t.traversee(args[0]);
     if ( tr.room.writable ) {
       if ( !tr.item ){
-        tr.room.addPath(new Room(t.item_name));
+        tr.room.addPath(new Room(tr.item_name, undefined, undefined, {writable: true}));
         t.fire_event(vt,'mkdir',args,0);
         return _("room_new_created", args);
       }

@@ -1,12 +1,15 @@
 NODEJS=nodejs
-LANGS=fr en
+
+LANGS?=fr en
 
 all: .npm
-	python3 Makefile.py fr
+	python3 Makefile.py ${LANGS}
 
 .npm:
 	npm install && touch .npm
 
 clean:
-	rm -rf webroot
-	rm -rf .build
+	rm -rf webroot .build .npm
+
+server: all
+	xterm -e "cd webroot; python -mSimpleHTTPServer" &

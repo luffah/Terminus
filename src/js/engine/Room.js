@@ -5,7 +5,7 @@ var global_spec={};
 function Room(roomname, introtext, picname,prop){
   prop=prop||{};
   prop.executable=d(prop.executable,true);
-  File.call(this,d(roomname, _(PO_DEFAULT_ROOM,[])),picname,prop);
+  File.call(this, d(roomname, _(PO_DEFAULT_ROOM,[])),picname,prop);
   this.parents = [];
   this.previous = this;
   this.children = [];
