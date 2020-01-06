@@ -1,18 +1,17 @@
-
 //---------------LEVEL 2---------------------
-//TOWN SQUARE
+// TOWN SQUARE
 $portal.addPath(
-  newRoom("townsquare", "loc_square.gif")
+  newRoom('townsquare', 'loc_square.gif')
 );
 $townsquare.setEnterCallback(function(){
-  music.play('chapter2',{loop:true});
+  music.play('chapter2',{loop:true})
 });
 var mayor_txtidx=1;
-var mayor=$townsquare.newPeople('citizen1',"item_citizen1.png")
-  .setCmdEvent('less_done','id')
+var mayor=$townsquare.newPeople('citizen1', 'item_citizen1.png')
+  .setCmdEvent('less_done', 'id')
   .addStates({
     id: function(re){
-      mayor.setCmdEvent('less_done','talk');
+      mayor.setCmdEvent('less_done', 'talk');
       mayor.setPoDelta('_');
     },
     talk:function(re){
@@ -31,7 +30,7 @@ var lady=$townsquare.newPeople('citizen3',"item_lady.png")
   });
 
 
-//MARKETPLACE
+// MARKETPLACE
 var disabled_sell_choices=[];
 $townsquare.addPath(
   newRoom('market',"loc_market.gif",{writable:true}).addCommand('touch')
@@ -110,7 +109,7 @@ $market.addStates({
 $market.newItem("rm_spell","item_manuscript.png");
 $market.newItem("mkdir_spell","item_manuscript.png");
 
-//LIBRARY
+// LIBRARY
 $townsquare.addPath(
 newRoom("library", "loc_library.gif")
   .addCommand("grep")
@@ -150,7 +149,7 @@ lever=$library.newItem("lever", "item_lever.png",{executable:true})
   })
   ;
 
-//BACK ROOM
+// BACK ROOM
 $library.addPath(
 newRoom('backroom',"loc_backroom.gif")
   .addCommand("grep")
@@ -168,7 +167,7 @@ $backroom.newPeople("grep", "grep.png")
 
 $backroom.newPeople("librarian", "item_librarian.png");
 
-//ROCKY PATH
+// ROCKY PATH
 $townsquare.addPath(
   newRoom("rockypath", "loc_rockypath.gif",{writable:true})
 );
@@ -185,7 +184,7 @@ $rockypath.newItem("largeboulder", "item_boulder.png")
     }
   });
 
-//ARTISAN'S SHOP
+// ARTISAN'S SHOP
 $townsquare.addPath(
   newRoom("artisanshop", "loc_artisanshop.gif")
   .setCmdEvents({
@@ -252,7 +251,7 @@ var Artisan=$artisanshop.newPeople("artisan", "item_artisan.png")
   })
   ;
 
-//FARM
+// FARM
 newRoom("farm", "loc_farm.gif")
   .addCommand("cp")
   .newItem("earofcorn", "item_corn.png")
@@ -267,7 +266,7 @@ newRoom("farm", "loc_farm.gif")
 
 var Farmer=$farm.newPeople('farmer',"item_farmer.png");
 
-//BROKEN BRIDGE
+// BROKEN BRIDGE
 $townsquare.addPath(
   newRoom("brokenbridge", "loc_bridge.gif")
   .setCmdEvent('touch',function(ct){return (ct.arg === _("item_plank")) ? "touchPlank" : "";})
@@ -285,7 +284,7 @@ $townsquare.addPath(
   })
 );
 
-//CLEARING
+// CLEARING
 $brokenbridge.addPath(
   newRoom("clearing", "loc_clearing.gif",{executable:false})
   .setCmdEvent('mkdir',function(ct){
@@ -307,7 +306,7 @@ $brokenbridge.addPath(
 );
 var CryingMan=$clearing.newPeople('cryingman',"item_man.png");
 
-//OMINOUS-LOOKING PATH
+// OMINOUS-LOOKING PATH
 $clearing.addPath(
   newRoom("ominouspath", "loc_path.gif",{writable:true})
 );
@@ -323,7 +322,7 @@ $ominouspath.newItem("brambles", "item_brambles.png",{cls:'large'})
   });
 
 
-//CAVE
+// CAVE
 var troll_evt=function(ct){
   return (ct.arg == 'UglyTroll' ? 'openSlide' : '' );
 };
@@ -353,7 +352,7 @@ $trollcave.newPeople('supertroll', "item_supertroll.png")
   .setCmdText("rm", _('people_supertroll_rm'))
   .setCmdText("mv", _('people_supertroll_mv'));
 
-//CAGE
+// CAGE
 $trollcave.addPath(
   newRoom('cage', "item_cage.png",{cls:'covering',writable:true,executable:false,pic_shown_as_item:true})
   .setCmdText("cd", _('room_cage_cd'))
@@ -364,13 +363,13 @@ var Kid=$cage.newPeople('kidnapped', "item_boy.png")
   .addStates({
     freeKid:function(){Kid.moveTo($clearing);}
   });
-//SLIDE
+// SLIDE
 $trollcave.addPath(
   newRoom("slide",null,{executable:false})
   .setCmdText("cd", _('room_slide_cd'))
 );
 
-//KERNEL FILES
+// KERNEL FILES
 $slide.addPath(
   newRoom("kernel")
   .addCommand("sudo",{question:undefined,password:"IHTFP"})
@@ -405,7 +404,7 @@ $bigfiles[ Math.floor(Math.random()*9)
 ].setCmdText('grep', 'password = IHTFP');
 
 
-//PARADISE (end game screen)
+// PARADISE (end game screen)
 newRoom("paradise", "loc_theend.gif")
   .setCmdText("ls", _('room_paradise_ls'));
 

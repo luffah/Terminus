@@ -101,7 +101,7 @@ def unifyjs(dest, lines=[], jssrc=[]):
     with open(tmp, "w") as buf:
         buf.writelines(ret)
 
-    nodebin('uglifyjs', '-o',  dest, tmp, '-c', '-m')
+    nodebin('uglifyjs', '-o', dest, tmp, '-c', '-m')
 
     with open(dest, "r") as buf:
         return buf.readlines()

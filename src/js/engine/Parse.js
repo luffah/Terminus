@@ -161,6 +161,7 @@ function _parse_exec(vt, arrs,superuser){
   // if the collection is empty then the command is executed
   var passwordcallback=function(passok,cmdpass){
     var ret = "";
+    console.log(passok, cmdpass);
     if (passok) {
       var text_to_display = cmdexec(args,vt);
       if (text_to_display){
