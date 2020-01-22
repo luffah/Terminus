@@ -10,10 +10,14 @@ _setupCommand('less',null,[ARGT.strictfile],function(args,vt){// event arg -> ob
       if (room){
         var item=tgt.item;
         if (item) {
-          vt.push_img(item.picture,{index:ret.length}); // Display image of item
-          room.fire_event(vt,'less',args,i);
-          item.fire_event(vt,'less',args,i);
-          ret.push(cmd_done(vt,[[room,0],[item,i+0]], item.cmd_text.less,'less',args)) ;
+          if (item.readable || r.sudo){
+            vt.push_img(item.picture,{index:ret.length}); // Display image of item
+            room.fire_event(vt,'less',args,i);
+            item.fire_event(vt,'less',args,i);
+            ret.push(cmd_done(vt,[[room,0],[item,i+0]], item.cmd_text.less,'less',args)) ;
+          } else {
+            item.fire_event(vt, 'unreadable', args, i);
+          }
         } else {
           room.fire_event(vt,'destination_unreachable',args,i);
           ret.push(_("item_not_exists",args));
@@ -31,7 +35,7 @@ _lnCommand('more','less');
 _setupCommand('ls','dir', [ARGT.dir], function(args,vt){
   var t=vt.getContext();
   var pic;
-  console.log(t);
+  // console.log(t);
   function printLS(room,render_classes){
     var ret='',pics={},i;
     render_classes=render_classes|| {item:'item',people:'people',subroom:'inside-room'};
@@ -74,7 +78,7 @@ _setupCommand('ls','dir', [ARGT.dir], function(args,vt){
   if (args.length > 0){
     var room=t.traversee(args[0]).room;
     if (room) {
-      if (!room.readable){
+      if (!(room.readable||t.sudo)){
         return _("permission_denied")+' '+_("room_unreadable");
       }
       if (room.children.length === 0 && room.items.length === 0 ){
@@ -86,7 +90,9 @@ _setupCommand('ls','dir', [ARGT.dir], function(args,vt){
       pic.addChildren(prtls.pics);
       pic.setOneShotRenderClass('room');
       vt.push_img(pic); // Display image of room
-      return prtls.txt;
+
+      return cmd_done(vt,[[room, 0]], prtls.txt, 'ls', args) ;
+      // return prtls.txt;
     } else {
       return _("room_unreachable");
     }
@@ -96,7 +102,8 @@ _setupCommand('ls','dir', [ARGT.dir], function(args,vt){
     pic.addChildren(prtls.pics);
     pic.setOneShotRenderClass('room');
     vt.push_img(pic); // Display image of room
-    return prtls.txt;
+    // return prtls.txt;
+    return cmd_done(vt,[[t, 0]], prtls.txt, 'ls', args) ;
   }
 });
 _setupCommand('cd','dir',[ARGT.dir],function(args,vt){
@@ -200,7 +207,7 @@ _setupCommand('cp',null,[ARGT.file,ARGT.filenew], function(args,vt){//event arg 
   }
 });
 _setupCommand('mv',null,[ARGT.strictfile,ARGT.file],function(args,vt){// event arg -> object (source)
-  console.log(args);
+  // console.log(args);
   var t=vt.getContext();
   var ret=[],
     src,
@@ -321,6 +328,7 @@ _setupCommand('grep',null,[ARGT.pattern,ARGT.strictfile],function(args,vt){
       var item_to_find_in_text = tgt.item.cmd_text.less;
       var line_array = [];
       var found = false;
+      if (tgt.item.readable||t.sudo){
       if (tgt.item.cmd_text.grep) {
          var longest_word =  '';
          if ( word_to_find.length > 2) {
@@ -338,6 +346,9 @@ _setupCommand('grep',null,[ARGT.pattern,ARGT.strictfile],function(args,vt){
           continue;
         }
       }
+      } else {
+        tgt.item.fire_event(vt, 'unreadable');
+      }
       line_array = item_to_find_in_text.split("\n");
       var return_arr = line_array.filter(function(line){ return (line.indexOf(word_to_find) >= 0);});
       if (return_arr.length > 0) ret.push(return_arr.join("\n"));
@@ -347,6 +358,7 @@ _setupCommand('grep',null,[ARGT.pattern,ARGT.strictfile],function(args,vt){
   }
   return ret.join("\n");
 });
+
 _setupCommand('touch',null,[ARGT.filenew],function(args,vt){
   var t=vt.getContext();
   if (args.length < 1){
@@ -369,7 +381,6 @@ _setupCommand('touch',null,[ARGT.filenew],function(args,vt){
   }
 });
 
-
 _setupCommand('mkdir',null,[ARGT.dirnew],function(args,vt){//event arg -> created dir
   var t=vt.getContext();
   if (args.length === 1 ){
@@ -386,6 +397,7 @@ _setupCommand('mkdir',null,[ARGT.dirnew],function(args,vt){//event arg -> create
   }
   return _("incorrect_syntax");
 });
+
 _setupCommand('unzip',null,[ARGT.file.concat(['*.zip'])], function(args,vt){
   var t=vt.getContext();
   if (args.length === 1){
@@ -399,16 +411,7 @@ _setupCommand('unzip',null,[ARGT.file.concat(['*.zip'])], function(args,vt){
   }
   return _("incorrect_syntax");
 });
-_setupCommand('sudo',null,[ARGT.cmd], function(args,vt){
-  var t=vt.getContext();
-  if (['cat', 'less'].indexOf(args[0]) && args[1] === "Certificate"){
-    t.ev.fire("tryEnterSudo");
-    return;
-  } else {
-    return _("room_wrong_syntax");
-  }
-  return _("cannot_cast");
-});
+
 _setupCommand('poe',null,[ARGT.msgid],function(args,vt){
   var sym=args[0];
   if (sym){
@@ -424,6 +427,7 @@ _setupCommand('poe',null,[ARGT.msgid],function(args,vt){
   }
   return _("incorrect_syntax");
 });
+
 _setupCommand('pogen','poe', [], function(args,vt){
   var ret=pogen_deliver_link();
   return [ret,function(){

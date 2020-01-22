@@ -116,6 +116,7 @@ def postcss(fpath):
 
 
 def make_all(lang):
+    print("-%s-" % lang)
     os.makedirs(WEBROOT, exist_ok=True)
     os.makedirs(TMPDIR, exist_ok=True)
     os.makedirs(IMAGEDIR, exist_ok=True)
@@ -149,12 +150,17 @@ def make_all(lang):
         'src/js/terminus.run.js',
     ]
 
+    pojsfile = 'src/js/_build/terminus.dialog.%s.js' % lang
+    pojs=po2json('src/lang/terminus.%s.po' % lang)
+    with open(pojsfile, "w") as buf:
+        buf.writelines(pojs)
+
     htmlinject(
         'src/index.html',
         WEBROOT + '/index.html',
         jscontent=unifyjs(
             TMPDIR + '/min.js',
-            lines=po2json('src/lang/terminus.%s.po' % lang),
+            lines=pojs,
             jssrc=jssrc),
         csscontent=postcss('src/css/terminus.css')
     )

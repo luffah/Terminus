@@ -121,8 +121,16 @@ color:grey;
 .msg pre{
   display:inline;
 }
-.passinput:before {
-  content:'#>';
+/* 
+ * .input .input-wrapper:before {
+ *   content:'#> ';
+ * }
+ */
+#term .passinput .input-wrapper {
+  opacity:20%;
+}
+#term .passinput .input-wrapper input {
+  max-width:40ch;
 }
 .choicebox {
 border: 10px solid #efefef;

@@ -11,7 +11,6 @@ function Room(roomname, introtext, picname,prop){
   this.children = [];
   this.items = [];
   this.isRoot=true;
-  this.commands_lock={};
 //  this.fire = null;
   this.intro_text = d(introtext, _(PO_DEFAULT_ROOM_DESC));
   this.starter_msg=null;
@@ -38,7 +37,7 @@ function newRoom(id, picture,prop){
 function enterRoom(new_room,vt){
   var prev=vt.getContext();
   if (prev||!new_room.hasParent(prev)){
-    console.log(prev.toString(),'doLeaveCallbackTo',new_room.toString());
+    // console.log(prev.toString(),'doLeaveCallbackTo',new_room.toString());
     prev.doLeaveCallbackTo(new_room);
   }
   vt.setContext(new_room);
@@ -52,7 +51,7 @@ Room.prototype=union(File.prototype, {
   fire_event :function(vt,cmd,args,idx,ct){
     ct=d(ct,{});
     var ev_trigger=null;
-    console.log('EVENT '+cmd);
+    // console.log('EVENT '+cmd);
     var context={term:vt, room:this, arg:(def(idx)?args[idx]:null), args:args, i:idx,ct:ct};
     if (ct.hasOwnProperty('unreachable_room')) {
       if ((ct.unreachable_room.name in global_spec) && (cmd in global_spec[ct.unreachable_room.name])) {
@@ -64,7 +63,7 @@ Room.prototype=union(File.prototype, {
     if (ev_trigger) {
       var ck=(typeof ev_trigger === "function" ? ev_trigger(context) : ev_trigger);
       if (ck){
-        console.log('FIRE '+ck);
+        // console.log('FIRE '+ck);
 //        this.ev.fire(this.uid+ck);
         this.fire(this.uid+ck);
       }
@@ -244,25 +243,6 @@ Room.prototype=union(File.prototype, {
     return this;
   },
 
-  // command management
-  setCommandOptions : function(cmd,options){
-    this.commands_lock[cmd]=options;
-    return this;
-  },
-  removeCommandOptions : function(cmd){
-    delete this.commands_lock[cmd];
-    return this;
-  },
-  addCommand : function(cmd,options){
-//    if (this.commands.indexOf(cmd) == -1) {
-//      this.commands.push(cmd);
-//    }
-    if (def(options)){
-      this.setCommandOptions(cmd,options);
-    }
-    return this;
-  },
-
   /*Checks if arg can be reached from this room
    * Returns the room if it can
    * Returns false if it cannot
@@ -308,7 +288,7 @@ Room.prototype=union(File.prototype, {
         }
       }
     }
-    console.log(ret);
+    // console.log(ret);
     return ret;
   },
   pathToRoom:function(path){

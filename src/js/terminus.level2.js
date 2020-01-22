@@ -370,18 +370,22 @@ $trollcave.addPath(
 );
 
 // KERNEL FILES
+  // .addCommand("sudo",{question:undefined,password:"IHTFP"})
 $slide.addPath(
   newRoom("kernel")
-  .addCommand("sudo",{question:undefined,password:"IHTFP"})
+  .addCommand("sudo")
   .addCommand("grep")
-  .setCmdText("sudo", _('room_kernel_sudo'))
+);
+$kernel.newItem('certificate', undefined, {readable: false})
+  .setCmdEvent('unreadable', function(ct){ ct.term.echo(_('item_certificate_alert'));})
+  .setCmdEvent('less_done', 'sudoComplete')
   .addStates({
     sudoComplete : function(re){
       $kernel.addPath($paradise);
+      mesg(_('new_path',[$paradise]),re,{timeout:600,ondone:true});
+      unlock(vt, $paradise, re);
     }
-  })
-);
-$kernel.newItem('certificate');
+  });
 $kernel.newItem("instructions")
   .setCmdEvent('less','sudo')
   .addStates({
@@ -406,5 +410,15 @@ $bigfiles[ Math.floor(Math.random()*9)
 
 // PARADISE (end game screen)
 newRoom("paradise", "loc_theend.gif")
-  .setCmdText("ls", _('room_paradise_ls'));
+  .setCmdText("ls", _('room_paradise_ls'))
+  .setCmdEvent('ls_done', 'gameover')
+  .addStates({
+    gameover: function(re){
+      if (!re) vt.echo(_('room_paradise_ls'));
+      mesg(_('gameover'),re,{timeout:30000,ondone:true});
+      mesg(_('gameover1'),re,{timeout:60000,ondone:true});
+      mesg(_('gameover2'),re,{timeout:180000,ondone:true});
+      mesg(_('gameover3'),re,{timeout:196000,ondone:true});
+    }
+  });
 
