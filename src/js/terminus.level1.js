@@ -14,16 +14,11 @@ $home.setEnterCallback(function(){
   music.play('forest');
 });
   
-$home.setCmdEvent('poe_cmd_not_found','poe_mode')
+$home
   .setCmdEvent('cmd_not_found','hnotf')
   .setCmdEvent('less_no_arg','hnoarg')
   .setCmdEvent('destination_unreachable','hnodest')
   .addStates({
-    poe_mode: function(re){
-      vt.show_msg(_('cmd_poe_revealed'));
-      _addGroup('poe');
-      learn(vt,['poe','pogen'],re);
-    },
     hnotf:function(re){
       if (!re){
         setTimeout(function(){

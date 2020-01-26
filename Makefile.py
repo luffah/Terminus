@@ -10,7 +10,10 @@ WEBROOT = 'webroot'
 IMAGEDIR = os.path.join(WEBROOT, 'img')
 CSSDIR = WEBROOT
 SOUNDDIR = os.path.join(WEBROOT, 'snd')
-
+LANG_TO_INDEX = {
+    'fr': 'index.html',
+    'en': 'terminus.en.html'
+}
 
 try:
     from polib import pofile
@@ -151,7 +154,7 @@ def make_all(lang):
 
     htmlinject(
         'src/index.html',
-        WEBROOT + '/index.html',
+        WEBROOT + '/' + LANG_TO_INDEX[lang],
         jscontent=unifyjs(
             TMPDIR + '/min.js',
             lines=po2json('src/lang/terminus.%s.po' % lang),

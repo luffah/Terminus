@@ -204,8 +204,7 @@ _setupCommand('mv',null,[ARGT.strictfile,ARGT.file],function(args,vt){// event a
   var t=vt.getContext();
   var ret=[],
     src,
-    dest = t.traversee(args[args.length-1]),
-    item_idx;
+    dest = t.traversee(args[args.length-1]);
   if (dest.item_name && args.length > 2){
     ret.push(_('cmd_mv_flood'));
   } else {
@@ -279,11 +278,10 @@ _setupCommand('rm',null,[ARGT.file],function(args,vt){// event arg -> object
     return _("cmd_rm_miss");
   } else {
     var stringtoreturn = "";
-    var item,room,idx;
+    var room,idx;
     for (var i = 0; i < args.length; i++){
       var tgt = t.traversee(args[i]);
       room = tgt.room;
-      item = tgt.item;
       idx = tgt.item_idx;
       if (idx>-1){
         if (room.writable){
@@ -300,7 +298,7 @@ _setupCommand('rm',null,[ARGT.file],function(args,vt){// event arg -> object
             stringtoreturn += _('cmd_rm_failed');
           }
         } else {
-          return item.cmd_text.rm || _('cmd_rm_invalid');
+          return tgt.item.cmd_text.rm || _('cmd_rm_invalid');
         }
       }
       return stringtoreturn;
@@ -311,7 +309,6 @@ _setupCommand('rm',null,[ARGT.file],function(args,vt){// event arg -> object
 _setupCommand('grep',null,[ARGT.pattern,ARGT.strictfile],function(args,vt){
   var t=vt.getContext();
   var word_to_find = args[0];
-  //      var item=t.getItemFromName(args[1]);
   var filelist = args.slice(1);
   var ret = [];
   for (var i = 0; i < filelist.length; i++){
@@ -408,26 +405,5 @@ _setupCommand('sudo',null,[ARGT.cmd], function(args,vt){
     return _("room_wrong_syntax");
   }
   return _("cannot_cast");
-});
-_setupCommand('poe',null,[ARGT.msgid],function(args,vt){
-  var sym=args[0];
-  if (sym){
-    if (dialog[sym]){
-      var cb=function(value){
-        dialog[sym]=value;
-      };
-      vt.ask(_("po_symbol_edit"),cb,{multiline:true,value:dialog[sym]});
-      return '';
-    } else {
-      return _("po_symbol_unknown");
-    }
-  }
-  return _("incorrect_syntax");
-});
-_setupCommand('pogen','poe', [], function(args,vt){
-  var ret=pogen_deliver_link();
-  return [ret,function(){
-    ret.click();
-  }]; 
 });
 

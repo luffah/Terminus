@@ -454,7 +454,7 @@ VTerm.prototype={
       // which word to guess
       function trymatch(potential,tocomplete){
         var tocompleterx=new RegExp("^"+t.complete_opts.fuzzy(tocomplete), t.complete_opts.case)
-        console.log(potential, tocompleterx);
+        // console.log(potential, tocompleterx);
         return t.complete_opts.fuzzy(potential).match(tocompleterx);
       }
       if (tocomplete && idx>0) { // at least 1 arg
@@ -466,7 +466,7 @@ VTerm.prototype={
           var cmds=_getCommands(t.context);
           idx=0;
           for(var i = 0; i<cmds.length; i++){
-            console.log(cmds[i],tocomplete);
+            // console.log(cmds[i],tocomplete);
             var tocompleterx=new RegExp("^"+t.complete_opts.fuzzy(tocomplete), t.complete_opts.case)
             if(cmds[i].match(tocompleterx)){
               match.push(cmds[i]);
@@ -474,11 +474,11 @@ VTerm.prototype={
           }
         }
       } else { // propose commands
-      console.log("this case",_getCommands(t.context));
+      // console.log("this case",_getCommands(t.context));
         tocomplete="";
         match=_getCommands(t.context).map(addspace);
       }
-      console.log(match);
+      // console.log(match);
       // find solutions
       if (match.length === 0){
         t.set_line(l+'?');
@@ -530,7 +530,7 @@ VTerm.prototype={
   show_suggestion: function (txt,hlcls){
     var t=this;
     t.histindex=0;
-    console.log(txt,hlcls);
+    // console.log(txt,hlcls);
     addBtn(t.suggestions,hlcls,txt.replace(/(#[^#]+#)/g,'<i class="hashtag"> $1 </i>'),txt,function (e){
       t.input.value+=txt;
 //      var l=t.get_line();
@@ -682,7 +682,6 @@ VTerm.prototype={
       vt.statkey[k]=(vt.statkey[k]||0)+1;
       if (lastkey[0]==k) {lastkey[1]++;} else {lastkey[1]=0;}
       lastkey[0]=k;
-      var echo="";
       t.hide_suggestions();
       if (k === 'Enter') {
         overide(e);
@@ -808,7 +807,7 @@ VTerm.prototype={
     opts=d(opts,{});
     disabled_choices=d(opts.disabled_choices,[]);
     direct=d(opts.direct,false);
-    console.log(opts.disabled_choices);
+    // console.log(opts.disabled_choices);
     while (disabled_choices.indexOf(curidx)>-1){
       curidx++;
     } 
