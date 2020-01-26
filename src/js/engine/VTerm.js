@@ -700,7 +700,6 @@ VTerm.prototype={
       vt.statkey[k]=(vt.statkey[k]||0)+1;
       if (lastkey[0]==k) {lastkey[1]++;} else {lastkey[1]=0;}
       lastkey[0]=k;
-      var echo="";
       t.hide_suggestions();
       if (k === 'Enter') {
         overide(e);

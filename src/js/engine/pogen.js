@@ -54,3 +54,35 @@ function pogen_deliver_link(){
   return dl;
 }
 console.log('pogen loaded');
+
+_setupCommand('poe',null,[ARGT.msgid],function(args,vt){
+  var sym=args[0];
+  if (sym){
+    if (dialog[sym]){
+      var cb=function(value){
+        dialog[sym]=value;
+      };
+      vt.ask(_("po_symbol_edit"),cb,{multiline:true,value:dialog[sym]});
+      return '';
+    } else {
+      return _("po_symbol_unknown");
+    }
+  }
+  return _("incorrect_syntax");
+});
+_setupCommand('pogen','poe', [], function(args,vt){
+  var ret=pogen_deliver_link();
+  return [ret,function(){
+    ret.click();
+  }]; 
+});
+
+$home.setCmdEvent('poe_cmd_not_found','poe_mode')
+  .addStates({
+    poe_mode: function(re){
+      vt.show_msg(_('cmd_poe_revealed'));
+      _addGroup('poe');
+      learn(vt,['poe','pogen'],re);
+    }
+  )
+

@@ -1571,10 +1571,10 @@ msgid "Suggestions"
 msgstr "Suggestions"
 
 msgid "cmd_poe_revealed"
-msgstr "cmd_poe_revealed"
+msgstr "(Vous venez d'activer le mode d'édition des traductions.)"
 
 msgid "po_symbol_edit"
 msgstr "(édition - taper Ctrl + Entrée pour valider) "
 
 msgid "po_symbol_unknown"
-msgstr "po_symbol_unknown"
+msgstr "(message inconnu)"
