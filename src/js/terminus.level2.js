@@ -150,10 +150,8 @@ lever=$library.newItem("lever", "item_lever.png",{executable:true})
   ;
 
 // BACK ROOM
-$library.addPath(
 newRoom('backroom',"loc_backroom.gif")
-  .addCommand("grep")
-);
+  .addCommand("grep");
 
 $backroom.newPeople("grep", "grep.png")
   .setCmdEvent('less','grep')

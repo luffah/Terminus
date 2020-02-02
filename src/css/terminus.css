@@ -23,6 +23,9 @@ body {
   position:absolute;
   width:100%;
 }
+#term {
+  font-family: term;
+}
 .color-ok {
 color:lightgreen;
 }
@@ -56,9 +59,10 @@ color:grey;
 .badge {
   position:relative;
   text-align:center;
+  font-family:inherit;
 }
 .badge-title {
-  font-size:1.4em;
+  font-size:1.2em;
 }
 .badge img {
   width:16ch;

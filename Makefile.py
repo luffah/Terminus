@@ -153,7 +153,7 @@ def make_all(lang):
         'src/js/terminus.run.js',
     ]
 
-    pojsfile = 'src/js/_build/terminus.dialog.%s.js' % lang
+    pojsfile = os.path.join(TMPDIR, 'terminus.dialog.%s.js' % lang)
     pojs=po2json('src/lang/terminus.%s.po' % lang)
     with open(pojsfile, "w") as buf:
         buf.writelines(pojs)

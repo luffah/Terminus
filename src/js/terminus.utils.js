@@ -15,19 +15,19 @@ function learn(vt, cmds,re){
     global_fireables.done.push(
       function(){
         for (var j=0; j<cmds.length;j++) {
-          vt.badge(cmds[j],_('you_learn',[cmds[j]]));
+          vt.badge(_('you_learn',[cmds[j]]),_('you_learn_desc',[cmds[j]]));
           vt.playSound('learned');
         }
       }
     );
   }
 }
-function unlock(vt, unlocked,re){
+function unlock(vt, unlocked, re){
   if (!re) {
     global_fireables.done.push(
       function(){
         vt.playSound('unlocked'); 
-        vt.badge(_('you_unlock',[unlocked]));
+        vt.badge(_('you_unlock',[unlocked]), _('you_unlock_desc', [unlocked]));
       }
     );
   }

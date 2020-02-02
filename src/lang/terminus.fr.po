@@ -50,10 +50,16 @@ msgid "prelude_wrong_game"
 msgstr "Tu concentres ton énergie, tu lances ce sort puissant… Où te crois-tu ? Dans un dessin animé ?"
 
 msgid "you_learn"
-msgstr "Tu as appris à utiliser '%s' !"
+msgstr "'%s' appris !"
 
 msgid "you_unlock"
-msgstr "Tu peux maintenant aller dans '%s' !"
+msgstr "%s en vue !"
+
+msgid "you_learn_desc"
+msgstr "Tu peux maintenant utiliser la commande '%s'"
+
+msgid "you_unlock_desc"
+msgstr "Tu peux maintenant accéder à ce lieu :%s'"
 
 msgid "you_success"
 msgstr "Fini '%s' !"
