@@ -114,29 +114,7 @@ $townsquare.addPath(
 newRoom("library", "loc_library.gif")
   .addCommand("grep")
 );
-$library.newItem('radspellbook',"item_radspellbook.png");
-$library.newItem('romancebook',"item_romancenovel.png");
-$library.newItem('historybook',"item_historybook.png");
-$library.newItem('nostalgicbook',"item_historybook.png")
-  .setCmdEvent('less','pwdCmd')
-  .addStates({
-    pwdCmd:function(re){
-      $western_forest.fire_event('pwdCmd'); 
-    }
-  })
-;
-vimbook=$library.newItem('vimbook',"item_vimbook.png")
-  .setCmdEvent('less','openVim')
-  .addState("openVim", function(re){
-    if (!re){
-      vt.flash(1600,1000);
-      vt.rmCurrentImg(2650);
-    }
-    vimbook.disappear();
-  });
-
-
-lever=$library.newItem("lever", "item_lever.png",{executable:true})
+lever=$library.newItem("lever", "item_lever.png", {executable:true})
   .setCmdEvent('exec','pullLever')
   .addStates({
     pullLever:function(re){
@@ -148,6 +126,28 @@ lever=$library.newItem("lever", "item_lever.png",{executable:true})
     }
   })
   ;
+$library.newItem('historybook',"item_historybook.png");
+$library.newItem('nostalgicbook',"item_historybook.png")
+  .setCmdEvent('less','pwdCmd')
+  .addStates({
+    pwdCmd:function(re){
+      $western_forest.fire_event('pwdCmd'); 
+    }
+  })
+;
+$library.newItem('romancebook',"item_romancenovel.png");
+$library.newItem('itemspellbook',"item_radspellbook.png");
+$library.newItem('radspellbook',"item_radspellbook.png");
+vimbook=$library.newItem('vimbook',"item_vimbook.png")
+  .setCmdEvent('less','openVim')
+  .addState("openVim", function(re){
+    if (!re){
+      vt.flash(1600,1000);
+      vt.rmCurrentImg(2650);
+    }
+    vimbook.disappear();
+  });
+
 
 // BACK ROOM
 newRoom('backroom',"loc_backroom.gif")
@@ -277,14 +277,17 @@ $townsquare.addPath(
       $brokenbridge.unsetCmdText("cd");
       $brokenbridge.setIntroText(_('room_brokenbridge_text2'));
       if (re) $brokenbridge.newItem('plank',"item_plank.png");
-      else $brokenbridge.getItem('plank').setPic("item_plank.png");
+      else { 
+        $brokenbridge.getItem('plank').setPic("item_plank.png");
+        vt.echo(_('room_brokenbridge_text2'));
+      }
     }
   })
 );
 
 // CLEARING
 $brokenbridge.addPath(
-  newRoom("clearing", "loc_clearing.gif",{executable:false})
+  newRoom("clearing", "loc_clearing.gif",{writable:true, executable:false})
   .setCmdEvent('mkdir',function(ct){
     return (ct.arg == _('room_house') ? 'HouseMade':'');
   })
@@ -292,7 +295,7 @@ $brokenbridge.addPath(
   .addCommand("mkdir")
   .addStates({
     HouseMade: function(re){
-      if (re) { $clearing.leadsTo(newRoom('house')); }
+      if (re) { $clearing.addPath(newRoom('house')); }
       $clearing.getChildFromName(_('room_house'))
         .setCmdText("cd", _('room_house_cd') )
         .setCmdText("ls", _('room_house_ls') );
@@ -329,9 +332,9 @@ newRoom("trollcave", "loc_cave.gif",{writable:true})
   .setCmdEvent('rm',troll_evt);
 
 $trollcave.newPeople('troll1', "item_troll1.png")
-  .setCmdText("rm", _('people_troll11_rm'))
-  .setCmdText("mv", _('people_troll11_mv'))
-  .setCmdText("cp",_('people_troll11_cp'))
+  .setCmdText("rm", _('people_troll1_rm'))
+  .setCmdText("mv", _('people_troll1_mv'))
+  .setCmdText("cp",_('people_troll1_cp'))
   .setCmdEvent('mv','openSlide')
   .setCmdEvent('rm','openSlide')
   .addStates({
@@ -344,7 +347,7 @@ $trollcave.newPeople('troll1', "item_troll1.png")
   });
 
 $trollcave.newPeople('troll2', "item_troll2.png")
-  .setCmdText("rm",_('people_troll11_rm'));
+  .setCmdText("rm",_('people_troll1_rm'));
 
 $trollcave.newPeople('supertroll', "item_supertroll.png")
   .setCmdText("rm", _('people_supertroll_rm'))
@@ -384,7 +387,7 @@ $kernel.newItem('certificate', undefined, {readable: false})
       unlock(vt, $paradise, re);
     }
   });
-$kernel.newItem("instructions")
+$kernel.newItem("sudo_teaser")
   .setCmdEvent('less','sudo')
   .addStates({
     sudo : function(re){
@@ -392,6 +395,7 @@ $kernel.newItem("instructions")
       learn(vt,'sudo',re);
     }
   });
+$kernel.newItem("instructions");
 
 $kernel. addPath(
   newRoom("morekernel")

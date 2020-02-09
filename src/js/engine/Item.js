@@ -153,7 +153,7 @@ Item.prototype=union(File.prototype, {
     if (this.exec_function){
       return this.exec_function(this,args,room,vt);
     } else {
-      return cmd_done(vt,[[it,0]],it.cmd_text.less,'exec',args);
+      return cmd_done(vt,[[it,0]],'','exec',args);
     }
   },
   setPo:function(name,vars){

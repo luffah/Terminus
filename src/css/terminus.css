@@ -44,6 +44,9 @@ color:palevioletred;
 .color-item {
 color:magenta;
 }
+.color-item.color-executable {
+color:blueviolet;
+}
 .mesg {
 color:grey;
 }

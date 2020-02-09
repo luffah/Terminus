@@ -7,6 +7,7 @@ var POPREFIX_ROOM='room_';
 var POPREFIX_ITEM='item_';
 var POPREFIX_PEOPLE='people_';
 var POSUFFIX_DESC='_text';
+var POSUFFIX_EXEC_DESC='_exec';
 var PO_NONE='none';
 var PO_NONE_DESC=PO_NONE+POSUFFIX_DESC;
 var PO_DEFAULT_ROOM=POPREFIX_ROOM+PO_NONE;

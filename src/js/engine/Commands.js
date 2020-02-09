@@ -70,7 +70,9 @@ _setupCommand('ls','dir', [ARGT.dir], function(args,vt){
       }
     }
     if (items.length > 0){
-      ret+= _('items', ["\t" + items.map(function(n){return span('color-item',n.toString());}).join("\n\t")]) + "\t\n";
+      ret+= _('items', ["\t" + items.map(function(n){
+        return span('color-item' + (n.executable?' color-executable':''),n.toString());
+      }).join("\n\t")]) + "\t\n";
     }
     return {txt:ret,pics:pics};
   }
