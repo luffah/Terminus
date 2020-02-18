@@ -59,7 +59,7 @@ msgid "you_learn_desc"
 msgstr "Tu peux maintenant utiliser la commande '%s'"
 
 msgid "you_unlock_desc"
-msgstr "Tu peux maintenant accéder à ce lieu :%s'"
+msgstr "Tu peux maintenant accéder à : '%s'"
 
 msgid "you_success"
 msgstr "Fini '%s' !"
@@ -133,8 +133,8 @@ msgstr ""
 msgid "gameintro_ok"
 msgstr "OK"
 
-msgid "gameintro_failure"
-msgstr "Échec"
+msgid "gameintro_pass"
+msgstr "passable"
 
 msgid "gameintro_text_terminus"
 msgstr ""
@@ -455,6 +455,15 @@ msgid "room_spell_casting_academy_text"
 msgstr ""
 "Le hall d'entrée est bondé. \n"
 "L'académie a un plafond très haut, qui rend l'entrée très impressionnante."
+
+msgid "room_spell_casting_academy_success_title"
+msgstr "Succès 'Déménagement destructeur'"
+
+msgid "room_spell_casting_academy_success_text"
+msgstr "Les énigmes de l'{{room_spell_casting_academy}} sont résolues"
+
+msgid "room_spell_casting_academy_congrat_mesg"
+msgstr "L'{{room_spell_casting_academy}} va être fermée le temps des réparations ! Fais plus attention à l'avenir."
 
 msgid "item_western_forest_academy_direction"
 msgstr "Panneau"
@@ -1034,6 +1043,12 @@ msgstr "Le rocher disparait dans un pop."
 msgid "room_artisanshop"
 msgstr "BoutiqueArtisanale"
 
+msgid "room_artisanshop_success_title"
+msgstr "Succès 'Assistanat'"
+
+msgid "room_artisanshop_success_text"
+msgstr "Tu sais maintenant utiliser 'touch' et 'mv'."
+
 msgid "room_artisanshop_text"
 msgstr ""
 "Les murs de la boutique sont couverts d'horloges dont les tic-tac sont légèrement désynchronisés.\n"
@@ -1170,6 +1185,12 @@ msgstr ""
 
 msgid "room_house"
 msgstr "Maison"
+
+msgid "room_house_success_title"
+msgstr "Succès 'Architecte hétérotopiste'"
+
+msgid "room_house_success_text"
+msgstr "Tu conçois des espaces à partir de rien pour y abriter nos imaginaires."
 
 msgid "room_house_text"
 msgstr "Ça ! C'est une {{room_house}}."
@@ -1416,7 +1437,7 @@ msgstr "TrollPlusMoche"
 msgid "people_troll2_text"
 msgstr ""
 "Il a l'air fou et vraiment vraiment moche. \n"
-"Mais il veut te dire quelque chose. Mais ces grognements sont incompréhensibles."
+"Mais il semble vouloir te dire quelque chose avec des grognements incompréhensibles."
 
 msgid "people_supertroll"
 msgstr "TrollAbsolumentHideux"

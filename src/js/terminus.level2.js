@@ -225,6 +225,7 @@ $townsquare.addPath(
         $artisanshop.removeItem('gear',[3]);
         $artisanshop.removeItem('gear',[4]);
         $artisanshop.removeItem('gear',[5]);
+        success(vt,'room_artisanshop', re);
       }
       state.saveCookie();
     }
@@ -299,6 +300,7 @@ $brokenbridge.addPath(
       $clearing.getChildFromName(_('room_house'))
         .setCmdText("cd", _('room_house_cd') )
         .setCmdText("ls", _('room_house_ls') );
+      success(vt,'room_house',re);
       $clearing.unsetCmdText("cd");
       $clearing.setIntroText(_('room_clearing_text2'));
       CryingMan.setCmdText("less", _('room_clearing_less2'));

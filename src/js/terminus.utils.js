@@ -55,13 +55,16 @@ function mesg(msg,re,opt){
 function ondone(fu){
 global_fireables.done.push(fu);
 }
-function success(vt, txt,re){
+function success(vt,txt, re){
   if (!re) {
     global_fireables.done.push(
       function(){
         vt.playSound('success'); 
-        vt.badge(_('you_success',[txt]));
-        mesg(_('congrat',[txt]));
+        vt.badge(_(txt+'_success_title'), _(txt+'_success_text'));
+        var m = txt+'_congrat_mesg';
+        if (m in dialog){
+          mesg(_(m));
+        }
       }
     );
   }

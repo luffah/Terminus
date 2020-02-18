@@ -77,7 +77,7 @@ function start_game(){
       seq.then(function(next){
         loadel=dom.Id('initfsck');
         vt.show_loading_element_in_msg(['/\'','\'-',' ,','- '],{
-          el:loadel,finalvalue:"<span class='color-ko'>"+_('gameintro_failure')+"</span>",
+          el:loadel,finalvalue:"<span class='color-pass'>"+_('gameintro_pass')+"</span>",
           duration:800,callback:next});
       });
       seq.then(function(next){

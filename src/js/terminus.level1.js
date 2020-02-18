@@ -125,7 +125,7 @@ function mv_sum(re){
       });
     }
     if (!re){
-      success(vt,_('room_spell_casting_academy'),re);
+      success(vt,'room_spell_casting_academy',re);
       ondone(function(){
         setTimeout(function(){ 
           snd.play('broken');
