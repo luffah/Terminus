@@ -23,11 +23,17 @@ body {
   position:absolute;
   width:100%;
 }
+#term {
+  font-family: term;
+}
 .color-ok {
 color:lightgreen;
 }
 .color-ko {
 color:red;
+}
+.color-pass {
+color:orange;
 }
 .color-cmd {
 color:chartreuse;
@@ -40,6 +46,9 @@ color:palevioletred;
 }
 .color-item {
 color:magenta;
+}
+.color-item.color-executable {
+color:blueviolet;
 }
 .mesg {
 color:grey;
@@ -56,9 +65,10 @@ color:grey;
 .badge {
   position:relative;
   text-align:center;
+  font-family:inherit;
 }
 .badge-title {
-  font-size:1.4em;
+  font-size:1.2em;
 }
 .badge img {
   width:16ch;
@@ -121,8 +131,16 @@ color:grey;
 .msg pre{
   display:inline;
 }
-.passinput:before {
-  content:'#>';
+/* 
+ * .input .input-wrapper:before {
+ *   content:'#> ';
+ * }
+ */
+#term .passinput .input-wrapper {
+  opacity:20%;
+}
+#term .passinput .input-wrapper input {
+  max-width:40ch;
 }
 .choicebox {
 border: 10px solid #efefef;

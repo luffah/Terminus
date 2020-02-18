@@ -13,6 +13,7 @@
 bak
 #trashes
 _trash
+.build
 
 #report files
 *.pdf

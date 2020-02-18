@@ -122,13 +122,19 @@ function _getCommands(r){
   }
   return ret.concat(_getUserCommands());
 }
-function _parse_exec(vt, arrs,superuser){
+function _parse_exec(vt, arrs){
   var t=vt.getContext();
   var cmd = arrs[0];
+  var sudo = false;
+  if (arrs[0] == 'sudo') {
+    arrs.shift();
+    cmd = arrs[0];
+    sudo = true;
+  }
   var ret = "";
   var r=t;
   arrs.push(arrs.pop().replace(/\/$/,""));
-//  console.log('_parse_exec',arrs,r);
+  //  console.log('_parse_exec',arrs,r);
   var args=_expandArgs(arrs.slice(1),r);
   // find the program to launch
   var cmdexec=null;
@@ -142,13 +148,13 @@ function _parse_exec(vt, arrs,superuser){
       };
     }
   }
-  if (!cmdexec && _hasRightForCommand(cmd,r)){//find a builtin program
+  if (!cmdexec && (sudo || _hasRightForCommand(cmd,r))){//find a builtin program
     cmdexec=_getCommandFunction(cmd);
   }
   // test command eligibility when no existant cmd 
   if ( !cmdexec) {
     if (cmd in r.cmd_text){
-      r.fire_event(vt,cmd+'_cmd_text',args,0);
+      r.fire_event(vt, cmd+'_cmd_text',args,0);
       ret=r.cmd_text[cmd];
     } else {
       r.fire_event(vt,'cmd_not_found',args,0);
@@ -157,36 +163,12 @@ function _parse_exec(vt, arrs,superuser){
     }
     return ret;
   } 
-  // asume there is a collection of password to unlock
-  // if the collection is empty then the command is executed
-  var passwordcallback=function(passok,cmdpass){
-    var ret = "";
-    if (passok) {
-      var text_to_display = cmdexec(args,vt);
-      if (text_to_display){
-        ret=text_to_display;
-      } else if (cmd in r.cmd_text){
-        ret=r.cmd_text[cmd];
-      }
-    } else {
-      ret=_('room_wrong_password');
-    }
-    return ret;
-  };
 
-  // construct the list of passwords to give
-  var cmdpass=[];
-  if (cmd in t.commands_lock){
-    if (cmd.locked_inside) { // test option locked inside
-      cmdpass.push(t.commands_lock[cmd]);
-    }
-  }
   var tgt,cur;
-  for (var i=0;i<args.length;i++ ){
+  for (var i=0; i<args.length; i++){
     tgt=t.traversee(args[i]);
     cur=tgt.room;
-    //don't ask passwd for items OR if no room
-    if (!cur || tgt.item) {continue;}
+    if (!cur || tgt.item || sudo) {continue;}
     if (i===0 && !_hasRightForCommand(cmd,cur)){
       if (cmd in cur.cmd_text){
         ret=cur.cmd_text[cmd];
@@ -195,17 +177,36 @@ function _parse_exec(vt, arrs,superuser){
       }
       return ret;
     }
-    if (cmd in cur.commands_lock){
-      if(cmd === "sudo" && cur.hasOwnProperty('supass') && cur.supass){
-        continue;
-      }
-      cmdpass.push(cur.commands_lock[cmd]);
-    }
   }
-  // ask passwords and exec 
-  if (cmdpass.length > 0){
-    vt.ask_password(cmdpass,passwordcallback);
+
+  var run_cmd=function(){
+    if (sudo) t.sudo = true;
+    var text_to_display = cmdexec(args,vt);
+    if (text_to_display){
+      ret=text_to_display;
+    } else if (cmd in r.cmd_text){
+      ret=r.cmd_text[cmd];
+    }
+    t.sudo = false;
+    return ret;
+  }
+
+  if (sudo && !t.supass){
+    var passwordcallback=function(passwd, elem){
+      var ret = "";
+      // console.log(passwd);
+      if (passwd == 'IHTFP') {
+        t.supass = true;
+        ret = run_cmd();
+      } else {
+        ret=_('room_wrong_password');
+      }
+      return ret;
+    };
+
+    vt.ask(_('ask_password'), passwordcallback, {cls:'choicebox passinput', disappear:function(f){f();}});
   } else {
-    return passwordcallback(true);
+    ret = run_cmd();
+    return ret
   }
 }

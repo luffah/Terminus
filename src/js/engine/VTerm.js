@@ -391,6 +391,22 @@ VTerm.prototype={
   },
   show_msg: function (msg,opt){
     if (def(msg)){
+      //   if (echo.isReturnSequence){
+      //     var supercb=[];
+      //     for (var i=0;i<echo.length();i++){
+      //        supercb.push(function(){
+      //          t.show_img({index:echo.getIdx()});
+      //          t.show_msg(echo.next(),{cb:supercb.shift()});
+      //        });
+      //     }
+      //     supercb.shift()();
+      //   } else {
+      //     t.show_img();
+      //     if (t.cmdoutput) {
+      //       t.show_msg(echo);
+      //     }
+      //   }
+      // console.log(msg, opt);
       opt=opt||{};
       var cb;
       var t=this;
@@ -474,7 +490,7 @@ VTerm.prototype={
           }
         }
       } else { // propose commands
-      // console.log("this case",_getCommands(t.context));
+        // console.log("this case",_getCommands(t.context));
         tocomplete="";
         match=_getCommands(t.context).map(addspace);
       }
@@ -556,6 +572,27 @@ VTerm.prototype={
   argsValid: function(args){
     return _validArgs(args.shift(),args,this.context);
   },
+  echo: function(msg){
+    var t=this;
+    if (def(msg)){
+      if (msg.isReturnSequence){
+        if (!msg.length()) return;
+        var supercb=[];
+        for (var i=0;i<msg.length();i++){
+          supercb.push(function(){
+            t.show_img({index:msg.getIdx()});
+            t.show_msg(msg.next(),{cb:supercb.shift()});
+          });
+        }
+        supercb.shift()();
+      } else {
+        t.show_img();
+        if (t.cmdoutput) {
+          t.show_msg(msg);
+        }
+      }
+    }
+  },
   enter: function(){
     // Enter -> exec command
     var t=this;
@@ -569,34 +606,17 @@ VTerm.prototype={
       t.show_previous_prompt(pr.value);
       t.history.push(pr.value);
       var args=l.split(' ');
-      var echo=_parse_exec(t, args);
-      if (def(echo)){
-        if (echo.isReturnSequence){
-          var supercb=[];
-          for (var i=0;i<echo.length();i++){
-             supercb.push(function(){
-               t.show_img({index:echo.getIdx()});
-               t.show_msg(echo.next(),{cb:supercb.shift()});
-             });
-          }
-          supercb.shift()();
-        } else {
-          t.show_img();
-          if (t.cmdoutput) {
-            t.show_msg(echo);
-          }
-        }
-        t.set_line('');
-        t.hide_suggestions();
-        //t.show_suggestions(_getCommands(t.context).map(addspace));
-        t.monitor = mon;
-      }
+      t.echo(_parse_exec(t, args));
+      t.set_line('');
+      t.hide_suggestions();
+      //t.show_suggestions(_getCommands(t.context).map(addspace));
+      t.monitor = mon;
     }
   },
   enterKey : this.enter,
-/*****************/
-/** Prompt behavior part **/
-/*****************/
+  /*****************/
+  /** Prompt behavior part **/
+  /*****************/
   behave: function(){
     this.global_behavior();
     this.input_behavior();
@@ -607,7 +627,7 @@ VTerm.prototype={
     };
   },
   _cmdline_key:function(){
-  
+
 
   },
   input_behavior: function (){
@@ -619,7 +639,7 @@ VTerm.prototype={
       e = e || window.event;//Get event
       if(def(t.battle_scene)){
         t.battle_scene.onkeydown(e);
-      } else if(def(t.choose_input)||def(t.password_input)) {
+      } else if(def(t.choose_input)) {
         e.preventDefault();
       } else {
         var k=e.key;
@@ -642,8 +662,6 @@ VTerm.prototype={
         t.battle_scene.onkeyup(e);
       } else if(def(t.choose_input)){
         t._choose_key(e.key,e);
-      } else if(def(t.password_input)) {
-        t._password_key(e.key,e);
       } else {
         var k=e.key;
         if (k === 'ArrowRight' || k  === 'ArrowLeft' || k === 'ArrowUp' || k  === 'ArrowDown') {
@@ -927,10 +945,11 @@ VTerm.prototype={
     var choicebox = addEl(t.monitor,'div',args.cls|| 'choicebox');
     t.show_msg([question,function(){
       setTimeout(function(){
+        var input_wrapper = addEl(choicebox, 'div', 'input-wrapper');
         if (args.multiline){
-          t.answer_input=addEl(choicebox,'textarea',{cols:78});
+          t.answer_input=addEl(input_wrapper,'textarea',{cols:78});
         } else {
-          t.answer_input=addEl(choicebox,'input',{size:78});
+          t.answer_input=addEl(input_wrapper,'input',{size:78});
         }
         var k=addEl(choicebox,'div','keys');
         addBtn(k,'key','↵','Enter',function(e){t.enterKey();});
@@ -964,7 +983,7 @@ VTerm.prototype={
           var ret = t.answer_input.value;
           ret = callback?callback(ret):ret;
           end_answer();
-          t.show_msg(ret);
+          t.echo(ret);
         },intimeout+outtimeout);
       }
     }],{el:choicebox,dependant:false}); 
@@ -989,73 +1008,10 @@ VTerm.prototype={
       var ret = t.answer_input.value;
       ret = callback?callback(ret):ret;
       end_answer();
-      t.show_msg(ret);
+      t.echo(ret);
     };
   },
-/** Password prompt **/
-  _begin_password: function(){
-    var t = this;
-    t.set_line('');
-    t._cur_box = addEl(t.monitor,'div','choicebox');
-    t._div =addEl(t.inputdiv,'div',{class:'passinput'});
-    t.password_input =addEl(t._div,'input',{size:20});
-    
 
-    t.password_input.focus();
-    t.password_input.onkeyup=function(e){
-      var k=e.key;
-      if (k === 'Enter') { // ENTER
-        t.enterKey();
-        e.preventDefault();
-        t.scrl();
-      }
-    };
-    t.disable_input();
-  },
-  _end_password: function(){
-    var t = this;
-    t.inputdiv.removeChild(t._div);
-    t.password_input = undefined;
-    t._div = undefined;
-    t.enable_input();
-  },
-  _password_key:function(k,e){
-  //nothing
-  },
-  _ask_password_rec:function(cmdpass,callback){
-    var t=this;
-    if (cmdpass.length > 0){
-      var p=cmdpass.shift();
-      var question=d(p.question,_('ask_password'));
-      t.show_msg( question,{el:t._cur_box});
-      t.enterKey=function(){
-        t.playSound('choiceselect');
-        var ret = t.password_input.value;
-        t.password_input.value="";
-        if (p.password === ret){
-          if (p.passok){
-            t.show_msg(p.passok,{el:t._cur_box});
-          }
-          t._ask_password_rec(cmdpass,callback); 
-        } else {
-          if (p.passko){
-            t.show_msg(p.passko,{el:t._cur_box});
-          }
-          t.show_msg(callback(false,cmdpass),{el:t._cur_box});
-          t._end_password();
-        }
-      };
-      t.scrl();
-    } else {
-      t.show_msg(callback(true,cmdpass));
-      t._end_password();
-    }
-  }, 
-/** TODO : maybe, add live action function option **/
-  ask_password: function(cmdpass,callback){
-    this._begin_password();
-    this._ask_password_rec(cmdpass,callback);
-  },
   auto_shuffle_input_msg: function(msg,fromcomplexicity,tocomplexicity,stepcomplexity,period,duration,incstep){
     var t=this;
     var id=t.msg_idx;
