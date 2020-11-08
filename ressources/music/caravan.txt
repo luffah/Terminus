@@ -1,6 +1,6 @@
 title: Desert theme
 artist: yd
-date: Saturday, December 31, 2011 - 22:54
+date: Saturday, December 31, 2011 - 19:54
 license: CC0
 url: https://opengameart.org/content/desert-theme
 url artist: https://opengameart.org/users/yd

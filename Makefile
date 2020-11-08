@@ -40,7 +40,7 @@ assemble: ## Transform game file into an usable script
 	done
 
 fetch_ressources:
-	${GAMEDEV_TOOLS}/ogaget ./ressources -dl --recursive
+	${GAMEDEV_TOOLS}/ogaget --recursive ./ressources -dl
 
 js: ${TOOLS}/.npm po  ## Compress javascript files
 	for _LANG in ${LANGS};do \
