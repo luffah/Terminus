@@ -40,23 +40,23 @@ assemble: ## Transform game file into an usable script
 	done
 
 fetch_ressources:
-	${GAMEDEV_TOOLS}/ogaget --recursive ./ressources -dl
+	${GAMEDEV_TOOLS}/ogaget  --recursive ./ressources -dl
 
-js: ${TOOLS}/.npm po  ## Compress javascript files
-	for _LANG in ${LANGS};do \
-		_LANG=$${_LANG} make _js; \
-	done
-
-_js_transpile: _ensure_dir_js_build
-	${NODEJS} ${NODEBIN}/babel \
-		-o ./_build/js/all.${_LANG}.js --presets env \
-		`grep '<script ' ./engine/index.html | grep 'src=' |  egrep -v 'tests/|<!--|-->' | sed 's/.*src="\([^"]*.js\)".*/.\/src\/\1/;s/${LANG_REGEX}/\1${_LANG}\2/'`
-
-_js: _ensure_build_dir _js_transpile
-	${NODEJS} ${NODEBIN}/uglifyjs \
-		./_build/js/all.${_LANG}.js \
-		-o ./_build/js/min.${_LANG}.js -c -m;
-
+# js: ${TOOLS}/.npm po  ## Compress javascript files
+# 	for _LANG in ${LANGS};do \
+# 		_LANG=$${_LANG} make _js; \
+# 	done
+#
+# _js_transpile: _ensure_dir_js_build
+# 	${NODEJS} ${NODEBIN}/babel \
+# 		-o ./_build/js/all.${_LANG}.js --presets env \
+# 		`grep '<script ' ./engine/index.html | grep 'src=' |  egrep -v 'tests/|<!--|-->' | sed 's/.*src="\([^"]*.js\)".*/.\/src\/\1/;s/${LANG_REGEX}/\1${_LANG}\2/'`
+#
+# _js: _ensure_build_dir _js_transpile
+# 	${NODEJS} ${NODEBIN}/uglifyjs \
+# 		./_build/js/all.${_LANG}.js \
+# 		-o ./_build/js/min.${_LANG}.js -c -m;
+#
 # _check_polib:
 	# ${PYTHON}  -c "import polib" || pip install polib
 
@@ -66,10 +66,10 @@ _ensure_build_dir:
 css:
 	 ${NODEJS} ${TOOLS}/postcss.js
 
-html: css js ## Generate minimal html [usage: _LANG=xx make html]
-	 ${PYTHON} ${TOOLS}/inject ./src/index.html \
-		 ./_build/min.css ./_build/min.${_LANG}.js \
-		./webroot/terminus.${_LANG}.html
+# html: ## Generate minimal html [usage: _LANG=xx make html]
+# 	 ${PYTHON} ${BUILD_TOOLS}/inject ./src/index.html \
+# 		 ./_build/min.css ./_build/min.${_LANG}.js \
+# 		./webroot/terminus.${_LANG}.html
 
 # EXTRA #
 # pot: _ensure_build_dir _check_polib ## Generate a pot file from a pofile [usage: _LANG=xx make pot]

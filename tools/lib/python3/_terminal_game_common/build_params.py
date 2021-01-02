@@ -42,13 +42,12 @@ def get_project_parameters(gamedir, tgt=''):
             # TARGET
             'target_dir': realpath(tgt),
             # dirs project_dir/webroot_dir/{css,img,js,engine}
-            'target_engine_subdir': 'engine',
+            'target_engine_subdir': 'js.engine',
             'target_css_subdir': 'css',
             'target_img_subdir': 'img',
             'target_sound_subdir': 'snd',
             'target_music_subdir': 'snd',
-            'target_js_subdir': 'js',
-            'target_engine_subdir': 'engine',
+            'target_js_subdir': 'js.built',
             # files in  target_dir/js/
             'game.js': 'game.js',
             # %s = lang

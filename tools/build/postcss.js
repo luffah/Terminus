@@ -21,16 +21,16 @@ var postcss_plugins = [
 ]
 
 var args = process.argv.slice(2)
-
 if (args.length == 2) {
   var sourcecss = args[0]
   var targetcss = args[1]
+  function writeFile(result){
+    fs.writeFile(targetcss, result.css, () => {});
+    if (result.map) fs.writeFile(targetcss + '.map', result.map, () => {})
+  }
   fs.readFile(sourcecss, (err, css) => {
     postcss(postcss_plugins)
       .process(css, { from: sourcecss, to: targetcss })
-      .then(result => {
-        fs.writeFile(targetcss, result.css)
-        if (result.map) fs.writeFile(targetcss + '.map', result.map)
-      })
+      .then(writeFile)
   })
 }

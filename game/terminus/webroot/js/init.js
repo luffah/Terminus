@@ -1,6 +1,6 @@
 var vt = (new VTerm(dom.Id('term'))).addon(VTermImages, RES.img)
-invidiv = addEl(vt.cmdinput, 'pre', { class: 'invidiv' })
-cursorblock = addEl(vt.cmdinput, 'div', {
+var invidiv = addEl(vt.cmdinput, 'pre', { class: 'invidiv' })
+var cursorblock = addEl(vt.cmdinput, 'div', {
   class: 'cursorblock'
 })
 CursorListener.push((k, pos) => {

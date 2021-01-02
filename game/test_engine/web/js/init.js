@@ -20,11 +20,11 @@ window.addEventListener('load', Game)
 function Game () {
   console.log('--start engine test--')
   let state = File.prototype.STATE
-  hasSave = state.startCookie('test_engine')
-  cookie_question = _('cookie')
-  cookie_choices = [_('cookie_yes_load'), _('cookie_yes'), _('cookie_no')]
-  cookie_disabled_choices = hasSave ? [] : [0]
-  cookie_parse_answer = function (useCookies){
+  let hasSave = state.startCookie('test_engine')
+  let cookie_question = _('cookie')
+  let cookie_choices = [_('cookie_yes_load'), _('cookie_yes'), _('cookie_no')]
+  let cookie_disabled_choices = hasSave ? [] : [0]
+  let cookie_parse_answer = function (useCookies){
     vt.clear()
 
     if (useCookies === 0) vt.env = state.loadEnv()

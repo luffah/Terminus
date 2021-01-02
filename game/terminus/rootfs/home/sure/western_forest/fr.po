@@ -17,7 +17,7 @@ msgstr "Gribouillis"
 
 msgid "item_gribouillis_text"
 msgstr ""
-"Il est formellement interdit d'essayer de parler aux non- anthropomorphes.\n"
+"Il est formellement interdit d'essayer de parler aux non-anthropomorphes.\n"
 "Rappelez vous de l'incident de la semaine dernière et la perte de votre camarade."
 
 msgid "item_western_forest_academy_direction"

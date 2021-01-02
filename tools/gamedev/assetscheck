@@ -13,7 +13,7 @@ from _terminal_game_common.assets import Assets
 from _terminal_game_common.jspart import get_assets_references
 from _terminal_game_common.build_params import po_perimeter
 
-USAGE = 'Usage: %s <dir>' % sys.argv[0]
+USAGE = 'USAGE: %s <dir>' % sys.argv[0]
 
 
 def _get_assets_missing(curdir, lvl=0):

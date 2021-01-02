@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
-    <title>Test Engine</title>
+    <title>Test js.engine</title>
     <!-- style definition -->
     <link href="css/game.css" rel="stylesheet"/>
   </head>
@@ -15,73 +15,73 @@
     <!--<iframe id="pogen" style="display:none;"></iframe>-->
 
     <!-- lang data -->
-    <script type="text/javascript" src="js/dialog.lang.js"></script>
+    <script type="text/javascript" src="js.built/dialog.lang.js"></script>
     <!-- scripts -->
-    <script type="text/javascript" src="engine/utils/seq.js"></script>
-    <script type="text/javascript" src="engine/utils/dom.js"></script>
-    <script type="text/javascript" src="engine/utils/random.js"></script>
-    <script type="text/javascript" src="engine/utils/object.js"></script>
-    <script type="text/javascript" src="engine/utils/string.js"></script>
-    <script type="text/javascript" src="engine/utils/array.js"></script>
+    <script type="text/javascript" src="js.engine/utils/seq.js"></script>
+    <script type="text/javascript" src="js.engine/utils/dom.js"></script>
+    <script type="text/javascript" src="js.engine/utils/random.js"></script>
+    <script type="text/javascript" src="js.engine/utils/object.js"></script>
+    <script type="text/javascript" src="js.engine/utils/string.js"></script>
+    <script type="text/javascript" src="js.engine/utils/array.js"></script>
 
-    <script type="text/javascript" src="engine/keymap.js"></script>
+    <script type="text/javascript" src="js.engine/keymap.js"></script>
 
-    <script type="text/javascript" src="engine/ui/Gettext.js"></script>
-    <script type="text/javascript" src="engine/ui/Window.js"></script>
-    <script type="text/javascript" src="engine/ui/VTerm.js"></script>
+    <script type="text/javascript" src="js.engine/ui/Gettext.js"></script>
+    <script type="text/javascript" src="js.engine/ui/Window.js"></script>
+    <script type="text/javascript" src="js.engine/ui/VTerm.js"></script>
 
-    <script type="text/javascript" src="engine/state/Cookie.js"></script>
-    <script type="text/javascript" src="engine/state/GameState.js"></script>
+    <script type="text/javascript" src="js.engine/state/Cookie.js"></script>
+    <script type="text/javascript" src="js.engine/state/GameState.js"></script>
 
-    <script type="text/javascript" src="engine/filesystem/Properties.js"></script>
-    <script type="text/javascript" src="engine/filesystem/Eventable.js"></script>
-    <script type="text/javascript" src="engine/filesystem/Statable.js"></script>
-    <script type="text/javascript" src="engine/filesystem/POable.js"></script>
-    <script type="text/javascript" src="engine/filemodel.js"></script>
-    <script type="text/javascript" src="engine/filesystem/mode.js"></script>
-    <script type="text/javascript" src="engine/filesystem/file.js"></script>
-    <script type="text/javascript" src="engine/filesystem/directory.js"></script>
-    <script type="text/javascript" src="engine/filesystem/link.js"></script>
+    <script type="text/javascript" src="js.engine/filesystem/Properties.js"></script>
+    <script type="text/javascript" src="js.engine/filesystem/Eventable.js"></script>
+    <script type="text/javascript" src="js.engine/filesystem/Statable.js"></script>
+    <script type="text/javascript" src="js.engine/filesystem/POable.js"></script>
+    <script type="text/javascript" src="js.engine/filemodel.js"></script>
+    <script type="text/javascript" src="js.engine/filesystem/mode.js"></script>
+    <script type="text/javascript" src="js.engine/filesystem/file.js"></script>
+    <script type="text/javascript" src="js.engine/filesystem/directory.js"></script>
+    <script type="text/javascript" src="js.engine/filesystem/link.js"></script>
 
-    <script type="text/javascript" src="engine/addons/outsiders/howler.core.js"></script>
-    <script type="text/javascript" src="engine/addons/Audio.js"></script>
-    <script type="text/javascript" src="engine/addons/Image.js"></script>
-    <script type="text/javascript" src="engine/addons/credits.js"></script>
+    <script type="text/javascript" src="js.engine/addons/outsiders/howler.core.js"></script>
+    <script type="text/javascript" src="js.engine/addons/Audio.js"></script>
+    <script type="text/javascript" src="js.engine/addons/Image.js"></script>
+    <script type="text/javascript" src="js.engine/addons/credits.js"></script>
 
-    <script type="text/javascript" src="engine/shell/Env.js"></script>
-    <script type="text/javascript" src="engine/shell/TextIO.js"></script>
-    <script type="text/javascript" src="engine/shell/Task.js"></script>
-    <script type="text/javascript" src="engine/shell/Shell.js"></script>
-    <script type="text/javascript" src="engine/shell/Key.js"></script>
-    <script type="text/javascript" src="engine/shell/CommandStore.js"></script>
+    <script type="text/javascript" src="js.engine/shell/Env.js"></script>
+    <script type="text/javascript" src="js.engine/shell/TextIO.js"></script>
+    <script type="text/javascript" src="js.engine/shell/Task.js"></script>
+    <script type="text/javascript" src="js.engine/shell/Shell.js"></script>
+    <script type="text/javascript" src="js.engine/shell/Key.js"></script>
+    <script type="text/javascript" src="js.engine/shell/CommandStore.js"></script>
 
-    <script type="text/javascript" src="engine/builtins/alias.js"></script>
-    <script type="text/javascript" src="engine/builtins/cd.js"></script>
-    <script type="text/javascript" src="engine/builtins/exit.js"></script>
-    <script type="text/javascript" src="engine/builtins/echo.js"></script>
-    <script type="text/javascript" src="engine/builtins/help.js"></script>
-    <script type="text/javascript" src="engine/builtins/pwd.js"></script>
-    <script type="text/javascript" src="engine/builtins/_poedit.js"></script>
+    <script type="text/javascript" src="js.engine/builtins/alias.js"></script>
+    <script type="text/javascript" src="js.engine/builtins/cd.js"></script>
+    <script type="text/javascript" src="js.engine/builtins/exit.js"></script>
+    <script type="text/javascript" src="js.engine/builtins/echo.js"></script>
+    <script type="text/javascript" src="js.engine/builtins/help.js"></script>
+    <script type="text/javascript" src="js.engine/builtins/pwd.js"></script>
+    <script type="text/javascript" src="js.engine/builtins/_poedit.js"></script>
 
-    <script type="text/javascript" src="engine/commands/less.js"></script>
-    <script type="text/javascript" src="engine/commands/cp.js"></script>
-    <script type="text/javascript" src="engine/commands/groups.js"></script>
-    <script type="text/javascript" src="engine/commands/grep.js"></script>
-    <script type="text/javascript" src="engine/commands/whoami.js"></script>
-    <script type="text/javascript" src="engine/commands/ls.js"></script>
-    <script type="text/javascript" src="engine/commands/man.js"></script>
-    <script type="text/javascript" src="engine/commands/mkdir.js"></script>
-    <script type="text/javascript" src="engine/commands/mv.js"></script>
-    <script type="text/javascript" src="engine/commands/rm.js"></script>
-    <script type="text/javascript" src="engine/commands/sudo.js"></script>
-    <script type="text/javascript" src="engine/commands/touch.js"></script>
-    <script type="text/javascript" src="engine/commands/unzip.js"></script>
+    <script type="text/javascript" src="js.engine/commands/less.js"></script>
+    <script type="text/javascript" src="js.engine/commands/cp.js"></script>
+    <script type="text/javascript" src="js.engine/commands/groups.js"></script>
+    <script type="text/javascript" src="js.engine/commands/grep.js"></script>
+    <script type="text/javascript" src="js.engine/commands/whoami.js"></script>
+    <script type="text/javascript" src="js.engine/commands/ls.js"></script>
+    <script type="text/javascript" src="js.engine/commands/man.js"></script>
+    <script type="text/javascript" src="js.engine/commands/mkdir.js"></script>
+    <script type="text/javascript" src="js.engine/commands/mv.js"></script>
+    <script type="text/javascript" src="js.engine/commands/rm.js"></script>
+    <script type="text/javascript" src="js.engine/commands/sudo.js"></script>
+    <script type="text/javascript" src="js.engine/commands/touch.js"></script>
+    <script type="text/javascript" src="js.engine/commands/unzip.js"></script>
 
-    <script type="text/javascript" src="js/game.js"></script>
-    <script type="text/javascript" src="ui/init.js"></script>
-    <script type="text/javascript" src="ui/effects.js"></script>
-    <script type="text/javascript" src="ui/background.js"></script>
-    <script type="text/javascript" src="ui/utils.js"></script>
-    <script type="text/javascript" src="ui/gamestart.js"></script>
+    <script type="text/javascript" src="js.built/game.js"></script>
+    <script type="text/javascript" src="js/init.js"></script>
+    <script type="text/javascript" src="js/effects.js"></script>
+    <script type="text/javascript" src="js/background.js"></script>
+    <script type="text/javascript" src="js/utils.js"></script>
+    <script type="text/javascript" src="js/gamestart.js"></script>
   </body>
 </html>

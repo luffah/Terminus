@@ -13,6 +13,6 @@ assets:< credits for assets are in ressources directory
 assets sources:
     opengameart.org
 
-[lang] transalations: anonym
+[lang] translations: anonym
 
 license: CC0

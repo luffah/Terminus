@@ -278,7 +278,7 @@ def default_game_defaults_builder(params):
 
     return follow_as(
         'default_game_defaults_builder',"""
-GameDefaults = { env: function (){
+var GameDefaults = { env: function (){
       return new Env({
         me: %s, // current user
         r: %s, // current working dir
@@ -315,8 +315,9 @@ def build(params):
     """ make an usable js script from project_dir """
     # print(CONTAMINATION_NOTE)
     ensure_dir(params['target_dir'])
+    ensure_dir(params['target_js_dir'])
     copy_dir('css_dir', 'target_dir', 'target_css_subdir', params=params)
-    copy_dir('engine_dir', 'target_dir', 'target_engine_subdir', params=params)
+    copy_dir('engine_dir', 'target_js_dir', 'target_engine_subdir', params=params)
     return _dir2js(params)
 
 
