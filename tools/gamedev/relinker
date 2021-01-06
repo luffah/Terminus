@@ -29,12 +29,13 @@
          You can move and rename freely the file pointed.
 """
 
-from os import link, symlink, remove
-from os.path import getsize, realpath, relpath, dirname, isfile
-import filecmp
-from shutil import copyfile
 from glob import glob
+from os import link, symlink, remove, readlink, unlink
+from os.path import getsize, realpath, relpath, dirname, isfile, islink
+from shutil import copyfile
 import argparse
+import filecmp
+import re
 
 def _filesize(num):
     for unit in ['', 'k', 'M', 'G']:
@@ -44,27 +45,43 @@ def _filesize(num):
     return "Too big"
 
 def main(src=None, res=None, linkcmd=None, verbose=False, dry=False,
-         relative=True):
-    files_src = [f for f in glob(src + '/**', recursive=True) if isfile(f)]
-    files_res = [f for f in glob(res + '/**', recursive=True) if isfile(f)]
-    totalgained = 0
-    for fsrc in files_src:
-        for fres in [f for f in files_res if filecmp.cmp(fsrc, f)]:
+         relative=True, subst_pattern=None):
+
+    if subst_pattern:
+        files_src = [f for f in glob(src + '/**', recursive=True) if islink(f)]
+        pat_from, pat_to = eval('(' + subst_pattern + ')')
+        for fsrc in files_src:
+            orig_link = readlink(fsrc)
+            target_link = re.sub(pat_from, pat_to, orig_link)
+            if orig_link == target_link:
+                continue
             if verbose:
-                print("%s\n-> %s" % (fres, fsrc))
-            totalgained += getsize(fsrc)
-            if callable(linkcmd) and not dry:
-                remove(fsrc)
-                linkcmd(realpath(fres) if not relative else
-                          relpath(realpath(fres), dirname(realpath(fsrc))),
-                   fsrc)
-            break
-    print(
-        "Total %s : %s" % (
-            'loss expected' if linkcmd.__name__[:4] == 'copy'
-            else 'gain expected',
-            _filesize(totalgained)
-    ))
+                print("[%s]\n-> %s -> %s" % (fsrc, orig_link, target_link))
+            if not dry:
+                unlink(fsrc)
+                symlink(orig_link, fsrc)
+    else:
+        files_src = [f for f in glob(src + '/**', recursive=True) if isfile(f)]
+        files_res = [f for f in glob(res + '/**', recursive=True) if isfile(f)]
+
+        totalgained = 0
+        for fsrc in files_src:
+            for fres in [f for f in files_res if filecmp.cmp(fsrc, f)]:
+                if verbose:
+                    print("%s\n-> %s" % (fres, fsrc))
+                totalgained += getsize(fsrc)
+                if callable(linkcmd) and not dry:
+                    remove(fsrc)
+                    linkcmd(realpath(fres) if not relative else
+                              relpath(realpath(fres), dirname(realpath(fsrc))),
+                       fsrc)
+                break
+        print(
+            "Total %s : %s" % (
+                'loss expected' if linkcmd.__name__[:4] == 'copy'
+                else 'gain expected',
+                _filesize(totalgained)
+        ))
 
 
 if __name__ == '__main__':
@@ -78,6 +95,10 @@ if __name__ == '__main__':
         'res',
         help="(library) contains ressources files")
     group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        '-subst', action='store', dest='subst_pattern',
+        help="a python substitution \"'from','to'\" (see /usr/lib/python*/re.py for special chars)"
+    )
     group.add_argument(
         '-s', '--symbolic', action='store_const', dest='linkcmd', const=symlink,
         help="link points to the path of the file"

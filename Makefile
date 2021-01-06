@@ -39,8 +39,8 @@ assemble: ## Transform game file into an usable script
 		${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}); \
 	done
 
-fetch_ressources:
-	${GAMEDEV_TOOLS}/ogaget  --recursive ./ressources -dl
+fetch_resources:  ## Fetch resources
+	${GAMEDEV_TOOLS}/ogaget  --recursive ./resources -dl
 
 # js: ${TOOLS}/.npm po  ## Compress javascript files
 # 	for _LANG in ${LANGS};do \
