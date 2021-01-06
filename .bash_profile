@@ -19,6 +19,10 @@ export RESSOURCES="$WORKSPACE/ressources"
 export PYTHONPATH="$TOOLS/lib/python3"
 export PATH="$TOOLS/gamedev:$TOOLS/build:$PATH"
 
+echo "Adding commands for gamedev"
+echo "---------------------------"
+find $TOOLS/gamedev  -maxdepth 1 -executable -type f | sed 's,.*/,,' | xargs echo
+
 _set_prompt(){
   export PROMPT_COMMAND=_prompt_command
   _prompt_command(){

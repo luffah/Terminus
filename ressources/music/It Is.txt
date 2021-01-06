@@ -1,6 +1,6 @@
 title: It is
 artist: HorrorPen
-date: Friday, May 11, 2012 - 14:26
+date: Friday, May 11, 2012 - 11:26
 license: CC-BY 3.0
 url: https://opengameart.org/content/it-is
 url artist: https://opengameart.org/users/horrorpen

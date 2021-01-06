@@ -21,13 +21,13 @@ LIVE_EDITOR = environ.get('LIVE_EDITOR', "vi {file} +/{msgid}")
 #
 USAGE = (
     "Show the message string related to a po msgid.\n"
-    "Usage:\n"
+    "USAGE:\n"
     " {0} <gamedir> -list\n"
     " {0} <gamedir> <msgid> [<lang>] [-po|-edit]\n"
-    "Parameters:\n"
+    "PARAMETERS:\n"
     " <gamedir> : the project directory\n"
     " <msgid> : the gettext id\n"
-    "Options:\n"
+    "OPTIONS:\n"
     " -list : show msgids\n"
     " -po   : show message in po format instead of plain text\n"
     " -edit : call '{1}' in order to edit the message.\n"

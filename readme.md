@@ -18,7 +18,7 @@ It provide:
 
 Note for game dev
 =================
-- `make` can be used to build the game(s) in `./game`
+- `make build` can be used to build the game(s) in `./game`
 - `make fetch_ressources` can be used to fetchs ressources registered `./ressources`
 - `./game/terminus/devenv.sh` set up a bash shell for dev...
 - to work on develop branch : `git fetch origin; git checkout --track origin/develop`

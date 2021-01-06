@@ -22,6 +22,17 @@ else:  # python
         return matched
 
 
+def merge_dict(orig_dict, new_dict):
+    """ merge 2 dicts, accumulating values """
+
+    for key in new_dict:
+        if (isinstance(new_dict[key], dict) and
+              isinstance(orig_dict.get(key), dict)):
+            merge_dict(orig_dict[key], new_dict[key])
+        else:
+            orig_dict[key] = new_dict[key]
+
+
 def get_content(fname, ext='', rec=False, lvl=0, join=None):
     """ get content of file(s) with name ending with ext """
     ret = []

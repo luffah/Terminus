@@ -1,6 +1,6 @@
 title: 8 Bit The Hero 
 artist: ShwiggityShwag
-date: Monday, August 4, 2014 - 07:58
+date: Monday, August 4, 2014 - 04:58
 license: CC0
 url: https://opengameart.org/content/8-bit-the-hero
 url artist: https://opengameart.org/users/shwiggityshwag

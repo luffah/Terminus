@@ -25,10 +25,31 @@ class Env {
    *
    * */
   constructor (h) {
-    // h = {users:{$name: {groups:[]}}, me:$name, r:$room,  v:{PATH:[],HOME:$room} }
-    console.log(h);
+    // h = {users:{$name: {groups:[], v:{PATH:[],HOME:$room}}}, me:$name, r:$room}
     h = h || {}
     this.h = h
+    if (this.h.fs && this.h.fixpaths){
+      if (typeof this.h.r === 'string'){
+        this.h.r = this.h.fs.getDir(this.h.r)
+      }
+      for (let u in this.h.users) {
+        let user = this.h.users[u]
+        for (let k in user.v){
+          if (k.endsWith('PATH')){
+            let paths = []
+            for (let kp of user.v[k].split(':')) {
+              let p = this.h.fs.getDir(kp)
+              paths.push(p ? p.path : kp)
+            }
+            user.v[k] = paths.join(':')
+          } else if (re.dir.test(user.v[k])) {
+            let p = this.h.fs.getDir(user.v[k])
+            user.v[k] = p ? p.path : kp
+          }
+        }
+      }
+    }
+    console.log(h);
   }
 
   get cwd () { return this.h.r }

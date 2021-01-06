@@ -25,9 +25,9 @@ class FileModel extends POable {
   }
 }
 
-File.owner = 'user'
-File.group = 'user'
-File.mod = 'a+r'
+FileModel.owner = 'user'
+FileModel.group = 'user'
+FileModel.mod = 'a+r'
 
 function recordAssetRef (prop, obj) {
   Object.keys(RES).forEach(t => {
@@ -37,7 +37,7 @@ function recordAssetRef (prop, obj) {
         files[obj.name] = obj
         RES[t][prop[t]].files = files
       } else {
-        console.log(t, prop[t], 'not found for', this.name, this)
+        console.log(t, prop[t], 'not found for', obj.name, obj)
       }
     }
   })

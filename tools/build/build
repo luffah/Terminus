@@ -3,6 +3,7 @@
    Generate javascript and move assets
 """
 import sys
+import os
 from os import makedirs, symlink, remove
 from os.path import join, dirname, realpath, isdir, relpath, islink
 sys.path.append(
@@ -15,23 +16,35 @@ from _terminal_game_common.build_params import get_project_parameters
 
 USAGE = (
     "Build/export the game in html/css/js format.\n"
-    "Usage:\n"
-    " %s <gamedir> <tgt_dir> [-t] [-transpile|-minify|-css|-html] [-only]\n"
-    "Parameters:\n"
+    "BASIC USAGE (for testing a game in project dir):\n"
+    " %s <gamedir> <tgt_dir>\n"
+    "OPTIONS:\n"
     " -t is for writing trace\n"
-    "Here is enough for testing the game.\n"
-    "Next ther parameters allows to go futher. \n"
-    " -transpile : (step 1a) transpile js for compatibility in many browsers\n"
+    "\nNext options allows to compile the game.\n"
+    "USAGE:\n"
+    " %s <gamedir> <tgt_dir> [-t] [-transpile|-minify|-css|-html] [-only]\n"
+    "OPTIONS:\n"
+    " -transpile : (step 1a) transpile js for old browsers compatibility\n"
     " -css       : (step 1b) autoprefix css properties\n"
     " -minify    : (step 2) uglify js code\n"
     " -html      : (step 3) generate all-in-one html file\n"
     "Each step depends on the previous ones.\n"
-    "If you want to re-execute only one step use '-only'."
+    "To re-execute only one step use '-only'.\n"
+    "Therefore you probably need no more than the option '-html'.\n"
+    "\nENVIRONMENT VARIABLES FOR DEBUGGING:\n"
+    "  'DEBUG=t' shows most of in processing params\n"
+    "  'DEBUG_SKIP=postcss' disable css minifying\n"
+    "  'DEBUG_SKIP=uglifyjs' disable js minifying\n"
+    "  'DEBUG_SKIP=babel,uglifyjs' disable transpiling\n"
+    "  'DEBUG_SKIP=nodejs' disable all node things\n"
 )
 
 
 def rsymlink(src, dst):
-    symlink(relpath(src, dirname(dst)), dst)
+    orig = relpath(src, dirname(dst))
+    if os.environ.get('DEBUG', False):
+        print('symlink %s to %s'% (orig, dst))
+    symlink(orig, dst)
 
 
 def _link_dirs_in_project(params, dirs):
@@ -49,6 +62,9 @@ def _main(gamedir, tgt, opts):
     params = get_project_parameters(gamedir, tgt)
     _link_dirs_in_project(params, ['js', 'img', 'sound', 'music', 'engine'])
     only = '-only' in opts
+    if os.environ.get('DEBUG', False):
+        from pprint import pprint
+        pprint(params)
     if not only:
         _install_deps()
         build_data = build(params)
@@ -82,7 +98,7 @@ if __name__ == '__main__':
             TARGET = arg
         else:
             OPTS[arg] = arg
-    if not (GAMEDIR and TARGET):
+    if '-h' in sys.argv[1:] or '--help' in sys.argv[1:] or not (GAMEDIR and TARGET):
         print(USAGE)
         exit(1)
     _main(GAMEDIR, TARGET, OPTS)

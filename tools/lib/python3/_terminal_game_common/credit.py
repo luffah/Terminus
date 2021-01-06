@@ -31,15 +31,17 @@ def get_credit_data_idx(name):
 
 def parse_credit(fpath):
     """
-    parse a project credit file (see parse from credits.credit_file)
+    parse a project credit file (see credit file format in ogaget project)
     return a dictionnary ({key:list(values)}, ordered_keys)
     """
-    parsed = _just_parse_credit_file(fpath)
+    # parsed = _just_parse_credit_file(fpath)
+    (parsed, sorted_keys) = _just_parse_credit_file(fpath, return_ordered_keys=True)
     credits_ = {}
     lkeys = {}
     for key in parsed:
         m = re.match(RE_LANG_SPECIFIC_KEY, key)
-        vals = parsed.get(key, [None])[0]
+        # vals = parsed.get(key, [None])[0]
+        vals = parsed.get(key, None)
         if m:
             lang = m.group(1)
             lkeys[key] = m.group(2)
@@ -56,7 +58,8 @@ def parse_credit(fpath):
             )
 
     keys_ = []
-    for key in sorted(parsed.keys(), key=lambda k: parsed[k][1]):
+    # for key in sorted(parsed.keys(), key=lambda k: parsed[k][1]):
+    for key in sorted_keys:
         key_ = lkeys.get(key, key)
         if key_ not in keys_:
             keys_.append(key_)
@@ -104,7 +107,8 @@ def parse_credit_asset(
     for key in parsed:
         if (not if_any_key) or key in if_any_key:
             minimum = True
-        for val in parsed[key][0]:
+        # for val in parsed[key][0]:
+        for val in parsed[key]:
             if key in info_keys + (if_any_key or []):
                 refcredit[key] = get_credit_data_idx(val)
             if key in extra_credits_keys:

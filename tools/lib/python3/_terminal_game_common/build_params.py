@@ -7,21 +7,13 @@
 import os
 from os.path import split, join, isfile, isdir, dirname, realpath
 import sys
-from .logging import print_err
 from ogaget.credit_file import parse
+from .logging import print_err
+from . import merge_dict
 TOOLS = dirname(dirname(sys.argv[0]))
 BUILD_TOOLS = join(TOOLS, 'build')
 
 DEFAULT_LANGS = []
-
-
-def parse_info(fpath):
-    parsed = parse(fpath)
-    ret = {}
-    params = parsed.get('params')
-    if params:
-        ret = params[0]
-    return ret
 
 
 def get_project_parameters(gamedir, tgt=''):
@@ -33,6 +25,7 @@ def get_project_parameters(gamedir, tgt=''):
         'project_dir': gamedir,
         # file project_dir/game_info_file
         'game_info_file': 'credits.txt',
+        'game_users_file': 'users.txt',
         # dir  project_dir/root_dir
         'root_dir': 'rootfs',
         # dir  project_dir/webroot_dir
@@ -49,13 +42,12 @@ def get_project_parameters(gamedir, tgt=''):
             # TARGET
             'target_dir': realpath(tgt),
             # dirs project_dir/webroot_dir/{css,img,js,engine}
-            'target_engine_subdir': 'engine',
+            'target_engine_subdir': 'js.engine',
             'target_css_subdir': 'css',
             'target_img_subdir': 'img',
             'target_sound_subdir': 'snd',
             'target_music_subdir': 'snd',
-            'target_js_subdir': 'js',
-            'target_engine_subdir': 'engine',
+            'target_js_subdir': 'js.built',
             # files in  target_dir/js/
             'game.js': 'game.js',
             # %s = lang
@@ -71,9 +63,47 @@ def get_project_parameters(gamedir, tgt=''):
         params['target_engine_dir'] = params['source_engine_dir']
 
     # load project settings
-    game_infos = parse_info(join(params['project_dir'],
-                                 params['game_info_file']))
-    params.update(game_infos)
+    game_infos = parse(join(params['project_dir'],
+                                 params['game_info_file'])).get('params', {})
+    users = parse(join(params['project_dir'],
+                                 params['game_users_file']), with_order=False)
+    merge_dict(game_infos, {'game': { 'users': users}})
+    merge_dict(params, game_infos)
+
+    # post processing on variable type
+    type_spec = {
+        'root_dir': str,
+        'webroot_dir': str,
+        'game/users/default': str,
+        'game/users': dict,
+        'game/users/*/groups': list,
+        'game/users/*/password': str,
+        'game/users/*/variables': dict,
+        'game/users/*/variables/*': str,
+    }
+
+    def _rec_correct_types(dic, k=None, path=None):
+        if not k:
+            for nk in dic.keys():
+                _rec_correct_types(dic, nk, (path + '/') if path else '' + nk)
+            return
+        if k not in dic:
+            return
+        t_spec = type_spec.get(path, None)
+
+        if t_spec and not isinstance(dic[k], t_spec):
+            val = dic[k]
+            if isinstance(val, list) and t_spec == str:
+                dic[k] = val[0]
+            # TODO support more types conversion
+        elif isinstance(dic[k], dict):
+            for nk in dic[k].keys():
+                _rec_correct_types(dic[k], nk, path + '/' + nk)
+                _rec_correct_types(dic[k], nk, path + '/*')
+
+    _rec_correct_types(params)
+
+    # post processing on directories path
     params['root_dir'] = join(gamedir, params['root_dir'])
     params['ui_dir'] = join(gamedir, params['ui_dir'])
     for key in list(params.keys()):
@@ -121,6 +151,7 @@ CONTENT_POSITION = [
     'engine',         # ( engine specified for linting only )
     'assets',         # -> assets to load
     'credits',        # -> credits (that are not contained in assets)
+    'game_defaults',  # -> define game object defaults
     'ui',             # -> functions in ui dir
     '_init',
     '_background',

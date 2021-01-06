@@ -1,0 +1,8 @@
+default: sure
+
+sure:
+    password: ifhtp
+    groups: user
+    variables:
+        HOME: /home/sure
+        PATH: /bin

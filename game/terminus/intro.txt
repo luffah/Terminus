@@ -1,0 +1,8 @@
+
+ask:prelude_text
+    _match:re_hate
+        user_judged_bad
+    _match:re_love
+        user_judged_lovely
+    _default:
+        user_judged{random}
