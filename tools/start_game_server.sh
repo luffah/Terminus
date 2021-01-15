@@ -1,15 +1,11 @@
 #!/bin/sh
-GAME="${1:-$GAME}"
+. $(dirname $0)/sh/_choose_game.sh
 
-[ "$GAME" ] || GAME=$(PYTHONPATH=$(dirname $0)/lib/python3 python3 -m ogaget.selector 'Game ?' $(ls -d game/* | sed 's|.*/||') 3>&2 2>&1 1>&3)
-
-GAMEPATH=game/${GAME}
-SERVPATH_ALTDIR=$(cat game/${GAME}/credits.txt  | sed -n 's/^\s*webroot_dir\s*:\s*\(\S\+\)\s*$/\1/p')
-if [ "${SERVPATH_ALTDIR}" ];then
-  SERVPATH=game/${GAME}/${SERVPATH_ALTDIR}
-else
-  SERVPATH=game/${GAME}/webroot
+SERVPATH_DIR=$(cat ${GAME_PATH}/credits.txt  | sed -n 's/^\s*webroot_dir\s*:\s*\(\S\+\)\s*$/\1/p')
+if [ -z "${SERVPATH_DIR}" ]; then
+  SERVPATH_DIR=webroot
 fi
+SERVPATH=${GAME_PATH}/webroot
 PIDFILE=server.pid
 SERVPORT=7341
 serve(){

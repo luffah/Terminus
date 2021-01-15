@@ -3,3 +3,9 @@ msgid ""
 msgstr ""
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_rightleg_text"
+msgstr ""
+
+msgid "room_rightleg"
+msgstr ""

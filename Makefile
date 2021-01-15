@@ -17,7 +17,7 @@ clean_dist:
 all: build ## Generate all html files in all languages
 
 devenv: ## Source .bash_profile in order to use dev tools
-	bash --init-file .bash_profile
+	./devenv.sh ${GAME}
 
 server:
 	./tools/start_game_server.sh ${GAME}

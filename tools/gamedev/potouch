@@ -16,6 +16,7 @@ from _terminal_game_common.po import \
 from _terminal_game_common.build_params import po_perimeter
 
 def _touch_po(d, msgids, langs):
+    print(locals())
     for lang in langs:
         f = join(d, '%s.po' % lang)
         write(f, gen_po_header(lang) + ["\n"] + get_po_content(f))
@@ -34,7 +35,7 @@ def _touch_po(d, msgids, langs):
 def touch_po(d, msgids, langs, opts):
     d = realpath(d)
     if opts.force:
-        _touch_po(d, set(msgids) + set(find_po_references(d)), langs)
+        _touch_po(d, set(msgids) | set(find_po_references(d)), langs)
     else:
         msgids_done = []
         for r in [d] + onlydirs(d, rec=po_perimeter):

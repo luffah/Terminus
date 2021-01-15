@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 # pylint: disable=unexpected-keyword-arg
 """
-   Show missing po entries for a directory
+   Show missing assets for a directory
 """
 import sys
-from os.path import isdir, realpath, relpath, dirname, join
+from os.path import isdir, realpath, relpath, dirname, join, basename
 sys.path.append(
     join(dirname(dirname(realpath(__file__))),'lib','python3')
 )
@@ -13,7 +13,9 @@ from _terminal_game_common.assets import Assets
 from _terminal_game_common.jspart import get_assets_references
 from _terminal_game_common.build_params import po_perimeter
 
-USAGE = 'USAGE: %s <dir>' % sys.argv[0]
+USAGE = """usage: %s dir
+
+Show missing assets in the directory""" % basename(sys.argv[0])
 
 
 def _get_assets_missing(curdir, lvl=0):
@@ -35,7 +37,7 @@ def _get_assets_missing(curdir, lvl=0):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) < 2 or not isdir(sys.argv[1]):
+    if len(sys.argv) < 2 or sys.argv[1] in ('-h', '--help'):
         print(USAGE)
         exit(1)
 

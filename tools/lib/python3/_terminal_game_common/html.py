@@ -56,8 +56,8 @@ def inject(htmlfile, cssfile, jsfile, targetfile):
     js_injected = False
     css_injected = False
 
-    css_txt = "<style>%s</style>" % get_content(cssfile, join="\n")
-    js_txt = "<script>%s</script>" % get_content(jsfile, join="\n")
+    css_txt = "<style>%s</style>" % get_content(cssfile, join_sep="\n")
+    js_txt = "<script>%s</script>" % get_content(jsfile, join_sep="\n")
     html_lines = get_content(htmlfile)
 
     with open(targetfile, "w") as buf:

@@ -35,3 +35,9 @@ msgstr ""
 
 msgid "room_kernel_sudo"
 msgstr "room_kernel_sudo"
+
+msgid "room_kernelfiles_text"
+msgstr ""
+
+msgid "room_kernelfiles"
+msgstr ""

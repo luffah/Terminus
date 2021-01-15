@@ -40,3 +40,9 @@ msgstr ""
 "lesquels elles vont travailler. Toutes les informations séparées par des "
 "espaces à droite du nom de la commande sont appelées arguments de la ligne "
 "de commande."
+
+msgid "room_rootfs"
+msgstr ""
+
+msgid "room_rootfs_text"
+msgstr ""

@@ -28,10 +28,23 @@
          in that case the content remains accessible with the link.
          You can move and rename freely the file pointed.
 """
+USAGE = """
+# List symlinks
+       relinker src -ls [-v]
 
+# Modify symlinks
+       relinker src -subst SUBST_PATTERN [-v] [--dry-run]
+
+# Transform duplicated files into links
+       relinker src res (-s | -d | -c) [--fullpath] [-v] [--dry-run]
+
+# Help
+       relinker -h
+
+"""
 from glob import glob
 from os import link, symlink, remove, readlink, unlink
-from os.path import getsize, realpath, relpath, dirname, isfile, islink
+from os.path import getsize, realpath, relpath, dirname, isfile, isdir, islink, join
 from shutil import copyfile
 import argparse
 import filecmp
@@ -44,25 +57,61 @@ def _filesize(num):
         num /= 1024.0
     return "Too big"
 
-def main(src=None, res=None, linkcmd=None, verbose=False, dry=False,
-         relative=True, subst_pattern=None):
 
-    if subst_pattern:
-        files_src = [f for f in glob(src + '/**', recursive=True) if islink(f)]
+
+def main(src=None, res=None, linkcmd=None, verbose=False, dry=False,
+         relative=True, subst_pattern=None, list_symlink=False):
+    dirlink = {
+            src: [f for f in glob(src + '/**', recursive=True) if islink(f) and isdir(f)]
+            }
+    if res:
+        dirlink[res] = [f for f in glob(res + '/**', recursive=True) if islink(f) and isdir(f)]
+
+    def belongtolink(f, ref):
+        nonlocal dirlink
+        res = False
+        for fref in dirlink[ref]:
+            if f.startswith(fref):
+                res = True
+                break
+        return res
+
+    def found(fsrc, fname):
+        rpath = realpath(join(dirname(fsrc), fname))
+        return ('%s' if isfile(rpath) else "%s (not found)") % rpath
+
+    if list_symlink:
+        files_src = [f for f in glob(src + '/**', recursive=True) if islink(f) and isfile(f) and not belongtolink(f, src)]
+        for fsrc in files_src:
+            if verbose:
+                orig_link = readlink(fsrc)
+                print("[Link]  %s\n       -> %s\nTarget  %s\n" % (
+                    fsrc, orig_link, found(fsrc, orig_link)
+                    ))
+            else:
+                print(fsrc)
+
+    elif subst_pattern:
+        files_src = [f for f in glob(src + '/**', recursive=True) if islink(f) and isfile(f)  and not belongtolink(f, src)]
         pat_from, pat_to = eval('(' + subst_pattern + ')')
+        def found(fsrc, fname):
+            rpath = realpath(join(dirname(fsrc), fname))
+            return ('%s' if isfile(rpath) else "%s (not found)") % rpath
         for fsrc in files_src:
             orig_link = readlink(fsrc)
             target_link = re.sub(pat_from, pat_to, orig_link)
             if orig_link == target_link:
                 continue
             if verbose:
-                print("[%s]\n-> %s -> %s" % (fsrc, orig_link, target_link))
+                print("[Link]  %s\n       -> %s\nOld target  %s\nNew target  %s\n" % (
+                    fsrc, target_link, found(fsrc, orig_link), found(fsrc, target_link)
+                    ))
             if not dry:
                 unlink(fsrc)
-                symlink(orig_link, fsrc)
+                symlink(target_link, fsrc)
     else:
-        files_src = [f for f in glob(src + '/**', recursive=True) if isfile(f)]
-        files_res = [f for f in glob(res + '/**', recursive=True) if isfile(f)]
+        files_src = [f for f in glob(src + '/**', recursive=True) if isfile(f) and not belongtolink(f, src)]
+        files_res = [f for f in glob(res + '/**', recursive=True) if isfile(f) and not belongtolink(f, res)]
 
         totalgained = 0
         for fsrc in files_src:
@@ -86,15 +135,19 @@ def main(src=None, res=None, linkcmd=None, verbose=False, dry=False,
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='Transform duplicated files into links.'
+        usage=USAGE
     )
     parser.add_argument(
         'src',
         help="(project) contains copied files for purpose")
     parser.add_argument(
-        'res',
+        'res',nargs='?',
         help="(library) contains ressources files")
     group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument(
+        '-ls' ,'--list-symlink', action='store_true', dest='list_symlink',
+        help="list all symlink in dir"
+    )
     group.add_argument(
         '-subst', action='store', dest='subst_pattern',
         help="a python substitution \"'from','to'\" (see /usr/lib/python*/re.py for special chars)"

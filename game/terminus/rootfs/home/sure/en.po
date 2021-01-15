@@ -27,3 +27,15 @@ msgstr ""
 
 msgid "people_shell"
 msgstr ""
+
+msgid "item_nutshell_text"
+msgstr ""
+
+msgid "item_dust_text"
+msgstr ""
+
+msgid "item_nutshell"
+msgstr ""
+
+msgid "item_dust"
+msgstr ""

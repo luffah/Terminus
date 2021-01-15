@@ -1,9 +1,17 @@
 #
 msgid ""
 msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "room_fs"
 msgstr "Racine"
 
 msgid "room_fs_text"
 msgstr "Tout les chemins convergent ici."
+
+msgid "room_rootfs"
+msgstr ""
+
+msgid "room_rootfs_text"
+msgstr ""

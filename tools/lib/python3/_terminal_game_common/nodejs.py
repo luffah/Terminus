@@ -19,8 +19,8 @@ CSSLINT = which("csslint")
 
 NODEJS_INIT_OK = False
 if NODEJS:
-    NODEJS_VERSION = subprocess.getoutput(NODEJS + ' --version')
-    print('using %s %s' % (NODEJS, NODEJS_VERSION))
+    # NODEJS_VERSION = subprocess.getoutput(NODEJS + ' --version')
+    # print('using %s %s' % (NODEJS, NODEJS_VERSION))
     NODEMODULES = join(realpath(BUILD_TOOLS), "node_modules")
     NODEBIN = join(NODEMODULES, ".bin")
 else:

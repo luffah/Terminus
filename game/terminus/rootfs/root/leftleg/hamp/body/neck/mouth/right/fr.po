@@ -9,3 +9,9 @@ msgstr "ADroite"
 
 msgid "room_left_text"
 msgstr "Le chemin continue."
+
+msgid "room_right"
+msgstr ""
+
+msgid "room_right_text"
+msgstr ""

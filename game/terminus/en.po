@@ -1,7 +1,7 @@
 #
 msgid ""
 msgstr ""
-"Language: fr\n"
+"Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 
 msgid "people_darkwizard"

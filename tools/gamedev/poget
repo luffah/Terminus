@@ -3,7 +3,7 @@
    Print po
 """
 from os import system, environ
-from os.path import realpath, isfile, isdir, dirname, join
+from os.path import realpath, isfile, isdir, dirname, join, basename
 import re, sys
 from polib import pofile
 sys.path.append(
@@ -32,7 +32,7 @@ USAGE = (
     " -po   : show message in po format instead of plain text\n"
     " -edit : call '{1}' in order to edit the message.\n"
     "         Editor can be changed with LIVE_EDITOR variable.\n"
-). format(sys.argv[0], LIVE_EDITOR)
+). format(basename(sys.argv[0]), LIVE_EDITOR)
 
 def _print_entry(entry, as_po=False, edit=False):
     if edit:

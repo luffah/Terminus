@@ -3,3 +3,9 @@ msgid ""
 msgstr ""
 "Language: en\n"
 "Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "room_hamp_text"
+msgstr ""
+
+msgid "room_hamp"
+msgstr ""

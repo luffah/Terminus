@@ -28,3 +28,9 @@ msgid "room_kernel_text"
 msgstr ""
 "The KernelFiles hold the sudo-secret (no, not pseudo). You'd better read the"
 " Instructions."
+
+msgid "room_kernelfiles_text"
+msgstr ""
+
+msgid "room_kernelfiles"
+msgstr ""

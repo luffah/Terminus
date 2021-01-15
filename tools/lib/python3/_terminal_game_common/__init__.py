@@ -33,7 +33,7 @@ def merge_dict(orig_dict, new_dict):
             orig_dict[key] = new_dict[key]
 
 
-def get_content(fname, ext='', rec=False, lvl=0, join=None):
+def get_content(fname, ext='', rec=False, lvl=0, join_sep=None):
     """ get content of file(s) with name ending with ext """
     ret = []
     if isfile(fname):
@@ -48,8 +48,8 @@ def get_content(fname, ext='', rec=False, lvl=0, join=None):
                 rec=rec,
                 lvl=lvl+1
             )
-    if join:
-        ret = join.join(ret)
+    if join_sep:
+        ret = join_sep.join(ret)
     return ret
 
 

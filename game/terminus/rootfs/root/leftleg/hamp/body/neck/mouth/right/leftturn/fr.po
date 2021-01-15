@@ -9,3 +9,9 @@ msgstr "VirageAGauche"
 
 msgid "room_rightturn"
 msgstr "Le chemin forme un quart de cercle vers la gauche."
+
+msgid "room_leftturn"
+msgstr ""
+
+msgid "room_leftturn_text"
+msgstr ""

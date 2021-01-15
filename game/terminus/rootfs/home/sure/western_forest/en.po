@@ -27,3 +27,9 @@ msgid "item_western_forest_academy_direction_text"
 msgstr ""
 "Spell Casting Academy: The Elite School of Magic\n"
 "Today Only: Free Introductory Lessons! Novices welcome!"
+
+msgid "item_gribouillis"
+msgstr ""
+
+msgid "item_gribouillis_text"
+msgstr ""

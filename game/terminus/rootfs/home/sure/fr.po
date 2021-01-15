@@ -15,21 +15,25 @@ msgid "item_nutshell"
 msgstr "Noisette"
 
 msgid "item_nutshell_text"
-msgstr "Une noisette.\nLa coquille est cassée. Les inscriptions suivantes sont lisibles:\n"
+msgstr ""
+"Une noisette.\n"
+"La coquille est cassée. Les inscriptions suivantes sont lisibles:\n"
 "{{cmd,cd}} Tab Tab te mènera aux voies que te donne {{cmd,ls}}."
 
 # msgid "item_nut"
 # msgstr "Noix"
-#
+# 
 # msgid "item_nut_text"
 # msgstr "Une noix de caroube.\nLes inscriptions suivantes sont lisibles:\n"
 # "Ce clavier.... Formidable. J'aurai aimer pouvoir en utiliser un."
-
 msgid "item_dust"
 msgstr "Poussière"
 
 msgid "item_dust_text"
-msgstr "Une nappe de poussière.\nIl s'agit d'un rassemblement des particules comme celles qui flottent dans les airs.\nÇa a l'air doux et moelleux..."
+msgstr ""
+"Une nappe de poussière.\n"
+"Il s'agit d'un rassemblement des particules comme celles qui flottent dans les airs.\n"
+"Ça a l'air doux et moelleux..."
 
 msgid "room_home_text"
 msgstr "De retour au point de départ… "
@@ -38,12 +42,10 @@ msgid "cmd_poe_revealed"
 msgstr "poe revealed"
 
 msgid "cmd_cat_second_try"
-msgstr ""
-"??? mmm"
+msgstr "??? mmm"
 
 msgid "cmd_cat_third_try"
-msgstr ""
-"Tu n'as qu'à écrire '{{cmd,cat}} {{item_nutshell}}'"
+msgstr "Tu n'as qu'à écrire '{{cmd,cat}} {{item_nutshell}}'"
 
 msgid "very_first_try"
 msgstr ""
@@ -67,3 +69,6 @@ msgstr ""
 "2. En écrivant '{{cmd,ls}}' (LiSter), tu pourras voir ce qui croise ton chemin ;\n"
 "3. En écrivant '{{cmd,cd}}' (Changer de Destination), tu pourras aller ailleurs;\n"
 "4. En écrivant '{{cmd,help}}', une aide apparaitra.\n"
+
+msgid "cmd_cat_first_try"
+msgstr ""
