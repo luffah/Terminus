@@ -26,4 +26,5 @@ serve(){
   rm ${PIDFILE}
 }
 serve & 
-echo "http://localhost:${SERVPORT} (${GAME}) is up"
+echo "Server for '${GAME}' is up"
+echo "Game url : http://localhost:${SERVPORT}"

@@ -24,7 +24,7 @@ if NODEJS:
     NODEMODULES = join(realpath(BUILD_TOOLS), "node_modules")
     NODEBIN = join(NODEMODULES, ".bin")
 else:
-   DEBUG_SKIP = ['npm', 'babel', 'uglifyjs', 'postcss']
+    DEBUG_SKIP = ['npm', 'babel', 'uglifyjs', 'postcss']
 
 def _install_deps(force=False, update=True):
     if 'npm' in DEBUG_SKIP:
