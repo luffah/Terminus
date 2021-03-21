@@ -7,6 +7,7 @@ class Env {
    *   users    : properties for each user => {
    *                  km : { keymap.. }, // cf ../keymap.js
    *                  v: { vars.. },
+   *                  a: { aliases.. },
    *                  groups: [ str.. ],
    *                  password: str
    *                  }
@@ -19,6 +20,7 @@ class Env {
    *   groups   : GET [ group as str.. ]
    *   km       : GET { keymap to use.. }
    *   v        : GET { current user vars.. }
+   *   a        : GET { current user aliases.. }
    *   PS1      : GET prompt
    *   HOME     : GET variable HOME as dir
    *   PATH     : GET variable PATH as dir list
@@ -35,10 +37,11 @@ class Env {
       for (let u in this.h.users) {
         let user = this.h.users[u]
         for (let k in user.v){
-          if (k.endsWith('PATH')){
+          if (k.endsWith('PATH')){ // ensure dir are dir ?
             let paths = []
             for (let kp of user.v[k].split(':')) {
               let p = this.h.fs.getDir(kp)
+              console.log(kp, p)  // FIXME check if this func is usefull
               paths.push(p ? p.path : kp)
             }
             user.v[k] = paths.join(':')
@@ -47,6 +50,7 @@ class Env {
             user.v[k] = p ? p.path : kp
           }
         }
+        user.a = user.a || {'ll': 'ls -rtla'}
       }
     }
     console.log(h);
@@ -69,7 +73,7 @@ class Env {
 
   get user () { return (this.h.me && this.h.users[this.h.me]) }
 
-  set user (v) { this.h.me = v; this.v = this.h.users[v].v; }
+  set user (v) { this.h.me = v; this.v = this.h.users[v].v; this.a = this.h.users[v].a }
 
   get groups () { return this.h.users[this.h.me].groups }
 

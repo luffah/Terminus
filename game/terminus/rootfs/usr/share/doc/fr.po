@@ -20,6 +20,12 @@ msgstr ""
 "-OU- \n"
 "  ls CHEMIN     (pour voir là où tu ne peux pas choisir ta destination \"cd\" )"
 
+msgid "help_alias"
+msgstr ""
+"(Conserve une commande dans un alias) Utilise \"alias\" pour réutiliser une commande avec ses arguments. \n"
+"Par exemple pour obtenir un commande ll qui donne des détails sur le contenu du répertoire.\n"
+"Il faut écrire : alias ll=\"ls -rtla\""
+
 msgid "man_cd"
 msgstr ""
 "(Choisis ta destination) Utilise \"cd\" pour explorer le monde. \n"

@@ -25,6 +25,9 @@ server:
 test_game:
 	./tools/run_game_cli.sh ${GAME}
 
+test_game_server:
+	OPEN_URL_WITH=firefox ./tools/start_game_server.sh ${GAME}
+
 build: ## Fully build
 	for _GAME in $$(ls -d game/$${GAME}*);do \
 		echo "BUILD $${_GAME}"; \
