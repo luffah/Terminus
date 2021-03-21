@@ -111,3 +111,30 @@ Object.assign(Builtin, {
     })
   }
 })
+
+class Builtin extends Functionnal {
+  constructor (name, syntax, fu) {
+    super(name, syntax, fu)
+    Builtin.reg[name] = this
+  }
+}
+Object.assign(Builtin, {
+  reg: {},
+  def (name, syntax, fu) {
+    return new Builtin(name, syntax, fu)
+  },
+  hidden: {},
+  get: (cmd) => Builtin.hidden[cmd] ? undefined : Builtin.reg[cmd],
+  _keys: () => Object.keys(Builtin.reg),
+  keys: () => Builtin._keys().filter(k => !Builtin.reg[k].hidden),
+  hide (query) {
+    Builtin._keys().forEach((i) => {
+      if (i.match(query)) Builtin.hidden[i] = 1
+    })
+  },
+  unhide (query) {
+    Builtin._keys().forEach((i) => {
+      if (i.match(query)) Builtin.hidden[i] = 0
+    })
+  }
+})

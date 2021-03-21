@@ -28,3 +28,4 @@ serve(){
 serve & 
 echo "Server for '${GAME}' is up"
 echo "Game url : http://localhost:${SERVPORT}"
+[ "${OPEN_URL_WITH}" ] && ${OPEN_URL_WITH} http://localhost:${SERVPORT}

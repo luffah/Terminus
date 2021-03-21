@@ -1,10 +1,10 @@
 Builtin.def('alias', [ARGT.alias], function (args, env, sys) {
-  const hret = env.cwd.tryhook('help', args)
-  if (hret && hret.ret) return hret.ret
+  // const hret = env.cwd.tryhook('alias', args)
+  // if (hret && hret.ret) return hret.ret
   let ret = _('cmd_help_begin') + '\n'
-  var c = env.getCommands()
-  for (var i = 0; i < c.length; i++) {
-    ret += '<pre>' + c[i] + '\t</pre>: ' + _('help_' + c[i]) + '\n'
-  }
+  // let ret = _('cmd_help_begin') + '\n'
+  // Object.keys(env.a).forEach((i) => {
+  //   ret += '<pre>' + i + '\t</pre>: ' + env.a[i] + '\n'
+  // })
   return { stdout: ret }
 })
