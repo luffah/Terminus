@@ -3,6 +3,7 @@
   <head id='head'>
   <meta charset="utf-8" />
   <script type="text/javascript" src="js.engine/utils/xhr.js"></script>
+  <script type="text/javascript" src="js.engine/utils/testing.js"></script>
   <script>
   /*
    *  Load index.html and inject test scripts inside
@@ -13,11 +14,9 @@
    */
   xhr_load(
     "index.html",
-    [ '../tests/Testing.js' ].concat(
     window.location.search.substr(1).split(',').map(
-      (s) => '../tests/test_' + s + '.js')
-    ),
-    'css/terminus.testing.css'
+      (s) => '../tests/test_' + s + '.js'),
+    'css/terminus.testing.css' // FIXME where is this file
   )
    </script>
   </head>

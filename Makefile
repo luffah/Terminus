@@ -91,8 +91,8 @@ css:
 # 			             --output="$${TGTDIR}/$${TGT}";\
 # 			done
 
-testfs:
-	firefox --jsconsole --safe-mode src/testing.html?filesystem
+testfs: assemble
+	firefox --jsconsole --safe-mode ${GAME}/webroot/testing.html?filesystem
 
 help: ## Show this help
 	@sed -n \

@@ -2,12 +2,12 @@
 <html>
   <head id='head'>
   <meta charset="utf-8" />
-  <script type="text/javascript" src="engine/utils/xhr.js"></script>
+  <script type="text/javascript" src="./js.engine/utils/xhr.js"></script>
   <script>
     xhr_load(
       "index.html",
       window.location.search.substr(1).map(() => {
-        './js/_build/terminus.dialog.'+__lang+'.js'
+        './js.build/dialog.'+__lang+'.js'
       })
     )
    </script>
