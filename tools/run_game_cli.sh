@@ -6,7 +6,7 @@ LANG="${2:-$LANG}"
 if [ "$LANG" ]; then
   LANG=${LANG%_*}
 else
-  LANG=$(PYTHONPATH=$(dirname $0)/lib/python3 python3 -m ogaget.selector 'Lang ?' $(ls ${GAMEPATH}/*.po | sed 's|.*/\([^/]*\).po|\1|') 3>&2 2>&1 1>&3)
+  LANG=$(PYTHONPATH=$(dirname $0)/lib/python3 python3 -m ogaget.selector 'Lang ?' $(ls ${GAME_PATH}/*.po | sed 's|.*/\([^/]*\).po|\1|') 3>&2 2>&1 1>&3)
 fi
 
-${FRAMEWORK_ROOT}/tools/gamedev/testgame $GAMEPATH -l ${LANG}
+${FRAMEWORK_ROOT}/tools/gamedev/testgame ${GAME_PATH} -l ${LANG}

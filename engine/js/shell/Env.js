@@ -53,6 +53,7 @@ class Env {
         user.a = user.a || {'ll': 'ls -rtla'}
       }
     }
+    // FIXME usefull debug ?
     console.log(h);
   }
 

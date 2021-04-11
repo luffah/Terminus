@@ -1,3 +1,7 @@
+
+> Hey, maybe you wanted to have the source of the modified game Terminus.  
+> Sadly, this is the wrong page, now check the [original branch](https://github.com/luffah/Terminus/tree/origin).
+
 # Terminal game common
 A tool box to create games with command line interface, based on a classical filesystem structure.
 
@@ -69,27 +73,18 @@ Yes, it could do the job. You can even add sound, images and event with a small 
 But sometimes, you need to add some restrictions, and extra features to make a game interesting.
 
 
-
-The aim is not to destroy the enemy, no, you'll just have to help people you could meet.
-
-
-Build
-=====
-
-### For test
-Next, `make` updates texts (using '''.po''' files) and produce a minified version of the code.
-
-### For final build
-In order to produce a code usable in all browsers, you need `NodeJs` with `npm`.
-
 Start game
 ==========
-`make server`,  select the game and go to the url given as response. 
 
-Language
-========
-Edit `.po` files in game directory to edit translation.
-In `tools/gamedev`, there is tools to generate the `.pot` file, and ensure all references are translated.
+## Build
+
+  * ensure you have all resources  in`./game_art` : `make fetch_resources`
+  * assemble the game(s) in `./game`
+    * use `make build` to build for all Browsers/Platform
+    * use `make assemble` if for some reason you want to build while skipping Nodejs (and npm) part
+
+## Start game
+`make server`,  select the game and go to the url given as response. 
 
 Why the terminal ?
 ==================
@@ -107,13 +102,21 @@ Some examples of things you can easily do with command line :
 - access servers
 - develop scripts to repeat useful tasks
 
+Helping
+=======
 
-Note for game dev
-=================
-- `make build` can be used to build the game(s) in `./game`
-- `make fetch_ressources` can be used to fetchs ressources registered `./ressources`
+Things in thinking/doing are located in [TODO](./TODO.md) file.
+Feel free to check it, raise issues and push PR if you got something.
+
+Tips for game makers
+====================
+
+## Language
+
+Edit `.po` files in game directory to edit translation.
+In `tools/gamedev`, there is tools to generate the `.pot` file, and ensure all references are translated.
+
+## Note for game dev
 - `./game/terminus/devenv.sh` set up a bash shell for dev...
 - to work on develop branch : `git fetch origin; git checkout --track origin/develop`
 - get missing tools `git submodule update --init --recursive`
-
-

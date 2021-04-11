@@ -22,12 +22,6 @@ devenv: ## Source .bash_profile in order to use dev tools
 server:
 	./tools/start_game_server.sh ${GAME}
 
-test_game:
-	./tools/run_game_cli.sh ${GAME}
-
-test_game_server:
-	OPEN_URL_WITH=firefox ./tools/start_game_server.sh ${GAME}
-
 build: ## Fully build
 	for _GAME in $$(ls -d game/$${GAME}*);do \
 		echo "BUILD $${_GAME}"; \
@@ -39,7 +33,7 @@ assemble: ## Transform game file into an usable script
 	for _GAME in $$(ls -d game/$${GAME}*);do \
 		echo "ASSEMBLE $${_GAME}"; \
 		echo "------------------------------"; \
-		${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}); \
+		DEBUG_SKIP="${DEBUG_SKIP:-nodejs}" ${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}); \
 	done
 
 fetch_resources:  ## Fetch resources
@@ -92,7 +86,13 @@ css:
 # 			done
 
 testfs: assemble
-	firefox --jsconsole --safe-mode ${GAME}/webroot/testing.html?filesystem
+	firefox --jsconsole --safe-mode game/${GAME}/webroot/testing.html?filesystem
+
+test_game:
+	./tools/run_game_cli.sh ${GAME}
+
+test_game_server: assemble
+	OPEN_URL_WITH=firefox ./tools/start_game_server.sh ${GAME}
 
 help: ## Show this help
 	@sed -n \
