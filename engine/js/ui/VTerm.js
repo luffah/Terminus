@@ -285,9 +285,9 @@ class VTerm extends Window {
     addBtn(v.suggestions, hlcls, txt.replace(re.hashtag, '<i class="hashtag"> $1 </i>'), txt, function (e) {
       v.input.value += txt
       if (c.isValidInput(v.input.value)) {
-        v.shell.enter()
+        c.enter()
       } else {
-        v.shell.makeSuggestions(-1, false)
+        c.makeSuggestions(-1, false)
       }
     })
   }
@@ -428,7 +428,7 @@ class VTerm extends Window {
       v.overapp = undefined
       if (cb) cb()
     }
-    v.enterKey = function () { console.log('what is an overapp ?') }
+    v.enterKey = function () { console.log('extra app ?') }
     return fu(v, v.overapp, endapp)
   }
 

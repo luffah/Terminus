@@ -34,7 +34,7 @@ class Task {
       this.io.push(ret)
     }
     this.returncode = ret || 0
-    // this.terminate(ret) // FIXME : implement this
+    this.terminate(ret)
   }
 }
 Task.id = 1

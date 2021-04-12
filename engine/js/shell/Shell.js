@@ -168,7 +168,8 @@ class Shell {
     const execInstr = function (lo, end) {
       const piped = v.splitPipe(lo) // --> ['INSTR', '|', 'INSTR']
       if (piped[piped.length - 1] == '|') { endline(); return 1 }
-      // TODO: erreur symbole inattendu
+      // TODO: erreur symbole inattendu 
+      // TODO: match < > &
       if (piped.length > 1) {
         const cmds = []
         let prev = ''
@@ -250,9 +251,9 @@ class Shell {
       // TODO : VTERM ---
     }
 
-    const task = new Task(sh.task, returncode, line, cmd, args, env, io)
+    let task = new Task(sh.task, returncode, line, cmd, args, env, io)
 
-    if (!cmd) { // test if there is a hook for the command name
+    if (!cmd) { // test if there is a hook in room for the command name
       if (cmdname in r.cmd_hook) {
         r.fire(this, cmdname + '_cmd_hook', args, 0)
         ret = r.cmd_hook[cmdname](args)
@@ -262,40 +263,40 @@ class Shell {
         r.fire(this, cmdname + '_cmd_not_found', args, 0)
         ret = sh.psychologist(cmdname, args, line) || _('cmd_not_found', [cmdname, env.cwd.name])
         if (typeof ret === 'string') ret = { stdout: ret }
+        // sh.emit(['MessageAdded', 'ContentAdded', 'ContentChanged'])
       }
     // } else {
     //   let hret
-    //   if (cmd.hookable) {
-    //     hret = r.tryhook(cmdname, args, cmd)
-    //   }
+    //   if (cmd.hookable) { hret = r.tryhook(cmdname, args, cmd)  }
     //   if (hret && hret.ret) ret = hret.ret
     //   if (!(hret && hret.ret && !hret.continue)){
     //     ret = cmd.exec(args, env, io, cmd, arrs)
     //   }
     }
+     
     let retcode = 0
     if (ret) {
       // à revoir
       if (ret instanceof Task) {
-        ret.exit = returncode
+        ret.terminate = returncode
         return
       }
       ret = new Seq(ret)
       // console.log(ret)
-      ret.run((re, next) => {
+      ret.run((r, next) => {
         // FIXME : use io.push(re) instead
         // FIXME : make task exit use next()
 
-        if (re.code) retcode = re.code
-        if (re.stdout) (io.stdout.write(re.stdout, re, next))
-        if (re.stderr) (io.stderr.write(re.stderr, re, next))
-        if (re.fireables) {
+        if (r.code) retcode = r.code
+        if (r.stdout) (io.stdout.write(r.stdout, r, next))
+        if (r.stderr) (io.stderr.write(r.stderr, r, next))
+        if (r.fireables) {
           ret.cb = () => {
-            io.fire(re.fireables, 'done')
+            io.fire(r.fireables, 'done')
           }
           // ret.cb()
         }
-        sh.emit(['ReturnStatement'], re)
+        sh.emit(['ReturnStatement'], r)
       }, () => { returncode(retcode, ret) })
     } else { returncode(retcode) }
   }

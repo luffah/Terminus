@@ -5,6 +5,16 @@
 ## Alias shell function
   * code alias as a shell builtin  *IN PROGRESS*
 
+## Command identifiers
+  * give identifier (pid) to commands  *PARTIALLY DONE*
+
+## Implement redirections
+  * support stdin, stdout, stderr and redirections *PARTIALLY DONE*
+  * make pipe `|` functionnal *OK*
+  * make file writing `>` functionnal
+  * make file reading `<` functionnal
+  * redirecting redirections (with `&` pointer)
+
 # REFACTORING
 
 ## Translation architecture 
