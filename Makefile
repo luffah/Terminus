@@ -36,8 +36,11 @@ assemble: ## Transform game file into an usable script
 		DEBUG_SKIP="${DEBUG_SKIP:-nodejs}" ${BUILD_TOOLS}/build $${_GAME} _build/$$(basename $${_GAME}); \
 	done
 
-fetch_resources:  ## Fetch resources
-	${GAMEDEV_TOOLS}/ogaget  --recursive ./resources -dl
+update_submodules:
+	git submodule update --init --recursive
+
+fetch_resources: update_submodules  ## Fetch resources
+	${GAMEDEV_TOOLS}/ogaget  --recursive ./game_art -dl
 
 # js: ${TOOLS}/.npm po  ## Compress javascript files
 # 	for _LANG in ${LANGS};do \
@@ -55,7 +58,7 @@ fetch_resources:  ## Fetch resources
 # 		-o ./_build/js/min.${_LANG}.js -c -m;
 #
 # _check_polib:
-	# ${PYTHON}  -c "import polib" || pip install polib
+#	 ${PYTHON}  -c "import polib" || pip install polib
 
 _ensure_build_dir:
 	mkdir -p ./_build
